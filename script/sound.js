@@ -2,11 +2,12 @@
 
 //always call this function first (at init)
 function registerSound(soundPath, name){
+    createjs.Sound.alternateExtensions = ["ogg", "aiff"];
     createjs.Sound.registerSound(soundPath, name);
 }
 
 //play sound and return instance of the sound playing
-function playSound(soundName, volume){ //usind name of registered sound
+function playSound(soundName, volume = 1){ //usind name of registered sound
     var instance = createjs.Sound.play(soundName);
     instance.volume = volume;
 }

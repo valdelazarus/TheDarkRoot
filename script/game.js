@@ -10,7 +10,9 @@ const BULLET_SPEED = 10;
 //MAIN
 var canvas = document.getElementById('game-canvas');
 var stage;
-var version = '1.0.0'
+var version = '1.0.0';
+
+var preloader = new Preloader();
 
 var keyboardMoveLeft = false, keyboardMoveRight = false, keyboardMoveUp = false, keyboardMoveDown = false;
 
@@ -57,6 +59,13 @@ function init(){
     
     handleKeyBoardEvent();
     
+    //preloader jobs
+     preloader.installSoundPlugin();
+    //register sounds
+    registerSound("sound/shoot1.wav","Normal Shoot");
+    registerSound("sound/shoot2.wav","Special Shoot");
+    
+    //start game
     restartGame();
 }
 function update(){

@@ -11,6 +11,10 @@ class Preloader{
         this.fileArray = [];
         this.queue = new createjs.LoadQueue();
     }
+    //install sound plugin
+    installSoundPlugin(){
+        this.queue.installPlugin(createjs.Sound);
+    }
     //add file to array 
     addFile(id, src){
         this.fileArray.push({id: id, src: src});

@@ -162,6 +162,8 @@ class ShootBehavior {
             this.atkCounter = 0;
             //generate bullet 
             console.log("Normal shoot");
+            //play SFX
+            playSound("Normal Shoot");
             //
             this.generateBullet(source);
         }
@@ -171,6 +173,8 @@ class ShootBehavior {
             this.atkCounter = 0;
             //generate 3 bullets 
             console.log("Special shoot");
+            //play SFX
+            playSound("Special Shoot");
             //
 //            this.generateBullet(source,source.aimAngle - 5);
 //			this.generateBullet(source,source.aimAngle);
