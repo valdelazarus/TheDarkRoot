@@ -1,7 +1,38 @@
 /*SPAWNER, TIMER, HUD, SCENE*/
+
+//manage scenes and scene transition
 class SceneManager{
     
 }
+
+//preload assets and render loading bar 
+class Preloader{
+    constructor(){
+        this.fileArray = [];
+        this.queue = new createjs.LoadQueue();
+    }
+    //add file to array 
+    addFile(id, src){
+        this.fileArray.push({id: id, src: src});
+    }
+    //use a file array; each item in array should have id and src property
+    loadFiles(){
+        this.queue.loadManifest(this.fileArray);
+    }
+    //get loading progress - precentage between 0 and 1
+    getLoadingProgress(){
+        return this.queue.progress;
+    }
+    //create loading bar at pos x and y and return the instance
+    createLoadingBar(posX, posY){
+        
+    }
+    //update loading bar with loading progress - use bar instance
+    updateLoadingBar(loadingBar){
+        
+    }
+}
+
 //general random enemy spawner class
 class EnemySpawner{
     constructor(total){
