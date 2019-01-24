@@ -180,7 +180,7 @@ class ShootBehavior {
 //			this.generateBullet(source,source.aimAngle);
 //			this.generateBullet(source,source.aimAngle + 5);
             for(var i = 0 ; i < 360; i+=60){
-				this.generateBullet(source,i);
+				this.generateBullet(source, i);
 			}
         }
     }

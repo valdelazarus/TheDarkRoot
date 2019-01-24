@@ -17,6 +17,7 @@ var preloader = new Preloader();
 var keyboardMoveLeft = false, keyboardMoveRight = false, keyboardMoveUp = false, keyboardMoveDown = false;
 
 var player;
+var aimIndicator;
 
 var playerAtkSpd = 1; //can be changed with pickups
 var playerAimAngle = 0;  //changing depending on mouse position 
@@ -153,6 +154,9 @@ function mouseMoveHandler(e){
     var mouseY = e.stageY;
 
     player.aimAngle = Math.atan2(mouseY-player.y,mouseX-player.x) / Math.PI * 180;
+    
+    //rotate aimIndicator accordingly 
+    aimIndicator.setTransform(aimIndicator.x,aimIndicator.y,1,1,player.aimAngle+90);
 }
 /*GAME SPECIFIC*/
 function restartGame(){
@@ -169,11 +173,24 @@ function restartGame(){
 }
 function createPlayer(){
     player = new Player(drawImage('images/player.png', .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval);
+    
+    createAimIndicator();
+}
+function createAimIndicator(){
+    //create aim indicator object and attach to player
+    aimIndicator = new GameObject(drawImage('images/aimIndicator.png', .5, 0, 0));
+    player.addChild(aimIndicator);
+    //setting local positions for rotating point (parent object)
+    aimIndicator.x = 33;
+    aimIndicator.y = 30;
+    //setting child local position offset
+    aimIndicator.graphic.x = -13;
+    aimIndicator.graphic.y = -60;
 }
 //this functions will create all level objects and calling spawning function of enemies 
 function populateLevel(){
     //generateRandomBlocks('#000', totalOfBlocks);
-    generateBlocks();
+    //generateBlocks();
     
     //testing code
 //    var enemy = new Enemy(drawImage('images/enemy.png', .5, 700, 200), enemySpd);
