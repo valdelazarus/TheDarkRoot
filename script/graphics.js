@@ -28,6 +28,24 @@ drawRect = function(color, width, height, posX, posY){
     stage.addChild(rect);
     return rect;
 }
+//draw a rectangle with border color, width, height and positions 
+drawBorderedRect = function(color, width, height, posX, posY){
+    var borderedRect = new createjs.Shape();
+    
+    borderedRect.graphics.setStrokeStyle(2);
+    borderedRect.graphics.beginStroke(color).drawRect(0, 0, width, height);
+    
+    borderedRect.regX = width/2;
+    borderedRect.regY = height/2;
+    
+    borderedRect.x = posX;
+    borderedRect.y = posY;
+    
+    borderedRect.setBounds(borderedRect.regX,borderedRect.regY,width,height);
+    
+    stage.addChild(borderedRect);
+    return borderedRect;
+}
 //draw a image sprite with scale and positions
 drawImage = function(imagePath, scale, posX, posY){
     var imageObj = new Image();
@@ -42,4 +60,19 @@ drawImage = function(imagePath, scale, posX, posY){
     
     stage.addChild(image);
     return image;
+}
+//draw text with a displayed text, font, color, posX and posY
+drawText = function(text, font, color, posX, posY){
+    var textObj = new createjs.Text(text,font,color);
+    
+    textObj.x = posX;
+    textObj.y = posY
+    
+    stage.addChild(textObj);
+    return textObj;
+}
+//draw shadow under graphic
+drawShadow = function(color, offsetX, offsetY, blurSize){
+    var shadow = new createjs.Shadow(color, offsetX, offsetY, blurSize);
+    return shadow;
 }

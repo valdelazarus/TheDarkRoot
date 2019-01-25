@@ -10,6 +10,8 @@ class Preloader{
     constructor(){
         this.fileArray = [];
         this.queue = new createjs.LoadQueue();
+        this.loadingBar = null;
+        this.loadInterval = null;
     }
     //install sound plugin
     installSoundPlugin(){
@@ -28,12 +30,23 @@ class Preloader{
         return this.queue.progress;
     }
     //create loading bar at pos x and y and return the instance
-    createLoadingBar(posX, posY){
-        
+    createLoadingBar(width, height, posX, posY, color= "#000"){
+        this.loadingBar = drawBorderedRect(color, width, height, posX, posY);
     }
-    //update loading bar with loading progress - use bar instance
-    updateLoadingBar(loadingBar){
+    //update loading bar with real loading progress - pass in bar instance
+    updateLoadingBar(loadingBar, fillColor="#666", strokeColor="#000"){
+        loadingBar.graphics.beginFill(fillColor);
         
+        loadingBar.graphics.drawRect(0, 0, loadingBar.getBounds().width *                     this.getLoadingProgress(), loadingBar.getBounds().height);
+        
+        loadingBar.graphics.endFill();
+        
+        loadingBar.graphics.setStrokeStyle(2);
+        loadingBar.graphics.beginStroke(strokeColor);
+        
+        loadingBar.graphics.drawRect(0, 0, loadingBar.getBounds().width, loadingBar.getBounds().height);
+        
+        loadingBar.graphics.endStroke();
     }
 }
 

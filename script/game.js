@@ -13,6 +13,8 @@ var stage;
 var version = '1.0.0';
 
 var preloader = new Preloader();
+var fakeProgress = 0;
+var loadInterval; 
 
 var keyboardMoveLeft = false, keyboardMoveRight = false, keyboardMoveUp = false, keyboardMoveDown = false;
 
@@ -43,31 +45,32 @@ function init(){
     //set up auto-update on stage
     createjs.Ticker.framerate = 60;
     createjs.Ticker.on('tick',update);
-
-    //enable touch event for mobile support
-    createjs.Touch.enable(stage);
     
     retinalize();
     
     intialLog();
     
-    //mouse and keyboard handler
-    //stage.on('stagemousedown', mouseClickHandler);
-    
-    document.onclick = mouseClickHandler; //left click
-    document.oncontextmenu = rightMouseClickHandler; //right click
-    stage.on('stagemousemove', mouseMoveHandler) //mouse move
-    
-    handleKeyBoardEvent();
-    
-    //preloader jobs
-     preloader.installSoundPlugin();
-    //register sounds
-    registerSound("sound/shoot1.wav","Normal Shoot");
-    registerSound("sound/shoot2.wav","Special Shoot");
+    /*LOADING SCREEN*/
+        createGameTitle();
+        createCopyrightText();
+        //preloader jobs
+        preloader.createLoadingBar(canvas.width/4,20,canvas.width/2,canvas.height/2);
+        preloader.installSoundPlugin();
+        preloader.addFile("Player", "images/player.png");
+        preloader.loadFiles();
+
+        //NOTE:--to be used with real loading progress
+            //preloader.queue.on('progress', updateLoadingBar); 
+            //preloader.queue.on('complete',restartGame);
+
+        //register sounds
+        registerSound("sound/shoot1.wav","Normal Shoot");
+        registerSound("sound/shoot2.wav","Special Shoot");
+
+        loadInterval = setInterval(updateLoadingBar, 50);
     
     //start game
-    restartGame();
+    //restartGame();
 }
 function update(){
     stage.update();
@@ -101,12 +104,21 @@ function retinalize(){
 function intialLog(){
     console.log(`Welcome to the game. Version ${version}`);
 }
+/*FOR LOADING SCREEN*/
+function createGameTitle(){
+    var title = drawText("The Dark Root", "Bold 50px Arial", "#000", canvas.width/2- 170, canvas.height/2-100);
+    title.shadow = drawShadow("#666",3,3,10);
+}
+function createCopyrightText(){
+    drawText("\251 Copyright 2019 - NCBots", "Bold 20px Arial", "#000", canvas.width/2-130, canvas.height/2+50);
+}
+
+/*KEYBOARD EVENT HANDLER*/
 function handleKeyBoardEvent(){
     //handle keyboard event
     window.onkeyup = keyUpHandler;
     window.onkeydown = keyDownHandler;
 }
-/*KEYBOARD EVENT HANDLER*/
 function keyDownHandler(e){ //when key is pressed
     switch(e.keyCode){
         case KEYCODE_A:
@@ -158,8 +170,39 @@ function mouseMoveHandler(e){
     //rotate aimIndicator accordingly 
     aimIndicator.setTransform(aimIndicator.x,aimIndicator.y,1,1,player.aimAngle+90);
 }
+/*LOADING BAR*/
+function updateLoadingBar(){
+    fakeProgress += .005;
+    
+    preloader.loadingBar.graphics.beginFill("#666");
+        
+    preloader.loadingBar.graphics.drawRect(0, 0, preloader.loadingBar.getBounds().width *               fakeProgress, preloader.loadingBar.getBounds().height);
+
+    preloader.loadingBar.graphics.endFill();
+
+    preloader.loadingBar.graphics.setStrokeStyle(2);
+    preloader.loadingBar.graphics.beginStroke("#000");
+
+    preloader.loadingBar.graphics.drawRect(0, 0, preloader.loadingBar.getBounds().width,                   preloader.loadingBar.getBounds().height);
+
+    preloader.loadingBar.graphics.endStroke();
+    
+    if (fakeProgress >= 1){
+        clearInterval(loadInterval);
+        restartGame();
+    }
+}
 /*GAME SPECIFIC*/
 function restartGame(){
+    //mouse and keyboard handler
+    //stage.on('stagemousedown', mouseClickHandler);
+    
+    document.onclick = mouseClickHandler; //left click
+    document.oncontextmenu = rightMouseClickHandler; //right click
+    stage.on('stagemousemove', mouseMoveHandler) //mouse move
+    
+    handleKeyBoardEvent();
+    
     stage.removeAllChildren();
     
     //testing codes
