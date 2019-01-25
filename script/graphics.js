@@ -61,6 +61,20 @@ drawImage = function(imagePath, scale, posX, posY){
     stage.addChild(image);
     return image;
 }
+//draw a image using preloaded image
+drawPreloadedImage = function(imageObj,scale,posX,posY){
+    var image = new createjs.Bitmap(imageObj);
+    
+    image.shadow = drawShadow("#666",2,2,10);
+
+    image.x = posX;
+    image.y = posY;
+
+    image.scale = scale;
+    
+    stage.addChild(image);
+    return image;
+}
 //draw text with a displayed text, font, color, posX and posY
 drawText = function(text, font, color, posX, posY){
     var textObj = new createjs.Text(text,font,color);

@@ -188,7 +188,9 @@ class ShootBehavior {
         var spawnPosX = source.x + source.graphic.image.width * source.graphic.scale/2;
         var spawnPosY = source.y + source.graphic.image.height * source.graphic.scale/2;
 
-        var bullet = new Bullet(drawImage('images/playerBullet.png', .2, spawnPosX, spawnPosY),
+//        var bullet = new Bullet(drawImage('images/playerBullet.png', .2, spawnPosX, spawnPosY),
+//                               5, source.type);
+        var bullet = new Bullet(drawPreloadedImage(preloader.queue.getResult("Projectile"), .2, spawnPosX, spawnPosY),
                                5, source.type);
 
         var angle;

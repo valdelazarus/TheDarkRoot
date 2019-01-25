@@ -57,6 +57,9 @@ function init(){
         preloader.createLoadingBar(canvas.width/4,20,canvas.width/2,canvas.height/2);
         preloader.installSoundPlugin();
         preloader.addFile("Player", "images/player.png");
+        preloader.addFile("Minion", "images/enemy.png");
+        preloader.addFile("Projectile", "images/playerBullet.png");
+        preloader.addFile("AimIndicator", "images/aimIndicator.png");
         preloader.loadFiles();
 
         //NOTE:--to be used with real loading progress
@@ -74,6 +77,11 @@ function init(){
 }
 function update(){
     stage.update();
+    
+    //make sure player is always rendered on top of other objects in scene
+    if(player != undefined){
+        stage.setChildIndex(player, stage.numChildren-1);
+    }
     
     for (var i =0; i<blocks.length; ++i){
         if (checkCollisionSpriteRect(player, blocks[i])){
@@ -215,13 +223,17 @@ function restartGame(){
     createPlayer();
 }
 function createPlayer(){
-    player = new Player(drawImage('images/player.png', .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval);
+//    player = new Player(drawImage("images/player.png", .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval);
+//    
+    player = new Player(drawPreloadedImage(preloader.queue.getResult("Player"), .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval);
     
     createAimIndicator();
 }
 function createAimIndicator(){
     //create aim indicator object and attach to player
-    aimIndicator = new GameObject(drawImage('images/aimIndicator.png', .5, 0, 0));
+//    aimIndicator = new GameObject(drawImage('images/aimIndicator.png', .5, 0, 0));
+//    player.addChild(aimIndicator);
+    aimIndicator = new GameObject(drawPreloadedImage(preloader.queue.getResult("AimIndicator"), .5, 0, 0));
     player.addChild(aimIndicator);
     //setting local positions for rotating point (parent object)
     aimIndicator.x = 33;

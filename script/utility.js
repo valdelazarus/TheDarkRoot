@@ -61,7 +61,8 @@ class EnemySpawner{
         for (var i=0; i< this.total; ++i){
             var gap = Math.random()* maxGap;
 
-            var enemy = new Enemy(drawImage('images/enemy.png', .5, nextX, nextY), enemySpd);
+            //var enemy = new Enemy(drawImage('images/enemy.png', .5, nextX, nextY), enemySpd);
+            var enemy = new Enemy(drawPreloadedImage(preloader.queue.getResult("Minion"), .5, nextX, nextY), enemySpd);
 
             enemies.push(enemy);
 
