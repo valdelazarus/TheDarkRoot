@@ -4,7 +4,6 @@
 class SceneManager{
     
 }
-
 //preload assets and render loading bar 
 class Preloader{
     constructor(){
@@ -62,7 +61,9 @@ class EnemySpawner{
             var gap = Math.random()* maxGap;
 
             //var enemy = new Enemy(drawImage('images/enemy.png', .5, nextX, nextY), enemySpd);
-            var enemy = new Enemy(drawPreloadedImage(preloader.queue.getResult("Minion"), .5, nextX, nextY), enemySpd);
+//            var enemy = new Enemy(drawPreloadedImage(preloader.queue.getResult("Minion"), .2, nextX, nextY), enemySpd, meleeDmg);
+            
+            var enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Minion"), .2, nextX, nextY), enemySpd, meleeDmg, meleeAtkInterval);
 
             enemies.push(enemy);
 

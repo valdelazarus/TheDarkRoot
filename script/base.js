@@ -38,7 +38,7 @@ class MoveableGameObject extends GameObject{
 }
 //Player specific class 
 class Player extends MoveableGameObject{
-    constructor(graphic, speed, atkSpd, aimAngle, shootInterval, specialAtkInterval){
+    constructor(graphic, speed, atkSpd, aimAngle, shootInterval, specialAtkInterval, health){
         super(graphic);
         
         this.speed = speed;
@@ -47,6 +47,9 @@ class Player extends MoveableGameObject{
         this.aimAngle = aimAngle;
         this.shootInterval = shootInterval;
         this.specialAtkInterval = specialAtkInterval;
+        
+        this.health = health;
+        
         this.type = 'Player';
         
         this.shootBehavior = new ShootBehavior(this.atkSpd, this.aimAngle, this.shootInterval, this.specialAtkInterval);
@@ -78,27 +81,57 @@ class Player extends MoveableGameObject{
             this.y += this.velocity.y;
         }
     }
+    reduceHealth(points){
+        this.health-=points;
+        if (this.health<=0){
+            gameOver = true;
+            console.log("Game over!");
+        }
+    }
 }
 //general Enemy class - base for special types of enemies which implement different behavior classes
 class Enemy extends MoveableGameObject{
-    constructor(graphic, speed){
+    constructor(graphic, speed, damage){
         super(graphic);
         
         this.speed = speed; 
         
+        this.damage = damage;
+        
         this.type = 'Enemy';
+        
+        this.chaseBehavior = new ChaseBehavior();
         
         createjs.Ticker.on('tick', this.update.bind(this));
     }
     update(){
         super.update();
         //just for testing purpose - later will be replace with chasing behavior
-            this.velocity.y = this.speed;
-            if ((this.y + this.graphic.image.height * this.graphic.scale >= stage.canvas.height)
-               ||(this.y <= 0)){
-                this.speed = -this.speed;
-                this.velocity.y = this.speed;
-            } 
+//            this.velocity.y = this.speed;
+//            if ((this.y + this.graphic.image.height * this.graphic.scale >= stage.canvas.height)
+//               ||(this.y <= 0)){
+//                this.speed = -this.speed;
+//                this.velocity.y = this.speed;
+//            }
+        this.chaseBehavior.moveToPoint(player.x-this.x,player.y-this.y,this.speed);
+        this.velocity.x = this.chaseBehavior.velocity.x;
+        this.velocity.y = this.chaseBehavior.velocity.y;
+    }
+}
+//sub class - for melee minions
+class MeleeEnemy extends Enemy{
+    constructor(graphic, speed, damage, atkInterval){
+        super(graphic,speed,damage);
+        
+        this.atkInterval = atkInterval;
+        this.atkCounter = 0;
+    }
+    dealMeleeDamage(){
+        if (this.atkCounter > (this.atkInterval * createjs.Ticker.framerate)){
+            this.atkCounter = 0; 
+            player.reduceHealth(this.damage);
+            console.log("Melee minion "+ this.id + " hits player. Player health: "+ player.health);
+        }
     }
 }
 //Bullet 
@@ -200,5 +233,25 @@ class ShootBehavior {
 
         bullet.velocity.x = Math.cos(angle/180*Math.PI)*bullet.speed;
         bullet.velocity.y = Math.sin(angle/180*Math.PI)*bullet.speed;
+    }
+}
+//Chasing behavior
+class ChaseBehavior{
+    constructor(){
+        this.velocity = {
+          x:0,
+          y:0
+        }
+        this.distance = 0;
+    }
+    moveToPoint(dirX,dirY,speed){
+        var angle = Math.atan2(dirY,dirX);
+        this.velocity.x = Math.cos(angle)*speed;
+        this.velocity.y = Math.sin(angle)*speed;
+        
+        this.calcDistanceToPoint(dirX,dirY);
+    }
+    calcDistanceToPoint(dirX,dirY){
+        this.distance = Math.sqrt(dirX*dirX + dirY*dirY);
     }
 }

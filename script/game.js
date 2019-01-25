@@ -4,8 +4,9 @@ const KEYCODE_W = 87;
 const KEYCODE_A = 65;
 const KEYCODE_S = 83;
 const KEYCODE_D = 68;
-const PLAYER_SPEED = 2;
+const PLAYER_SPEED = 3;
 const BULLET_SPEED = 10;
+const PLAYER_HEALTH = 10;
 
 //MAIN
 var canvas = document.getElementById('game-canvas');
@@ -26,14 +27,21 @@ var playerAimAngle = 0;  //changing depending on mouse position
 var playerShootInterval = 1; //in seconds, changing based on weapon equipped
 var playerSpecialAtkInterval = 3; //in seconds, changing based on weapon equipped 
 
+var gameOver = false;
+
 //OTHERS
 var totalOfBlocks = 5;
 var blocks = [];
 
 var enemies = [];
-var enemySpd = 3; //changing depending on the level - will be used with chasing behavior codes
+var enemySpd = 2; //changing depending on the level - will be used with chasing behavior codes
 var enemyTotal = 3; //changing depending on the level
 var waveSpawnInterval = 5; //changing depending on the level
+
+var meleeDmg = 1;
+var meleeAtkInterval = 1;
+
+var enemySpawnInterval; 
 
 //Function calls
 init();
@@ -76,17 +84,33 @@ function init(){
     //restartGame();
 }
 function update(){
-    stage.update();
-    
-    //make sure player is always rendered on top of other objects in scene
-    if(player != undefined){
-        stage.setChildIndex(player, stage.numChildren-1);
+    //handle game over
+    if (gameOver){
+        clearInterval(enemySpawnInterval);
+        stage.removeAllChildren();
+        createGameOverScreen();
+        stage.update();
+        createjs.Ticker.removeAllEventListeners('tick');
+        return; 
     }
     
-    for (var i =0; i<blocks.length; ++i){
-        if (checkCollisionSpriteRect(player, blocks[i])){
-            console.log("collide "+ i);
-            handleCollisionSpriteRect(player, blocks[i]);
+    stage.update();
+    
+//    //make sure player is always rendered on top of other objects in scene
+//    if(player != undefined){
+//        stage.setChildIndex(player, stage.numChildren-1);
+//    }
+    
+//    for (var i =0; i<blocks.length; ++i){
+//        if (checkCollisionSpriteRect(player, blocks[i])){
+//            console.log("collide "+ i);
+//            handleCollisionSpriteRect(player, blocks[i]);
+//        } 
+//    }
+    for (var i =0; i<enemies.length; ++i){
+        if (checkCollisionSprSpr(player, enemies[i])){
+            enemies[i].atkCounter++;
+            enemies[i].dealMeleeDamage();
         } 
     }
 }
@@ -112,15 +136,6 @@ function retinalize(){
 function intialLog(){
     console.log(`Welcome to the game. Version ${version}`);
 }
-/*FOR LOADING SCREEN*/
-function createGameTitle(){
-    var title = drawText("The Dark Root", "Bold 50px Arial", "#000", canvas.width/2- 170, canvas.height/2-100);
-    title.shadow = drawShadow("#666",3,3,10);
-}
-function createCopyrightText(){
-    drawText("\251 Copyright 2019 - NCBots", "Bold 20px Arial", "#000", canvas.width/2-130, canvas.height/2+50);
-}
-
 /*KEYBOARD EVENT HANDLER*/
 function handleKeyBoardEvent(){
     //handle keyboard event
@@ -225,7 +240,7 @@ function restartGame(){
 function createPlayer(){
 //    player = new Player(drawImage("images/player.png", .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval);
 //    
-    player = new Player(drawPreloadedImage(preloader.queue.getResult("Player"), .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval);
+    player = new Player(drawPreloadedImage(preloader.queue.getResult("Player"), .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval, PLAYER_HEALTH);
     
     createAimIndicator();
 }
@@ -253,7 +268,7 @@ function populateLevel(){
     
      //for TESTING ONLY
     spawnEnemies();
-    setInterval(spawnEnemies, waveSpawnInterval* 1000);
+    enemySpawnInterval = setInterval(spawnEnemies, waveSpawnInterval* 1000);
 }
 
 function generateBlocks(){
@@ -284,5 +299,18 @@ function generateRandomBlocks(color, total){
         nextX = Math.random() * stage.canvas.width + gap;
         nextY = Math.random() * stage.canvas.height + gap;
     }
+}
+/*FOR LOADING SCREEN*/
+function createGameTitle(){
+    var title = drawText("The Dark Root", "Bold 50px Arial", "#000", canvas.width/2- 170, canvas.height/2-100);
+    title.shadow = drawShadow("#666",3,3,10);
+}
+function createCopyrightText(){
+    drawText("\251 Copyright 2019 - NCBots", "Bold 20px Arial", "#000", canvas.width/2-130, canvas.height/2+50);
+}
+/*FOR GAME OVER SCREEN*/
+function createGameOverScreen(){
+    var text = drawText("Game Over!", "Bold 50px Arial", "#000", canvas.width/2- 170, canvas.height/2-100);
+    text.shadow = drawShadow("#666",3,3,10);
 }
 
