@@ -68,15 +68,17 @@ function init(){
         preloader.addFile("Minion", "images/enemy.png");
         preloader.addFile("Projectile", "images/playerBullet.png");
         preloader.addFile("AimIndicator", "images/aimIndicator.png");
+        preloader.addFile("Normal Shoot", "sound/shoot1.wav");
+        preloader.addFile("Special Shoot", "sound/shoot2.wav");
         preloader.loadFiles();
 
         //NOTE:--to be used with real loading progress
             //preloader.queue.on('progress', updateLoadingBar); 
             //preloader.queue.on('complete',restartGame);
 
-        //register sounds
-        registerSound("sound/shoot1.wav","Normal Shoot");
-        registerSound("sound/shoot2.wav","Special Shoot");
+        //register sounds - use preloader above instead
+//        registerSound("sound/shoot1.wav","Normal Shoot");
+//        registerSound("sound/shoot2.wav","Special Shoot");
 
         loadInterval = setInterval(updateLoadingBar, 50);
     
