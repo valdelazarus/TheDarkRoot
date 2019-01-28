@@ -41,7 +41,13 @@ var waveSpawnInterval = 5; //changing depending on the level
 var meleeDmg = 1;
 var meleeAtkInterval = 1;
 
+var rangedDmg = 2; 
+var rangedAtkSpd = 1; 
+var shootAtkInterval = 3;
+
 var enemySpawnInterval; 
+
+var bullets = [];
 
 //Function calls
 init();
@@ -65,7 +71,9 @@ function init(){
         preloader.createLoadingBar(canvas.width/4,20,canvas.width/2,canvas.height/2);
         preloader.installSoundPlugin();
         preloader.addFile("Player", "images/player.png");
-        preloader.addFile("Minion", "images/enemy.png");
+        preloader.addFile("Boss", "images/enemy.png");
+        preloader.addFile("Melee", "images/melee.png");
+        preloader.addFile("Ranged", "images/ranged.png");
         preloader.addFile("Projectile", "images/playerBullet.png");
         preloader.addFile("AimIndicator", "images/aimIndicator.png");
         preloader.addFile("Normal Shoot", "sound/shoot1.wav");
@@ -88,11 +96,7 @@ function init(){
 function update(){
     //handle game over
     if (gameOver){
-        clearInterval(enemySpawnInterval);
-        stage.removeAllChildren();
-        createGameOverScreen();
-        stage.update();
-        createjs.Ticker.removeAllEventListeners('tick');
+        stopGame();
         return; 
     }
     
@@ -103,18 +107,7 @@ function update(){
 //        stage.setChildIndex(player, stage.numChildren-1);
 //    }
     
-//    for (var i =0; i<blocks.length; ++i){
-//        if (checkCollisionSpriteRect(player, blocks[i])){
-//            console.log("collide "+ i);
-//            handleCollisionSpriteRect(player, blocks[i]);
-//        } 
-//    }
-    for (var i =0; i<enemies.length; ++i){
-        if (checkCollisionSprSpr(player, enemies[i])){
-            enemies[i].atkCounter++;
-            enemies[i].dealMeleeDamage();
-        } 
-    }
+    runMinionBehavior();
 }
 //for retina display 
 function retinalize(){
@@ -283,6 +276,26 @@ function spawnEnemies(){
     var enemySpawner = new EnemySpawner(enemyTotal);
     enemySpawner.spawnRandom();
 }
+function runMinionBehavior(){
+    for (var i =0; i<enemies.length; ++i){
+        
+        if (enemies[i].type == "Melee"){
+            if (checkCollisionSprSpr(player, enemies[i])){
+                enemies[i].atkCounter++;
+                enemies[i].dealMeleeDamage();
+            } 
+        }
+        
+        if (enemies[i].type == "Ranged"){
+            if (enemies[i].chaseBehavior.distance <= enemies[i].minDistance){
+                enemies[i].speed = 0;
+                enemies[i].shootBehavior.performAtk(enemies[i]);
+            } else {
+                enemies[i].speed = enemies[i].temp;
+            }
+        }
+    }
+}
 //generate random blocks - but due to a bug in collision with these blocks- for now don't use this
 function generateRandomBlocks(color, total){
     var nextX = 0, nextY = 0, maxGap = 100;
@@ -315,4 +328,10 @@ function createGameOverScreen(){
     var text = drawText("Game Over!", "Bold 50px Arial", "#000", canvas.width/2- 170, canvas.height/2-100);
     text.shadow = drawShadow("#666",3,3,10);
 }
-
+function stopGame(){
+    clearInterval(enemySpawnInterval);
+    stage.removeAllChildren();
+    createGameOverScreen();
+    stage.update();
+    createjs.Ticker.removeAllEventListeners('tick');
+}

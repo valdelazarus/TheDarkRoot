@@ -63,14 +63,22 @@ class EnemySpawner{
             //var enemy = new Enemy(drawImage('images/enemy.png', .5, nextX, nextY), enemySpd);
 //            var enemy = new Enemy(drawPreloadedImage(preloader.queue.getResult("Minion"), .2, nextX, nextY), enemySpd, meleeDmg);
             
-            var enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Minion"), .2, nextX, nextY), enemySpd, meleeDmg, meleeAtkInterval);
+            var enemy = this.randomizeMinions(nextX, nextY);
 
             enemies.push(enemy);
 
             nextX = gap + Math.random() * (stage.canvas.width - enemy.graphic.image.width * enemy.graphic.scale);
             nextY = gap + Math.random() * (stage.canvas.height - enemy.graphic.image.height * enemy.graphic.scale); 
         }
-    }   
+    }
+    randomizeMinions(posX, posY){
+        var n = 1+ Math.random()*10;
+        if (n<5){
+            return new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, posX, posY), enemySpd, meleeDmg, meleeAtkInterval);
+        } else {
+            return new RangedEnemy(drawPreloadedImage(preloader.queue.getResult("Ranged"), .3, posX, posY), enemySpd, rangedDmg, rangedAtkSpd, 0, shootAtkInterval, 0, 500);
+        }
+    }
 }
 //timer class
 class Timer{

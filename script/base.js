@@ -125,6 +125,8 @@ class MeleeEnemy extends Enemy{
         
         this.atkInterval = atkInterval;
         this.atkCounter = 0;
+        
+        this.type = "Melee";
     }
     dealMeleeDamage(){
         if (this.atkCounter > (this.atkInterval * createjs.Ticker.framerate)){
@@ -132,6 +134,33 @@ class MeleeEnemy extends Enemy{
             player.reduceHealth(this.damage);
             console.log("Melee minion "+ this.id + " hits player. Player health: "+ player.health);
         }
+    }
+}
+//sub class - for ranged minions
+class RangedEnemy extends Enemy{
+    constructor(graphic, speed, damage, atkSpd, aimAngle, shootInterval, specialAtkInterval, minDistance){
+        super(graphic,speed,damage);
+        
+        this.type = "Ranged";
+        
+        this.atkSpd = atkSpd;
+        this.aimAngle = aimAngle;
+        this.shootInterval = shootInterval;
+        this.specialAtkInterval = specialAtkInterval;
+        
+        this.shootBehavior = new ShootBehavior(this.atkSpd, this.aimAngle, this.shootInterval, this.specialAtkInterval);
+        
+        this.minDistance = minDistance;
+        
+        this.temp = this.speed;
+        
+        createjs.Ticker.on('tick', this.update.bind(this));
+    }
+    update(){
+        super.update();
+        //calling shoot behavior update
+        this.shootBehavior.update();
+        this.aimAngle = Math.atan2(player.y-this.y,player.x-this.x) / Math.PI * 180;
     }
 }
 //Bullet 
@@ -149,13 +178,13 @@ class Bullet extends MoveableGameObject{
     }
     update(){
         super.update();
-        //remove when lifetime ends and later, when colliding with objects
-        var toRemove = false
+        
+        var toRemove = false;
+        //remove when lifetime ends and later, when colliding with objects   
         this.timer++;
         if (this.timer > (this.lifeTime * createjs.Ticker.framerate)){
             toRemove = true;
-        }
-        
+        }   
         for(var i=0 ; i <blocks.length; ++i){
             if (checkCollisionSpriteRect(this,blocks[i])){
                 toRemove = true;
@@ -163,7 +192,7 @@ class Bullet extends MoveableGameObject{
         }
         
         for(var i=0 ; i <enemies.length; ++i){
-            if (this.source === 'Player'){
+            if (this.source.type === 'Player'){
                 if (checkCollisionSprSpr(this,enemies[i])){
                     toRemove = true;
                     stage.removeChild(enemies[i]);
@@ -173,8 +202,20 @@ class Bullet extends MoveableGameObject{
             }
         }
         
+        if (this.timer > 7){ //temporary method to fix bug of repeating hitting players 
+            if (this.source.type === 'Ranged'){
+                if (checkCollisionSprSpr(this,player)){
+                    toRemove = true;
+                    player.reduceHealth(this.source.damage);
+                    console.log("Ranged minion "+ this.source.id + "bullet" + this.id + " hits player. Player health: "+ player.health);
+                }
+            }
+            this.timer = 0;
+        }
+        
         if(toRemove){
 			stage.removeChild(this);
+            stage.update();
 		}
     }
 }
@@ -194,7 +235,7 @@ class ShootBehavior {
         if (this.atkCounter > (this.shootInterval * createjs.Ticker.framerate)){
             this.atkCounter = 0;
             //generate bullet 
-            console.log("Normal shoot");
+            console.log(source.type + source.id + "Normal shoot");
             //play SFX
             playSound("Normal Shoot");
             //
@@ -205,7 +246,7 @@ class ShootBehavior {
         if (this.atkCounter > (this.specialAtkInterval * createjs.Ticker.framerate)){
             this.atkCounter = 0;
             //generate 3 bullets 
-            console.log("Special shoot");
+            console.log(source.type + source.id + "Special shoot");
             //play SFX
             playSound("Special Shoot");
             //
@@ -223,8 +264,7 @@ class ShootBehavior {
 
 //        var bullet = new Bullet(drawImage('images/playerBullet.png', .2, spawnPosX, spawnPosY),
 //                               5, source.type);
-        var bullet = new Bullet(drawPreloadedImage(preloader.queue.getResult("Projectile"), .2, spawnPosX, spawnPosY),
-                               5, source.type);
+        var bullet = new Bullet(drawPreloadedImage(preloader.queue.getResult("Projectile"), .2, spawnPosX, spawnPosY), 5, source);
 
         var angle;
         if(aimOverwrite !== undefined)
@@ -233,6 +273,8 @@ class ShootBehavior {
 
         bullet.velocity.x = Math.cos(angle/180*Math.PI)*bullet.speed;
         bullet.velocity.y = Math.sin(angle/180*Math.PI)*bullet.speed;
+        
+        bullets.push(bullet);
     }
 }
 //Chasing behavior
