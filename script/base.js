@@ -179,44 +179,41 @@ class Bullet extends MoveableGameObject{
     update(){
         super.update();
         
-        var toRemove = false;
-        //remove when lifetime ends and later, when colliding with objects   
+        //remove when lifetime ends
         this.timer++;
         if (this.timer > (this.lifeTime * createjs.Ticker.framerate)){
-            toRemove = true;
+            this.timer = 0;
+            this.selfDestroy();
         }   
+    }
+    hitPlayer(){ //more than 1 instance at the same time ->> need to call this in a loop running through bullets list so that it only invokes once
+        player.reduceHealth(this.source.damage);
+        console.log("Ranged minion "+ this.source.id + " bullet " + this.id + " hits player. Player health: "+ player.health);
+    }
+    hitEnemy(){
+        for(var i=0 ; i <enemies.length; ++i){
+            if (checkCollisionSprSpr(this,enemies[i])){
+                this.selfDestroy();
+                stage.removeChild(enemies[i]);
+                enemies.splice(i, 1);
+                console.log('Hit enemy' + i);
+            }
+        }
+    }
+    hitProp(){
         for(var i=0 ; i <blocks.length; ++i){
             if (checkCollisionSpriteRect(this,blocks[i])){
-                toRemove = true;
+                this.selfDestroy();
             }
         }
-        
-        for(var i=0 ; i <enemies.length; ++i){
-            if (this.source.type === 'Player'){
-                if (checkCollisionSprSpr(this,enemies[i])){
-                    toRemove = true;
-                    stage.removeChild(enemies[i]);
-                    enemies.splice(i, 1);
-                    console.log('Hit enemy' + i);
-                }
+    }
+    selfDestroy(){
+        stage.removeChild(this);
+        for (var i=0; i<bullets.length; ++i){
+            if (bullets[i] === this){
+                bullets.splice(i,1);
             }
         }
-        
-        if (this.timer > 7){ //temporary method to fix bug of repeating hitting players 
-            if (this.source.type === 'Ranged'){
-                if (checkCollisionSprSpr(this,player)){
-                    toRemove = true;
-                    player.reduceHealth(this.source.damage);
-                    console.log("Ranged minion "+ this.source.id + "bullet" + this.id + " hits player. Player health: "+ player.health);
-                }
-            }
-            this.timer = 0;
-        }
-        
-        if(toRemove){
-			stage.removeChild(this);
-            stage.update();
-		}
     }
 }
 //Shooting Behavior
@@ -235,7 +232,7 @@ class ShootBehavior {
         if (this.atkCounter > (this.shootInterval * createjs.Ticker.framerate)){
             this.atkCounter = 0;
             //generate bullet 
-            console.log(source.type + source.id + "Normal shoot");
+            console.log(source.type + source.id + " Normal shoot");
             //play SFX
             playSound("Normal Shoot");
             //
@@ -246,7 +243,7 @@ class ShootBehavior {
         if (this.atkCounter > (this.specialAtkInterval * createjs.Ticker.framerate)){
             this.atkCounter = 0;
             //generate 3 bullets 
-            console.log(source.type + source.id + "Special shoot");
+            console.log(source.type + source.id + " Special shoot");
             //play SFX
             playSound("Special Shoot");
             //

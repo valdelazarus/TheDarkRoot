@@ -108,6 +108,7 @@ function update(){
 //    }
     
     runMinionBehavior();
+    runBulletBehavior();
 }
 //for retina display 
 function retinalize(){
@@ -272,6 +273,7 @@ function generateBlocks(){
     block = new GameObject(drawRect('#000', stage.canvas.width, 100, stage.canvas.width/2, stage.canvas.height - 25));
     blocks.push(block);
 }
+/* GAME LOGIC */
 function spawnEnemies(){
     var enemySpawner = new EnemySpawner(enemyTotal);
     enemySpawner.spawnRandom();
@@ -293,6 +295,19 @@ function runMinionBehavior(){
             } else {
                 enemies[i].speed = enemies[i].temp;
             }
+        }
+    }
+}
+function runBulletBehavior(){
+    for (var i=0; i<bullets.length; ++i){
+        if (bullets[i].source.type === 'Ranged'){
+            if (checkCollisionSprSpr(bullets[i],player)){
+                bullets[i].hitPlayer();
+                stage.removeChild(bullets[i]);
+                bullets.splice(i,1);
+            }
+        } else if (bullets[i].source.type === 'Player'){
+            bullets[i].hitEnemy();
         }
     }
 }
