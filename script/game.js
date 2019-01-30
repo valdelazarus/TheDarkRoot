@@ -46,7 +46,7 @@ var bossDmg = 3;
 var bossHealth = 50;
 var bossAtkInterval = 2;
 var bossMinionsNumber = 3;
-var bossWaveSpawnInterval = 10;
+var bossWaveSpawnInterval = 20;
 
 var meleeDmg = 1;
 var meleeAtkInterval = 1;
@@ -88,6 +88,7 @@ function init(){
         preloader.addFile("AimIndicator", "images/aimIndicator.png");
         preloader.addFile("Normal Shoot", "sound/shoot1.wav");
         preloader.addFile("Special Shoot", "sound/shoot2.wav");
+        preloader.addFile("Background1","sound/EpicTheme.mp3");
         preloader.loadFiles();
 
         //NOTE:--to be used with real loading progress
@@ -253,6 +254,8 @@ function restartGame(){
     populateLevel();
     
     createPlayer();
+    
+    playSound("Background1",.5);
 }
 function createPlayer(){
 //    player = new Player(drawImage("images/player.png", .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval);
@@ -364,7 +367,7 @@ function createGameTitle(){
     title.shadow = drawShadow("#666",3,3,10);
 }
 function createCopyrightText(){
-    drawText("\251 Copyright 2019 - NCBots", "Bold 20px Arial", "#000", canvas.width/2-130, canvas.height/2+50);
+    drawText("\251 Copyright 2019 - NC Bots", "Bold 20px Arial", "#000", canvas.width/2-130, canvas.height/2+50);
 }
 /*FOR GAME OVER SCREEN*/
 function createGameTextScreen(textToDisplay){
