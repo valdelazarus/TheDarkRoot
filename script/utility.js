@@ -71,6 +71,24 @@ class EnemySpawner{
             nextY = gap + Math.random() * (stage.canvas.height - enemy.graphic.image.height * enemy.graphic.scale); 
         }
     }
+    spawnAtSpecifiedPosition(posX, posY, random){
+        var nextX = posX, nextY=posY;
+        var maxGap = 200;
+        for (var i=0; i< this.total; ++i){
+            
+            var gap = -maxGap + Math.random()* maxGap;
+            
+            if (random){
+                var enemy = this.randomizeMinions(nextX, nextY);
+            }else{
+                var enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, nextX, nextY), enemySpd, meleeDmg, meleeAtkInterval);
+            }
+            
+            enemies.push(enemy);
+
+            nextY += gap;
+        }
+    }
     randomizeMinions(posX, posY){
         var n = 1+ Math.random()*10;
         if (n<5){

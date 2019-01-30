@@ -26,8 +26,10 @@ var playerAtkSpd = 1; //can be changed with pickups
 var playerAimAngle = 0;  //changing depending on mouse position 
 var playerShootInterval = 1; //in seconds, changing based on weapon equipped
 var playerSpecialAtkInterval = 3; //in seconds, changing based on weapon equipped 
+var playerDmg = 2;
 
 var gameOver = false;
+var nextLevel = false;
 
 //OTHERS
 var totalOfBlocks = 5;
@@ -37,6 +39,14 @@ var enemies = [];
 var enemySpd = 2; //changing depending on the level - will be used with chasing behavior codes
 var enemyTotal = 3; //changing depending on the level
 var waveSpawnInterval = 5; //changing depending on the level
+
+var boss;
+var bossSpd = 1;
+var bossDmg = 3;
+var bossHealth = 50;
+var bossAtkInterval = 2;
+var bossMinionsNumber = 3;
+var bossWaveSpawnInterval = 10;
 
 var meleeDmg = 1;
 var meleeAtkInterval = 1;
@@ -96,8 +106,13 @@ function init(){
 function update(){
     //handle game over
     if (gameOver){
-        stopGame();
+        stopGame("Game Over!");
         return; 
+    }
+    
+    if (nextLevel){
+        stopGame("Level 1 Finished!");
+        return;
     }
     
     stage.update();
@@ -107,8 +122,14 @@ function update(){
 //        stage.setChildIndex(player, stage.numChildren-1);
 //    }
     
-    runMinionBehavior();
+    runEnemyBehavior();
     runBulletBehavior();
+//    if (boss != undefined){
+//        if (boss.health <= 5){
+//            boss.startChasing = true;
+//        }
+//    }
+    
 }
 //for retina display 
 function retinalize(){
@@ -236,7 +257,7 @@ function restartGame(){
 function createPlayer(){
 //    player = new Player(drawImage("images/player.png", .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval);
 //    
-    player = new Player(drawPreloadedImage(preloader.queue.getResult("Player"), .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval, PLAYER_HEALTH);
+    player = new Player(drawPreloadedImage(preloader.queue.getResult("Player"), .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval, PLAYER_HEALTH, playerDmg);
     
     createAimIndicator();
 }
@@ -263,8 +284,10 @@ function populateLevel(){
 //    enemies.push(enemy);
     
      //for TESTING ONLY
-    spawnEnemies();
-    enemySpawnInterval = setInterval(spawnEnemies, waveSpawnInterval* 1000);
+//    spawnEnemies();
+//    enemySpawnInterval = setInterval(spawnEnemies, waveSpawnInterval* 1000);
+    
+    spawnBoss();
 }
 
 function generateBlocks(){
@@ -278,17 +301,22 @@ function spawnEnemies(){
     var enemySpawner = new EnemySpawner(enemyTotal);
     enemySpawner.spawnRandom();
 }
-function runMinionBehavior(){
+function spawnBoss(){
+    boss = new Boss1(drawPreloadedImage(preloader.queue.getResult("Boss"), .7, 700, 300),bossSpd,bossDmg,bossHealth,bossAtkInterval,bossMinionsNumber,bossWaveSpawnInterval);
+    enemies.push(boss);
+    //boss.spawnInterval = setInterval(boss.spawnMeleeMinions(boss.spawner), boss.waveSpawnInterval);
+}
+function runEnemyBehavior(){
     for (var i =0; i<enemies.length; ++i){
         
-        if (enemies[i].type == "Melee"){
+        if ((enemies[i].type == "Melee")||(enemies[i].type == "Boss 1") ){
             if (checkCollisionSprSpr(player, enemies[i])){
                 enemies[i].atkCounter++;
                 enemies[i].dealMeleeDamage();
             } 
         }
         
-        if (enemies[i].type == "Ranged"){
+        else if (enemies[i].type == "Ranged"){
             if (enemies[i].chaseBehavior.distance <= enemies[i].minDistance){
                 enemies[i].speed = 0;
                 enemies[i].shootBehavior.performAtk(enemies[i]);
@@ -339,14 +367,14 @@ function createCopyrightText(){
     drawText("\251 Copyright 2019 - NCBots", "Bold 20px Arial", "#000", canvas.width/2-130, canvas.height/2+50);
 }
 /*FOR GAME OVER SCREEN*/
-function createGameOverScreen(){
-    var text = drawText("Game Over!", "Bold 50px Arial", "#000", canvas.width/2- 170, canvas.height/2-100);
+function createGameTextScreen(textToDisplay){
+    var text = drawText(textToDisplay, "Bold 50px Arial", "#000", canvas.width/2- 170, canvas.height/2-100);
     text.shadow = drawShadow("#666",3,3,10);
 }
-function stopGame(){
+function stopGame(textToDisplay){
     clearInterval(enemySpawnInterval);
     stage.removeAllChildren();
-    createGameOverScreen();
+    createGameTextScreen(textToDisplay);
     stage.update();
     createjs.Ticker.removeAllEventListeners('tick');
 }

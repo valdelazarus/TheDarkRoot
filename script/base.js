@@ -38,7 +38,7 @@ class MoveableGameObject extends GameObject{
 }
 //Player specific class 
 class Player extends MoveableGameObject{
-    constructor(graphic, speed, atkSpd, aimAngle, shootInterval, specialAtkInterval, health){
+    constructor(graphic, speed, atkSpd, aimAngle, shootInterval, specialAtkInterval, health, damage){
         super(graphic);
         
         this.speed = speed;
@@ -49,6 +49,8 @@ class Player extends MoveableGameObject{
         this.specialAtkInterval = specialAtkInterval;
         
         this.health = health;
+        
+        this.damage = damage;
         
         this.type = 'Player';
         
@@ -113,6 +115,9 @@ class Enemy extends MoveableGameObject{
 //                this.speed = -this.speed;
 //                this.velocity.y = this.speed;
 //            }
+        this.chasePlayer();
+    }
+    chasePlayer(){
         this.chaseBehavior.moveToPoint(player.x-this.x,player.y-this.y,this.speed);
         this.velocity.x = this.chaseBehavior.velocity.x;
         this.velocity.y = this.chaseBehavior.velocity.y;
@@ -163,6 +168,82 @@ class RangedEnemy extends Enemy{
         this.aimAngle = Math.atan2(player.y-this.y,player.x-this.x) / Math.PI * 180;
     }
 }
+//sub class - for boss lvl 1
+//--behavior: stand and summon melee minions each interval; if health <= 20%, stop spawning and start to chase player with high speed
+class Boss1 extends Enemy{
+    constructor(graphic, speed, damage, health, atkInterval, minionsNumber, waveSpawnInterval){
+        super(graphic, speed, damage);
+        
+        this.type = 'Boss 1';
+        this.health = health;
+        this.minHealthTrigger = health/5;
+        
+        this.temp = this.speed;
+        this.startChasing = false;
+        
+        this.atkInterval = atkInterval;
+        this.atkCounter = 0;
+        
+        this.minionsNumber = minionsNumber;
+        this.spawner = new EnemySpawner(this.minionsNumber);
+        this.waveSpawnInterval = waveSpawnInterval;
+        this.timer = 0;
+        
+        createjs.Ticker.on('tick', this.update.bind(this)); 
+        this.spawnMeleeMinions();
+    }
+    update(){
+        if (this.health > this.minHealthTrigger){
+            this.timer++; 
+//            this.speed = 0;
+            this.velocity.x = 0;
+            this.velocity.y = this.speed;
+            
+            this.startChasing = false;
+            
+            if (((this.y + this.graphic.image.height*this.graphic.scale) >= canvas.height)||
+               (this.y <= 0)){
+                    this.speed = -this.speed;
+                    this.velocity.y = this.speed;
+                }
+            
+            if (this.timer > (this.waveSpawnInterval * createjs.Ticker.framerate)){
+                this.timer = 0;
+                this.spawnRandomMinions();
+            }
+            
+        }else {
+            console.log('Boss starts to chase player!');
+            this.timer = 0;
+            this.speed = this.temp;
+            this.startChasing = true;
+            this.chasePlayer();
+        }
+        
+        this.x+= this.velocity.x;
+        this.y += this.velocity.y;
+    }
+    spawnMeleeMinions(){
+        this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height/2 * this.graphic.scale, false);
+    }
+    spawnRandomMinions(){
+        this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height/2 * this.graphic.scale, true);
+    }
+    dealMeleeDamage(){
+        if (this.startChasing && (this.atkCounter > (this.atkInterval * createjs.Ticker.framerate))){
+            this.atkCounter = 0; 
+            player.reduceHealth(this.damage);
+            console.log("Boss hits player. Player health: "+ player.health);
+        }
+    }
+    reduceHealth(points){
+        this.health -= points;
+        if (this.health<=0){
+            nextLevel = true;
+            console.log("Level 1 finished!");
+        }
+    }
+}
 //Bullet 
 class Bullet extends MoveableGameObject{
     constructor(graphic, lifeTime, source){
@@ -192,11 +273,17 @@ class Bullet extends MoveableGameObject{
     }
     hitEnemy(){
         for(var i=0 ; i <enemies.length; ++i){
-            if (checkCollisionSprSpr(this,enemies[i])){
-                this.selfDestroy();
-                stage.removeChild(enemies[i]);
-                enemies.splice(i, 1);
-                console.log('Hit enemy' + i);
+            if (checkCollisionSprSpr(this,enemies[i])){      
+                if (enemies[i].type == 'Boss 1'){
+                    enemies[i].reduceHealth(this.source.damage);
+                    console.log("Hit "+ enemies[i].type + ". Target health: "+ enemies[i].health);
+                    this.selfDestroy();
+                } else {
+                    this.selfDestroy();
+                    stage.removeChild(enemies[i]);
+                    enemies.splice(i, 1);
+                    console.log('Hit enemy' + i);
+                }
             }
         }
     }
