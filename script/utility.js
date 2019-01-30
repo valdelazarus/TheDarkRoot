@@ -98,7 +98,73 @@ class EnemySpawner{
         }
     }
 }
+
+/*
+
 //timer class
 class Timer{
+    constructor(){
+        this.seconds = 0;
+        this.minutes = 0;
+    }
     
+    setTime(sec, min){
+        seconds = sec;
+        minutes = min;
+    }
+    
+    getSeconds(){
+        return seconds;
+    }
+    getMinutes(){
+        return minutes;
+    }
+    
+    reduceTime(){
+        if(seconds==0){
+            seconds = 59;
+            minutes--;
+        } else {
+            seconds--;
+        }
+    }
 }
+
+//health bar class
+class HealthBar{
+    constructor(){
+        this.healthBar = null;
+        this.maxHealth = 10;
+        this.currentHealth = 10;
+    }
+    
+    getMaxHealth(){
+        return maxHealth;
+    }
+    getCurrentHealth(){
+        return currentHealth;
+    }
+    
+    checkHealth(playerHealth){
+        currentHealth = playerHealth;
+    }
+    
+    createHealthBar(width, height, posX, posY, color= "#000"){
+        this.healthBar = drawBorderedRect(color, width, height, posX, posY);
+    }
+    
+    updateHealthBar(healthBar, fillColor="#666", strokeColor="#000"){
+        healthBar.graphics.beginFill(fillColor);
+        
+        healthBar.graphics.drawRect(0, 0, healthBar.getBounds().width * this.getCurrentHealth(), healthBar.getBounds().height);
+        
+        healthBar.graphics.endFill();
+        
+        healthBar.graphics.setStrokeStyle(2);
+        healthBar.graphics.beginStroke(strokeColor);
+        
+        healthBar.graphics.drawRect(0, 0, healthBar.getBounds().width, healthBar.getBounds().height);
+        
+        healthBar.graphics.endStroke();
+    }
+}*/
