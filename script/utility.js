@@ -106,73 +106,94 @@ class EnemySpawner{
         return enemy;
     }
 }
+//health bar class -create, display and update bar according to current health value 
+class HealthBar extends createjs.Container{
+    constructor(maxValue, currentValue, width, height, posX, posY, borderColor= "#000", fillColor = "red"){  
+//        this.maxHealth = 10; //DONT use hard-coded value 
+//        this.currentHealth = 10; //DONT use hard-coded value
+        super();
+        
+        this.maxValue = maxValue; 
+        this.currentValue = currentValue;
+        
+        this.width = width;
+        this.height = height; 
+        this.x = posX; 
+        this.y = posY; 
+        this.strokeColor = borderColor;
+        this.fillColor = fillColor;
+        
+        this.border = null;
+        this.fillArea = null;
+        
+         //will be replaced with player avatar later 
+        this.text = drawText("Player", "20px Arial Bold", "#000", this.x - this.width/2 - 60, this.y-this.height/2-5);
+        
+        this.addChild(this.border, this.fillArea); //group border and fill 
+        stage.addChild(this);
+        
+        createjs.Ticker.on('tick',this.update.bind(this));
+    }
+    update(){
+        this.updateBar();
+    }
+    //DONT need these - can always get value by instance.maxHealth or instance.currentHealth etc 
+//    getMaxHealth(){
+//        return maxHealth;  //when referring to variable of an instance-> use this.<variableName> 
+//    }
+//    getCurrentHealth(){
+//        return currentHealth;
+//    }
+    
+    updateBar(){
+        //create the fill representing current value 
+        if (this.fillArea != undefined){
+            stage.removeChild(this.fillArea); //reset after each update
+        }
+        if (this.border != undefined){
+            stage.removeChild(this.border); //reset after each update
+        }
+        
+        //draw the fill
+            this.fillArea=drawBorderedRect(null, this.width, this.height, this.x, this.y); //rect with no border
+
+            this.fillArea.graphics.beginFill(this.fillColor);
+
+            // width <-> maxValue ; fillWidth <-> currentValue --> fillWidth = width*currentValue/maxValue
+            this.fillArea.graphics.drawRect(0, 0, this.width * this.currentValue / this.maxValue, this.height); 
+
+            this.fillArea.graphics.endFill();
+        
+        //draw the border - make healthbar border drawn on top
+            this.border = drawBorderedRect(this.strokeColor, this.width, this.height, this.x, this.y);
+    }
+}
+
 
 /*
 
 //timer class
 class Timer{
-    constructor(){
-        this.seconds = 0;
-        this.minutes = 0;
+    constructor(maxTime){ //set direcly on constructor
+        this.seconds = seconds;
+        this.maxTime = maxTime; //max time allowed before spawning boss 
+        this.count = 0;
+        
+        createjs.Ticker.on('tick',this.update.bind(this)); //calling update to update time 
     }
-    
-    setTime(sec, min){
-        seconds = sec;
-        minutes = min;
-    }
-    
-    getSeconds(){
-        return seconds;
-    }
-    getMinutes(){
-        return minutes;
-    }
-    
-    reduceTime(){
-        if(seconds==0){
-            seconds = 59;
-            minutes--;
-        } else {
-            seconds--;
+    update(){
+        this.count++;  //count frame
+        if (this.count == 60) //game running on 60 FPS {
+            this.count = 0;
+            this.seconds--;
         }
     }
+    
+    //display on screen the current time - graphics.js -drawText - format the text: 'MM:SS'
+    display(posX,posY,font,color){
+    }
+    
+    //unit test: var lvlTimer = new Timer(maxTime); clock.display(); - expected: timer should be display and running 
 }
 
-//health bar class
-class HealthBar{
-    constructor(){
-        this.healthBar = null;
-        this.maxHealth = 10;
-        this.currentHealth = 10;
-    }
-    
-    getMaxHealth(){
-        return maxHealth;
-    }
-    getCurrentHealth(){
-        return currentHealth;
-    }
-    
-    checkHealth(playerHealth){
-        currentHealth = playerHealth;
-    }
-    
-    createHealthBar(width, height, posX, posY, color= "#000"){
-        this.healthBar = drawBorderedRect(color, width, height, posX, posY);
-    }
-    
-    updateHealthBar(healthBar, fillColor="#666", strokeColor="#000"){
-        healthBar.graphics.beginFill(fillColor);
-        
-        healthBar.graphics.drawRect(0, 0, healthBar.getBounds().width * this.getCurrentHealth(), healthBar.getBounds().height);
-        
-        healthBar.graphics.endFill();
-        
-        healthBar.graphics.setStrokeStyle(2);
-        healthBar.graphics.beginStroke(strokeColor);
-        
-        healthBar.graphics.drawRect(0, 0, healthBar.getBounds().width, healthBar.getBounds().height);
-        
-        healthBar.graphics.endStroke();
-    }
-}*/
+*/

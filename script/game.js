@@ -46,7 +46,7 @@ var bossDmg = 3;
 var bossHealth = 50;
 var bossAtkInterval = 2;
 var bossMinionsNumber = 1;
-var bossWaveSpawnInterval = 3;
+var bossWaveSpawnInterval = 5;
 
 var meleeDmg = 1;
 var meleeAtkInterval = 1;
@@ -58,6 +58,9 @@ var shootAtkInterval = 3;
 var enemySpawnInterval; 
 
 var bullets = [];
+
+//HUD
+var healthBarObj;
 
 //Function calls
 init();
@@ -139,7 +142,9 @@ function update(){
 //            boss.startChasing = true;
 //        }
 //    }
-    
+    if (healthBarObj != undefined && player != undefined && !gameOver){
+        healthBarObj.currentValue = player.health;
+    }
 }
 //for retina display 
 function retinalize(){
@@ -263,6 +268,8 @@ function restartGame(){
     populateLevel();
     
     createPlayer();
+    
+    createHealthBar();
     
     playSound("Background1",.5);
 }
@@ -389,4 +396,9 @@ function stopGame(textToDisplay){
     createGameTextScreen(textToDisplay);
     stage.update();
     createjs.Ticker.removeAllEventListeners('tick');
+}
+
+/* HUD */
+function createHealthBar(){
+    healthBarObj = new HealthBar(PLAYER_HEALTH, player.health, 100, 10, 150, 20);
 }
