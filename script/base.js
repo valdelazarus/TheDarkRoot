@@ -169,7 +169,7 @@ class RangedEnemy extends Enemy{
     }
 }
 //sub class - for boss lvl 1
-//--behavior: stand and summon melee minions each interval; if health <= 20%, stop spawning and start to chase player with high speed
+//--behavior: wander around and summon minions each interval; if health <= 30%, stop spawning and start to chase player with high speed
 class Boss1 extends Enemy{
     constructor(graphic, speed, damage, health, atkInterval, minionsNumber, waveSpawnInterval){
         super(graphic, speed, damage);
@@ -189,23 +189,22 @@ class Boss1 extends Enemy{
         this.waveSpawnInterval = waveSpawnInterval;
         this.timer = 0;
         
+        this.point = this.chaseBehavior.randomizeAPoint();
+        
         createjs.Ticker.on('tick', this.update.bind(this)); 
         this.spawnMeleeMinions();
     }
     update(){
         if (this.health > this.minHealthTrigger){
             this.timer++; 
-//            this.speed = 0;
-            this.velocity.x = 0;
-            this.velocity.y = this.speed;
             
             this.startChasing = false;
             
-            if (((this.y + this.graphic.image.height*this.graphic.scale) >= canvas.height)||
-               (this.y <= 0)){
-                    this.speed = -this.speed;
-                    this.velocity.y = this.speed;
-                }
+            //wandering around the stage
+            this.moveToRandomPoint();
+            if (this.chaseBehavior.distance < 10){
+                this.point = this.chaseBehavior.randomizeAPoint();
+            }
             
             if (this.timer > (this.waveSpawnInterval * createjs.Ticker.framerate)){
                 this.timer = 0;
@@ -215,7 +214,7 @@ class Boss1 extends Enemy{
         }else {
             console.log('Boss starts to chase player!');
             this.timer = 0;
-            this.speed = this.temp;
+            this.speed = this.temp*2;
             this.startChasing = true;
             this.chasePlayer();
         }
@@ -223,11 +222,16 @@ class Boss1 extends Enemy{
         this.x+= this.velocity.x;
         this.y += this.velocity.y;
     }
+    moveToRandomPoint(){
+        this.chaseBehavior.moveToPoint(this.point.x-this.x, this.point.y-this.y, this.speed);
+        this.velocity.x = this.chaseBehavior.velocity.x;
+        this.velocity.y = this.chaseBehavior.velocity.y;
+    }
     spawnMeleeMinions(){
-        this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height/2 * this.graphic.scale, false);
+        this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height/2 * this.graphic.scale, 0, false);
     }
     spawnRandomMinions(){
-        this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height/2 * this.graphic.scale, true);
+        this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height/2 * this.graphic.scale, 0, true);
     }
     dealMeleeDamage(){
         if (this.startChasing && (this.atkCounter > (this.atkInterval * createjs.Ticker.framerate))){
@@ -379,5 +383,11 @@ class ChaseBehavior{
     }
     calcDistanceToPoint(dirX,dirY){
         this.distance = Math.sqrt(dirX*dirX + dirY*dirY);
+    }
+    randomizeAPoint(){
+        var point = {x:0,y:0};
+        point.x = Math.random()*(canvas.width+1-200); 
+        point.y = Math.random()*(canvas.height+1-200);
+        return point;
     }
 }

@@ -45,8 +45,8 @@ var bossSpd = 1;
 var bossDmg = 3;
 var bossHealth = 50;
 var bossAtkInterval = 2;
-var bossMinionsNumber = 3;
-var bossWaveSpawnInterval = 20;
+var bossMinionsNumber = 1;
+var bossWaveSpawnInterval = 3;
 
 var meleeDmg = 1;
 var meleeAtkInterval = 1;
@@ -64,6 +64,15 @@ init();
 
 /*SYSTEM SPECIFIC*/
 function init(){
+//    if(typeof AudioContext != "undefined" || typeof webkitAudioContext != "undefined") {
+//       var resumeAudio = function() {
+//          if(typeof g_WebAudioContext == "undefined" || g_WebAudioContext == null) return;
+//          if(g_WebAudioContext.state == "suspended") g_WebAudioContext.resume();
+//          document.removeEventListener("click", resumeAudio);
+//       };
+//       document.addEventListener("click", resumeAudio);
+//    }
+    
     stage = new createjs.Stage(canvas);
     
     //set up auto-update on stage
@@ -118,10 +127,10 @@ function update(){
     
     stage.update();
     
-//    //make sure player is always rendered on top of other objects in scene
-//    if(player != undefined){
-//        stage.setChildIndex(player, stage.numChildren-1);
-//    }
+//    //make sure boss is always rendered on top of other objects in scene
+    if(boss != undefined){
+        stage.setChildIndex(boss, stage.numChildren-1);
+    }
     
     runEnemyBehavior();
     runBulletBehavior();

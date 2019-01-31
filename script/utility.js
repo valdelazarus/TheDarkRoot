@@ -71,9 +71,9 @@ class EnemySpawner{
             nextY = gap + Math.random() * (stage.canvas.height - enemy.graphic.image.height * enemy.graphic.scale); 
         }
     }
-    spawnAtSpecifiedPosition(posX, posY, random){
+    spawnAtSpecifiedPosition(posX, posY, maxGap, random){
         var nextX = posX, nextY=posY;
-        var maxGap = 200;
+        var maxGap = maxGap;
         for (var i=0; i< this.total; ++i){
             
             var gap = -maxGap + Math.random()* maxGap;
@@ -82,6 +82,8 @@ class EnemySpawner{
                 var enemy = this.randomizeMinions(nextX, nextY);
             }else{
                 var enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, nextX, nextY), enemySpd, meleeDmg, meleeAtkInterval);
+                enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
+                enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
             }
             
             enemies.push(enemy);
@@ -91,11 +93,17 @@ class EnemySpawner{
     }
     randomizeMinions(posX, posY){
         var n = 1+ Math.random()*10;
-        if (n<5){
-            return new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, posX, posY), enemySpd, meleeDmg, meleeAtkInterval);
+        var enemy;
+        if (n<8){
+            enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, posX, posY), enemySpd, meleeDmg, meleeAtkInterval);
+            enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
+            enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
         } else {
-            return new RangedEnemy(drawPreloadedImage(preloader.queue.getResult("Ranged"), .3, posX, posY), enemySpd, rangedDmg, rangedAtkSpd, 0, shootAtkInterval, 0, 500);
+            enemy = new RangedEnemy(drawPreloadedImage(preloader.queue.getResult("Ranged"), .3, posX, posY), enemySpd, rangedDmg, rangedAtkSpd, 0, shootAtkInterval, 0, 500);
+            enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
+            enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
         }
+        return enemy;
     }
 }
 
