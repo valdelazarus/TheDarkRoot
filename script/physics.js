@@ -113,3 +113,43 @@ function handleCollisionSpriteRect(sprite, rect){
     }
 }
 //handle collision between 2 sprites
+function handleCollisionSprSpr(spr1, spr2){
+    if (!checkCollisionSprSpr(spr1, spr2)){
+        return;
+    }
+    var x1= spr1.x;
+    var y1= spr1.y;
+    var w1=spr1.graphic.image.width * spr1.graphic.scale;
+    var h1= spr1.graphic.image.height * spr1.graphic.scale;
+    
+    var x2= spr2.x;
+    var y2= spr2.y;
+    var w2=spr2.graphic.image.width * spr2.graphic.scale;
+    var h2= spr2.graphic.image.height * spr2.graphic.scale;
+    
+    //horizontal collision
+    if ((y1 < y2+h2)&&(y2 < y1+h1)){
+        if ((x1+w1 > x2) && (x1+w1 <= x2+Math.floor(w2/2))){
+            x1 = Math.abs(x2 - w1); 
+        } 
+        if ((x1 < x2+w2)&&(x1+w1 > x2+Math.floor(w2/2))){
+            x1 = x2+w2;
+        }
+    }
+    
+    //vertical collision
+    if ((x1 > x2)&&(x1+w1 < x2+w2)){
+        if ((y1+h1 > y2)&&(y1+h1 <= y2+Math.floor(h2/2))){
+            y1 = Math.abs(y2 - h1);
+        }
+        if ((y1 > y2+h2)&&(y1+h1 > y2+Math.floor(h2/2))){
+            y1 = y2+h2;
+        }
+    }
+    
+    //gradually transition to new position to avoid snapping pixel
+    createjs.Tween.get(spr1).to({x:x1, y:y1},60).call(function(){
+        spr1.x = x1;
+        spr1.y = y1;
+    });
+}

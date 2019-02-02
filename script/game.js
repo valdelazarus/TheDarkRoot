@@ -347,10 +347,13 @@ function spawnBoss(){
 function runEnemyBehavior(){
     for (var i =0; i<enemies.length; ++i){
         
+        handleCollisionSprSpr(player, enemies[i]);
+        
         if ((enemies[i].type == "Melee")||(enemies[i].type == "Boss 1") ){
             if (checkCollisionSprSpr(player, enemies[i])){
                 enemies[i].atkCounter++;
                 enemies[i].dealMeleeDamage();
+                
             } 
         }
         
