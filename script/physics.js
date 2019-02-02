@@ -147,9 +147,11 @@ function handleCollisionSprSpr(spr1, spr2){
         }
     }
     
+    restrictToGameSpace(spr1);
     //gradually transition to new position to avoid snapping pixel
     createjs.Tween.get(spr1).to({x:x1, y:y1},60).call(function(){
         spr1.x = x1;
         spr1.y = y1;
+        createjs.Ticker.framerate = 60;
     });
 }
