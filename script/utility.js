@@ -172,11 +172,13 @@ class HealthBar extends createjs.Container{
 
 //timer class
 class Timer{
-    constructor(maxTime){ //set direcly on constructor
+    constructor(maxTime, posY, posX){ //set direcly on constructor
         this.seconds = maxTime;
         this.maxTime = maxTime; //max time allowed before spawning boss 
         this.count = 0;
         this.text = null;
+        this.posX = posX;
+        this.posY = posY;
         
         createjs.Ticker.on('tick',this.update.bind(this)); //calling update to update time 
     }
@@ -187,11 +189,11 @@ class Timer{
             this.count = 0;
             this.seconds--;
         }
-        this.display(150,20);
+        this.display();
     }
         
     //display on screen the current time - graphics.js -drawText - format the text: 'MM:SS'
-    display(posX,posY){
+    display(){
         if(this.text != undefined)
             stage.removeChild(this.text); //reset after each update
         
@@ -204,6 +206,6 @@ class Timer{
         if(min < 10){
             min = "0" + min; //Add a 0 before any 1-digit number
         }
-        this.text = drawText(min + ":" + sec, "20px Arial Bold", "#000", posX, posY);
+        this.text = drawText(min + ":" + sec, "20px Arial Bold", "#000", this.posX, this.posY);
     }
 }
