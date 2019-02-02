@@ -170,30 +170,40 @@ class HealthBar extends createjs.Container{
 }
 
 
-/*
-
 //timer class
 class Timer{
     constructor(maxTime){ //set direcly on constructor
-        this.seconds = seconds;
+        this.seconds = maxTime;
         this.maxTime = maxTime; //max time allowed before spawning boss 
         this.count = 0;
+        this.text = null;
         
         createjs.Ticker.on('tick',this.update.bind(this)); //calling update to update time 
     }
+        
     update(){
         this.count++;  //count frame
-        if (this.count == 60) //game running on 60 FPS {
+        if (this.count == 60) { //game running on 60 FPS
             this.count = 0;
             this.seconds--;
         }
+        this.display(150,20);
     }
-    
+        
     //display on screen the current time - graphics.js -drawText - format the text: 'MM:SS'
-    display(posX,posY,font,color){
+    display(posX,posY){
+        if(this.text != undefined)
+            stage.removeChild(this.text); //reset after each update
+        
+        var sec = this.seconds % 60;
+        var min = Math.floor(this.seconds/60);
+        
+        if(sec < 10){
+            sec = "0" + sec; //Add a 0 before any 1-digit number
+        }
+        if(min < 10){
+            min = "0" + min; //Add a 0 before any 1-digit number
+        }
+        this.text = drawText(min + ":" + sec, "20px Arial Bold", "#000", posX, posY);
     }
-    
-    //unit test: var lvlTimer = new Timer(maxTime); clock.display(); - expected: timer should be display and running 
 }
-
-*/
