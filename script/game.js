@@ -71,15 +71,6 @@ init();
 
 /*SYSTEM SPECIFIC*/
 function init(){
-//    if(typeof AudioContext != "undefined" || typeof webkitAudioContext != "undefined") {
-//       var resumeAudio = function() {
-//          if(typeof g_WebAudioContext == "undefined" || g_WebAudioContext == null) return;
-//          if(g_WebAudioContext.state == "suspended") g_WebAudioContext.resume();
-//          document.removeEventListener("click", resumeAudio);
-//       };
-//       document.addEventListener("click", resumeAudio);
-//    }
-    
     stage = new createjs.Stage(canvas);
     
     //set up auto-update on stage
@@ -119,6 +110,8 @@ function init(){
     
     //start game
     //restartGame();
+    
+    window.addEventListener("click", resumeAudioContext);
 }
 function update(){
     //handle game over
@@ -176,6 +169,21 @@ function retinalize(){
 }
 function intialLog(){
     console.log(`Welcome to the game. Version ${version}`);
+}
+/* HANDLE AUDIO CONTEXT FOR AUTOPLAY POLICY ON CHROME AND SAFARI*/
+function resumeAudioContext(){
+    // handler for fixing suspended audio context in Chrome
+    try {
+        if (createjs.WebAudioPlugin.context && createjs.WebAudioPlugin.context.state === "suspended") {
+            createjs.WebAudioPlugin.context.resume();
+            // Should only need to fire once
+            window.removeEventListener("click", resumeAudioContext);
+        }
+    } catch (e) {
+        // SoundJS context or web audio plugin may not exist
+        console.error("There was an error while trying to resume the SoundJS Web Audio context...");
+        console.error(e);
+    }
 }
 /*KEYBOARD EVENT HANDLER*/
 function handleKeyBoardEvent(){
