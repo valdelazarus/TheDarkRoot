@@ -38,15 +38,17 @@ var blocks = [];
 var enemies = [];
 var enemySpd = 2; //changing depending on the level - will be used with chasing behavior codes
 var enemyTotal = 3; //changing depending on the level
-var waveSpawnInterval = 5; //changing depending on the level
+var waveSpawnInterval = 3; //changing depending on the level
+var enemySpawner = new EnemySpawner(enemyTotal);
 
 var boss;
 var bossSpd = 1;
 var bossDmg = 3;
 var bossHealth = 50;
-var bossAtkInterval = 2;
+var bossAtkInterval = 1;
 var bossMinionsNumber = 1;
 var bossWaveSpawnInterval = 5;
+var bossSpawned = true;
 
 var meleeDmg = 1;
 var meleeAtkInterval = 1;
@@ -61,6 +63,8 @@ var bullets = [];
 
 //HUD
 var healthBarObj;
+var timerObj;
+var timerMaxTimer = 10; 
 
 //Function calls
 init();
@@ -144,6 +148,11 @@ function update(){
 //    }
     if (healthBarObj != undefined && player != undefined && !gameOver){
         healthBarObj.currentValue = player.health;
+    }
+    
+    if (timerObj != null && player != undefined && !gameOver && timerObj.seconds <= 0){
+        clearInterval(enemySpawnInterval);
+        spawnBoss();
     }
 }
 //for retina display 
@@ -270,6 +279,7 @@ function restartGame(){
     createPlayer();
     
     createHealthBar();
+    createTimer();
     
     playSound("Background1",.5);
 }
@@ -303,10 +313,8 @@ function populateLevel(){
 //    enemies.push(enemy);
     
      //for TESTING ONLY
-//    spawnEnemies();
-//    enemySpawnInterval = setInterval(spawnEnemies, waveSpawnInterval* 1000);
-    
-    spawnBoss();
+    spawnEnemies();
+    enemySpawnInterval = setInterval(spawnEnemies, waveSpawnInterval* 1000);
 }
 
 function generateBlocks(){
@@ -317,13 +325,16 @@ function generateBlocks(){
 }
 /* GAME LOGIC */
 function spawnEnemies(){
-    var enemySpawner = new EnemySpawner(enemyTotal);
     enemySpawner.spawnRandom();
 }
 function spawnBoss(){
-    boss = new Boss1(drawPreloadedImage(preloader.queue.getResult("Boss"), .7, 700, 300),bossSpd,bossDmg,bossHealth,bossAtkInterval,bossMinionsNumber,bossWaveSpawnInterval);
-    enemies.push(boss);
-    //boss.spawnInterval = setInterval(boss.spawnMeleeMinions(boss.spawner), boss.waveSpawnInterval);
+    if (bossSpawned){
+        boss = new Boss1(drawPreloadedImage(preloader.queue.getResult("Boss"), .7, 700, 300),bossSpd,bossDmg,bossHealth,bossAtkInterval,bossMinionsNumber,bossWaveSpawnInterval);
+        
+        enemies.push(boss);
+        
+        bossSpawned = false;
+    }
 }
 function runEnemyBehavior(){
     for (var i =0; i<enemies.length; ++i){
@@ -381,14 +392,17 @@ function generateRandomBlocks(color, total){
 function createGameTitle(){
     var title = drawText("The Dark Root", "Bold 50px Arial", "#000", canvas.width/2- 170, canvas.height/2-100);
     title.shadow = drawShadow("#666",3,3,10);
+    stage.addChild(title);
 }
 function createCopyrightText(){
-    drawText("\251 Copyright 2019 - NC Bots", "Bold 20px Arial", "#000", canvas.width/2-130, canvas.height/2+50);
+    var copyRightText = drawText("\251 Copyright 2019 - NC Bots", "Bold 20px Arial", "#000", canvas.width/2-130, canvas.height/2+50);
+    stage.addChild(copyRightText);
 }
 /*FOR GAME OVER SCREEN*/
 function createGameTextScreen(textToDisplay){
     var text = drawText(textToDisplay, "Bold 50px Arial", "#000", canvas.width/2- 170, canvas.height/2-100);
     text.shadow = drawShadow("#666",3,3,10);
+    stage.addChild(text);
 }
 function stopGame(textToDisplay){
     clearInterval(enemySpawnInterval);
@@ -401,4 +415,7 @@ function stopGame(textToDisplay){
 /* HUD */
 function createHealthBar(){
     healthBarObj = new HealthBar(PLAYER_HEALTH, player.health, 100, 10, 150, 20);
+}
+function createTimer(){
+    timerObj = new Timer(timerMaxTimer, stage.canvas.width/2, 20, 50,20,"red","#fff");
 }

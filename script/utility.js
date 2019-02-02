@@ -31,6 +31,7 @@ class Preloader{
     //create loading bar at pos x and y and return the instance
     createLoadingBar(width, height, posX, posY, color= "#000"){
         this.loadingBar = drawBorderedRect(color, width, height, posX, posY);
+        stage.addChild(this.loadingBar);
     }
     //update loading bar with real loading progress - pass in bar instance
     updateLoadingBar(loadingBar, fillColor="#666", strokeColor="#000"){
@@ -109,8 +110,6 @@ class EnemySpawner{
 //health bar class -create, display and update bar according to current health value 
 class HealthBar extends createjs.Container{
     constructor(maxValue, currentValue, width, height, posX, posY, borderColor= "#000", fillColor = "red"){  
-//        this.maxHealth = 10; //DONT use hard-coded value 
-//        this.currentHealth = 10; //DONT use hard-coded value
         super();
         
         this.maxValue = maxValue; 
@@ -127,9 +126,9 @@ class HealthBar extends createjs.Container{
         this.fillArea = null;
         
          //will be replaced with player avatar later 
-        this.text = drawText("Player", "20px Arial Bold", "#000", this.x - this.width/2 - 60, this.y-this.height/2-5);
+        this.text = drawText("Player", "20px Arial Bold", "#000", - this.width/2 - 60, -this.height/2-5);
         
-        this.addChild(this.border, this.fillArea); //group border and fill 
+        this.addChild(this.text, this.fillArea, this.border); //group border and fill 
         stage.addChild(this);
         
         createjs.Ticker.on('tick',this.update.bind(this));
@@ -137,25 +136,17 @@ class HealthBar extends createjs.Container{
     update(){
         this.updateBar();
     }
-    //DONT need these - can always get value by instance.maxHealth or instance.currentHealth etc 
-//    getMaxHealth(){
-//        return maxHealth;  //when referring to variable of an instance-> use this.<variableName> 
-//    }
-//    getCurrentHealth(){
-//        return currentHealth;
-//    }
-    
     updateBar(){
         //create the fill representing current value 
         if (this.fillArea != undefined){
-            stage.removeChild(this.fillArea); //reset after each update
+            this.removeChild(this.fillArea); //reset after each update
         }
         if (this.border != undefined){
-            stage.removeChild(this.border); //reset after each update
+            this.removeChild(this.border); //reset after each update
         }
         
         //draw the fill
-            this.fillArea=drawBorderedRect(null, this.width, this.height, this.x, this.y); //rect with no border
+            this.fillArea=drawBorderedRect(null, this.width, this.height, 0, 0); //rect with no border
 
             this.fillArea.graphics.beginFill(this.fillColor);
 
@@ -165,22 +156,43 @@ class HealthBar extends createjs.Container{
             this.fillArea.graphics.endFill();
         
         //draw the border - make healthbar border drawn on top
-            this.border = drawBorderedRect(this.strokeColor, this.width, this.height, this.x, this.y);
+            this.border = drawBorderedRect(this.strokeColor, this.width, this.height, 0, 0);
+        
+        this.addChild(this.fillArea, this.border); //group border and fill 
     }
 }
 
 
 //timer class
-class Timer{
-    constructor(maxTime, posY, posX){ //set direcly on constructor
+class Timer extends createjs.Container{
+    constructor(maxTime, posX, posY, boxWidth, boxHeight, boxColor, textColor){ //set direcly on constructor
+        
+        super();
+        
         this.seconds = maxTime;
         this.maxTime = maxTime; //max time allowed before spawning boss 
         this.count = 0;
-        this.text = null;
-        this.posX = posX;
-        this.posY = posY;
         
-        createjs.Ticker.on('tick',this.update.bind(this)); //calling update to update time 
+        this.x = posX;
+        this.y = posY;
+        
+        this.text = null;
+        this.textColor = textColor;
+        
+        //maybe replaced with timer graphic later 
+        this.boxWidth = boxWidth;
+        this.boxHeight = boxHeight;
+        this.boxColor = boxColor;
+        
+        this.containerBox = drawRect(this.boxColor, this.boxWidth, this.boxHeight, 0, 0);
+        this.containerBox.graphics.setStrokeStyle(2).beginStroke("#000").drawRect(0,0,this.boxWidth,this.boxHeight);
+        
+        this.addChild(this.containerBox);
+        this.updateTime();
+        
+        stage.addChild(this);
+        
+        createjs.Ticker.on('tick',this.update.bind(this));
     }
         
     update(){
@@ -189,23 +201,30 @@ class Timer{
             this.count = 0;
             this.seconds--;
         }
-        this.display();
+        if (this.seconds >= 0){
+            this.updateTime();
+            if (this.seconds == 0){ 
+                stage.removeChild(this);
+            }
+        }
     }
         
-    //display on screen the current time - graphics.js -drawText - format the text: 'MM:SS'
-    display(){
+    //set Timer based on the current time - graphics.js -drawText - format the text: 'MM:SS'
+    updateTime(){
         if(this.text != undefined)
-            stage.removeChild(this.text); //reset after each update
-        
+            this.removeChild(this.text); //reset after each update
+       
         var sec = this.seconds % 60;
         var min = Math.floor(this.seconds/60);
-        
+
         if(sec < 10){
             sec = "0" + sec; //Add a 0 before any 1-digit number
         }
         if(min < 10){
             min = "0" + min; //Add a 0 before any 1-digit number
         }
-        this.text = drawText(min + ":" + sec, "20px Arial Bold", "#000", this.posX, this.posY);
+        this.text = drawText(min + ":" + sec, "20px Arial Bold", this.textColor, -22.5, -8); //offset pos from containerBox  
+        
+        this.addChild(this.text);
     }
 }

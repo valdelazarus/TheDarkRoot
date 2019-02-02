@@ -214,7 +214,7 @@ class Boss1 extends Enemy{
         }else {
             console.log('Boss starts to chase player!');
             this.timer = 0;
-            this.speed = this.temp*2;
+            this.speed = this.temp*1.5;
             this.startChasing = true;
             this.chasePlayer();
         }
@@ -352,7 +352,7 @@ class ShootBehavior {
 
 //        var bullet = new Bullet(drawImage('images/playerBullet.png', .2, spawnPosX, spawnPosY),
 //                               5, source.type);
-        var bullet = new Bullet(drawPreloadedImage(preloader.queue.getResult("Projectile"), .2, spawnPosX, spawnPosY), 5, source);
+        var bullet = new Bullet(drawPreloadedImage(preloader.queue.getResult("Projectile"), .2, spawnPosX, spawnPosY), 1, source);
 
         var angle;
         if(aimOverwrite !== undefined)
