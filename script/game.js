@@ -351,10 +351,12 @@ function runEnemyBehavior(){
         
         if ((enemies[i].type == "Melee")||(enemies[i].type == "Boss 1") ){
             if (checkCollisionSprSpr(player, enemies[i])){
+                enemies[i].speed = 0;
                 enemies[i].atkCounter++;
                 enemies[i].dealMeleeDamage();
-                
-            } 
+            } else {
+                enemies[i].speed = enemies[i].temp;
+            }
         }
         
         else if (enemies[i].type == "Ranged"){

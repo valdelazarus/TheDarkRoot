@@ -132,6 +132,8 @@ class MeleeEnemy extends Enemy{
         this.atkCounter = 0;
         
         this.type = "Melee";
+        
+        this.temp = this.speed;
     }
     dealMeleeDamage(){
         if (this.atkCounter > (this.atkInterval * createjs.Ticker.framerate)){
