@@ -289,7 +289,7 @@ function restartGame(){
     createHealthBar();
     createTimer();
     
-    playSound("Background1",.5);
+    playSound("Background1",true,.5);
 }
 function createPlayer(){
 //    player = new Player(drawImage("images/player.png", .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval);
@@ -354,7 +354,8 @@ function runEnemyBehavior(){
                 enemies[i].speed = 0;
                 enemies[i].atkCounter++;
                 enemies[i].dealMeleeDamage();
-            } else {
+            } 
+            else {
                 enemies[i].speed = enemies[i].temp;
             }
         }
@@ -427,7 +428,7 @@ function stopGame(textToDisplay){
 
 /* HUD */
 function createHealthBar(){
-    healthBarObj = new HealthBar(PLAYER_HEALTH, player.health, 100, 10, 150, 20);
+    healthBarObj = new HealthBar(PLAYER_HEALTH, player.health, 100, 10, 150, 20,"Player");
 }
 function createTimer(){
     timerObj = new Timer(timerMaxTimer, stage.canvas.width/2, 20, 50,20,"red","#fff");

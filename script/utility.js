@@ -109,7 +109,7 @@ class EnemySpawner{
 }
 //health bar class -create, display and update bar according to current health value 
 class HealthBar extends createjs.Container{
-    constructor(maxValue, currentValue, width, height, posX, posY, borderColor= "#000", fillColor = "red"){  
+    constructor(maxValue, currentValue, width, height, posX, posY, text, borderColor= "#000", fillColor = "red"){  
         super();
         
         this.maxValue = maxValue; 
@@ -126,7 +126,7 @@ class HealthBar extends createjs.Container{
         this.fillArea = null;
         
          //will be replaced with player avatar later 
-        this.text = drawText("Player", "20px Arial Bold", "#000", - this.width/2 - 60, -this.height/2-5);
+        this.text = drawText(text, "20px Arial Bold", "#000", - this.width/2 - 60, -this.height/2-5);
         
         this.addChild(this.text, this.fillArea, this.border); //group border and fill 
         stage.addChild(this);

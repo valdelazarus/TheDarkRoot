@@ -130,28 +130,27 @@ function handleCollisionSprSpr(spr1, spr2){
     //horizontal collision
     if ((y1 < y2+h2)&&(y2 < y1+h1)){
         if ((x1+w1 > x2) && (x1+w1 <= x2+Math.floor(w2/2))){
-            x1 = Math.abs(x2 - w1)-10; 
+            x1 = Math.abs(x2 - w1)-100; 
         } 
         if ((x1 < x2+w2)&&(x1+w1 > x2+Math.floor(w2/2))){
-            x1 = x2+w2+10;
+            x1 = x2+w2+100;
         }
     }
     
     //vertical collision
     if ((x1 > x2)&&(x1+w1 < x2+w2)){
         if ((y1+h1 > y2)&&(y1+h1 <= y2+Math.floor(h2/2))){
-            y1 = Math.abs(y2 - h1)-10;
+            y1 = Math.abs(y2 - h1)-100;
         }
         if ((y1 > y2+h2)&&(y1+h1 > y2+Math.floor(h2/2))){
-            y1 = y2+h2+10;
+            y1 = y2+h2+100;
         }
     }
     
     restrictToGameSpace(spr1);
     //gradually transition to new position to avoid snapping pixel
-    createjs.Tween.get(spr1).to({x:x1, y:y1},60).call(function(){
+    createjs.Tween.get(spr1).to({x:x1, y:y1},100).call(function(){
         spr1.x = x1;
         spr1.y = y1;
-        createjs.Ticker.framerate = 60;
     });
 }

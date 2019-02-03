@@ -193,10 +193,16 @@ class Boss1 extends Enemy{
         
         this.point = this.chaseBehavior.randomizeAPoint();
         
+        this.healthBar = new HealthBar(this.health, this.health, 100, 10, this.graphic.image.width/2*this.graphic.scale, 0,null);
+        stage.removeChild(this.healthBar);
+        this.addChild(this.healthBar);
+        
         createjs.Ticker.on('tick', this.update.bind(this)); 
         this.spawnMeleeMinions();
     }
     update(){
+        this.healthBar.currentValue= this.health;
+        
         if (this.health > this.minHealthTrigger){
             this.timer++; 
             
