@@ -345,15 +345,14 @@ function spawnBoss(){
     }
 }
 function runEnemyBehavior(){
-    for (var i =0; i<enemies.length; ++i){
-        
-        handleCollisionSprSpr(player, enemies[i]);
+    for (var i =0; i<enemies.length; ++i){      
         
         if ((enemies[i].type == "Melee")||(enemies[i].type == "Boss 1") ){
             if (checkCollisionSprSpr(player, enemies[i])){
                 enemies[i].speed = 0;
                 enemies[i].atkCounter++;
                 enemies[i].dealMeleeDamage();
+                handleCollisionSprSpr(player, enemies[i]);
             } 
             else {
                 enemies[i].speed = enemies[i].temp;
@@ -361,6 +360,7 @@ function runEnemyBehavior(){
         }
         
         else if (enemies[i].type == "Ranged"){
+            handleCollisionSprSpr(player, enemies[i]);
             if (enemies[i].chaseBehavior.distance <= enemies[i].minDistance){
                 enemies[i].speed = 0;
                 enemies[i].shootBehavior.performAtk(enemies[i]);

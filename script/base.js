@@ -129,14 +129,14 @@ class MeleeEnemy extends Enemy{
         super(graphic,speed,damage);
         
         this.atkInterval = atkInterval;
-        this.atkCounter = 0;
+        this.atkCounter = this.atkInterval * createjs.Ticker.framerate;
         
         this.type = "Melee";
         
         this.temp = this.speed;
     }
     dealMeleeDamage(){
-        if (this.atkCounter > (this.atkInterval * createjs.Ticker.framerate)){
+        if (this.atkCounter >= (this.atkInterval * createjs.Ticker.framerate)){
             this.atkCounter = 0; 
             player.reduceHealth(this.damage);
             console.log("Melee minion "+ this.id + " hits player. Player health: "+ player.health);
@@ -184,7 +184,7 @@ class Boss1 extends Enemy{
         this.startChasing = false;
         
         this.atkInterval = atkInterval;
-        this.atkCounter = 0;
+        this.atkCounter = this.atkInterval * createjs.Ticker.framerate;
         
         this.minionsNumber = minionsNumber;
         this.spawner = new EnemySpawner(this.minionsNumber);
@@ -242,7 +242,7 @@ class Boss1 extends Enemy{
         this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height/2 * this.graphic.scale, 0, true);
     }
     dealMeleeDamage(){
-        if (this.startChasing && (this.atkCounter > (this.atkInterval * createjs.Ticker.framerate))){
+        if (this.atkCounter >= (this.atkInterval * createjs.Ticker.framerate)){
             this.atkCounter = 0; 
             player.reduceHealth(this.damage);
             console.log("Boss hits player. Player health: "+ player.health);
