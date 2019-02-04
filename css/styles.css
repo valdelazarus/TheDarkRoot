@@ -11,8 +11,9 @@ header{
     background: #404040;
     margin-bottom: 10px;
     text-align: left;
-    height: 110px;
+    height: auto;
     padding-top: 20px;
+    padding-bottom: 20px;
 }
 #title{
     font-family: 'Lobster', Georgia, Times, serif;
