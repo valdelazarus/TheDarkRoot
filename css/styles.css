@@ -3,7 +3,43 @@ body{
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+    font-family: Helvetica, Arial, sans-serif;
+    color: #404040;
+    background: #eee;
+}
+header{
+    background: #404040;
+    margin-bottom: 10px;
+    text-align: left;
+    height: 110px;
+    padding-top: 20px;
+}
+#title{
+    font-family: 'Lobster', Georgia, Times, serif;
+    font-size: 70px;
+    color: white;
+    margin-left: 50px;
+    text-shadow:
+        -3px -3px 0 #000,  
+        3px -3px 0 #000,
+        -2px 3px 0 #000,
+        3px 3px 0 #000;
+}
+#header-img{
+    height: 100px; 
+    width: auto; 
+    float: left;
 }
 canvas{
     background: #ccc;
+}
+h3{
+    color: black;
+    text-shadow: 3px 2px lightgray;
+}
+footer {
+    height: 20px;
+    color: white;
+    background: #404040;
+    padding-top: 5px;
 }
