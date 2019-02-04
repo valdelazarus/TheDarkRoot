@@ -79,6 +79,9 @@ drawPreloadedImage = function(imageObj,scale,posX,posY){
 drawText = function(text, font, color, posX, posY){
     var textObj = new createjs.Text(text,font,color);
     
+    textObj.textBaseline = "middle";
+    textObj.textAlign = "center";
+    
     textObj.x = posX;
     textObj.y = posY;
     

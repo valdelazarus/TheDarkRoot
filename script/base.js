@@ -49,6 +49,7 @@ class Player extends MoveableGameObject{
         this.specialAtkInterval = specialAtkInterval;
         
         this.health = health;
+        this.maxHealth = health;
         
         this.damage = damage;
         
@@ -90,6 +91,13 @@ class Player extends MoveableGameObject{
             console.log("Game over!");
         }
     }
+    increaseHealth(points){
+        if (this.health >= this.maxHealth){
+            this.health = this.maxHealth;
+        } else {
+            this.health += points;
+        }
+    }
 }
 //general Enemy class - base for special types of enemies which implement different behavior classes
 class Enemy extends MoveableGameObject{
@@ -125,27 +133,29 @@ class Enemy extends MoveableGameObject{
 }
 //sub class - for melee minions
 class MeleeEnemy extends Enemy{
-    constructor(graphic, speed, damage, atkInterval){
+    constructor(graphic, speed, damage, atkInterval, dropRate){
         super(graphic,speed,damage);
         
         this.atkInterval = atkInterval;
-        this.atkCounter = this.atkInterval * createjs.Ticker.framerate;
+        this.meleeBehavior = new MeleeBehavior(this.atkInterval);
         
         this.type = "Melee";
         
         this.temp = this.speed;
+        
+        this.dropRate = dropRate;
+        this.dropBehavior = new DropBehavior(this.dropRate);
+    }
+    dropItem(){
+        this.dropBehavior.dropItem("Health",this.x,this.y);
     }
     dealMeleeDamage(){
-        if (this.atkCounter >= (this.atkInterval * createjs.Ticker.framerate)){
-            this.atkCounter = 0; 
-            player.reduceHealth(this.damage);
-            console.log("Melee minion "+ this.id + " hits player. Player health: "+ player.health);
-        }
+        this.meleeBehavior.dealMeleeDamage(this.damage);
     }
 }
 //sub class - for ranged minions
 class RangedEnemy extends Enemy{
-    constructor(graphic, speed, damage, atkSpd, aimAngle, shootInterval, specialAtkInterval, minDistance){
+    constructor(graphic, speed, damage, atkSpd, aimAngle, shootInterval, specialAtkInterval, minDistance, dropRate){
         super(graphic,speed,damage);
         
         this.type = "Ranged";
@@ -161,6 +171,9 @@ class RangedEnemy extends Enemy{
         
         this.temp = this.speed;
         
+        this.dropRate = dropRate;
+        this.dropBehavior = new DropBehavior(this.dropRate);
+        
         createjs.Ticker.on('tick', this.update.bind(this));
     }
     update(){
@@ -168,6 +181,9 @@ class RangedEnemy extends Enemy{
         //calling shoot behavior update
         this.shootBehavior.update();
         this.aimAngle = Math.atan2(player.y-this.y,player.x-this.x) / Math.PI * 180;
+    }
+    dropItem(){
+        this.dropBehavior.dropItem("Health",this.x,this.y);
     }
 }
 //sub class - for boss lvl 1
@@ -184,7 +200,7 @@ class Boss1 extends Enemy{
         this.startChasing = false;
         
         this.atkInterval = atkInterval;
-        this.atkCounter = this.atkInterval * createjs.Ticker.framerate;
+        this.meleeBehavior = new MeleeBehavior(this.atkInterval);
         
         this.minionsNumber = minionsNumber;
         this.spawner = new EnemySpawner(this.minionsNumber);
@@ -242,11 +258,7 @@ class Boss1 extends Enemy{
         this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height/2 * this.graphic.scale, 0, true);
     }
     dealMeleeDamage(){
-        if (this.atkCounter >= (this.atkInterval * createjs.Ticker.framerate)){
-            this.atkCounter = 0; 
-            player.reduceHealth(this.damage);
-            console.log("Boss hits player. Player health: "+ player.health);
-        }
+        this.meleeBehavior.dealMeleeDamage(this.damage);
     }
     reduceHealth(points){
         this.health -= points;
@@ -293,6 +305,7 @@ class Bullet extends MoveableGameObject{
                 } else {
                     this.selfDestroy();
                     stage.removeChild(enemies[i]);
+                    enemies[i].dropItem();
                     enemies.splice(i, 1);
                     console.log('Hit enemy' + i);
                 }
@@ -315,6 +328,7 @@ class Bullet extends MoveableGameObject{
         }
     }
 }
+/* OBJECT BEHAVIOR */
 //Shooting Behavior
 class ShootBehavior {
     constructor(atkSpd, aimAngle, shootInterval, specialAtkInterval){
@@ -399,3 +413,83 @@ class ChaseBehavior{
         return point;
     }
 }
+//Melee behavior
+class MeleeBehavior{
+    constructor(atkInterval){
+        this.atkInterval = atkInterval;
+        this.atkCounter = this.atkInterval * createjs.Ticker.framerate;
+    }
+    dealMeleeDamage(damage){
+        if (this.atkCounter >= (this.atkInterval * createjs.Ticker.framerate)){
+            this.atkCounter = 0; 
+            player.reduceHealth(damage);
+            console.log("Melee damage dealt to player. Player health: "+ player.health);
+        }
+    }
+}
+
+/* Pick-Ups */
+class Pickup extends GameObject{
+    constructor(graphic, lifeTime){
+        super(graphic);
+        
+        this.lifeTime = lifeTime;
+        
+        this.timer = 0;
+        
+        createjs.Ticker.on('tick', this.update.bind(this));
+    }
+    update(){
+        //remove when lifetime ends
+        this.timer++;
+        if (this.timer > (this.lifeTime * createjs.Ticker.framerate)){
+            this.timer = 0;
+            this.selfDestroy();
+        } 
+    }
+    selfDestroy(){
+        stage.removeChild(this);
+        for (var i=0; i<pickups.length; ++i){
+            if (pickups[i] === this){
+                pickups.splice(i,1);
+            }
+        }
+    }
+}
+class HealthPickup extends Pickup{
+    constructor(graphic, lifeTime, healthBonus){
+        super(graphic,lifeTime);
+        
+        this.healthBonus = healthBonus;
+        
+        pickups.push(this);
+    }
+    onPickup(){
+        this.selfDestroy();
+        player.increaseHealth(this.healthBonus);
+        console.log("Picked up health. Player health: "+ player.health);
+    }
+}
+//drop an item at specified drop rate
+class DropBehavior{ 
+    constructor(dropRate){
+        this.dropRate = dropRate;
+        
+        this.random = 0;
+    }
+    dropItem(itemType, posX, posY){
+        this.random = Math.random();
+        if (this.random <= this.dropRate){
+            if (itemType == "Health"){
+                var item = new HealthPickup(drawPreloadedImage(preloader.queue.getResult("HealthPickup"), .3, posX, posY), 3, 1);
+            }
+        }
+    }
+}
+
+
+
+
+
+
+

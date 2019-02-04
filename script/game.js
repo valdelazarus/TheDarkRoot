@@ -61,6 +61,10 @@ var enemySpawnInterval;
 
 var bullets = [];
 
+var pickups = [];
+var meleeDropRate = .1;
+var rangedDropRate = .3;
+
 //HUD
 var healthBarObj;
 var timerObj;
@@ -93,6 +97,8 @@ function init(){
         preloader.addFile("Ranged", "images/ranged.png");
         preloader.addFile("Projectile", "images/playerBullet.png");
         preloader.addFile("AimIndicator", "images/aimIndicator.png");
+        preloader.addFile("HealthPickup", "images/upgrade2.png");
+    
         preloader.addFile("Normal Shoot", "sound/shoot1.wav");
         preloader.addFile("Special Shoot", "sound/shoot2.wav");
         preloader.addFile("Background1","sound/EpicTheme.mp3");
@@ -134,11 +140,8 @@ function update(){
     
     runEnemyBehavior();
     runBulletBehavior();
-//    if (boss != undefined){
-//        if (boss.health <= 5){
-//            boss.startChasing = true;
-//        }
-//    }
+    runPickupBehavior();
+
     if (healthBarObj != undefined && player != undefined && !gameOver){
         healthBarObj.currentValue = player.health;
     }
@@ -350,7 +353,7 @@ function runEnemyBehavior(){
         if ((enemies[i].type == "Melee")||(enemies[i].type == "Boss 1") ){
             if (checkCollisionSprSpr(player, enemies[i])){
                 enemies[i].speed = 0;
-                enemies[i].atkCounter++;
+                enemies[i].meleeBehavior.atkCounter++;
                 enemies[i].dealMeleeDamage();
                 handleCollisionSprSpr(player, enemies[i]);
             } 
@@ -383,6 +386,13 @@ function runBulletBehavior(){
         }
     }
 }
+function runPickupBehavior(){
+    for (var i=0; i<pickups.length; ++i){
+        if (checkCollisionSprSpr(pickups[i],player)){
+            pickups[i].onPickup();
+        }
+    }
+}
 //generate random blocks - but due to a bug in collision with these blocks- for now don't use this
 function generateRandomBlocks(color, total){
     var nextX = 0, nextY = 0, maxGap = 100;
@@ -404,17 +414,17 @@ function generateRandomBlocks(color, total){
 }
 /*FOR LOADING SCREEN*/
 function createGameTitle(){
-    var title = drawText("The Dark Root", "Bold 50px Arial", "#000", canvas.width/2- 170, canvas.height/2-100);
+    var title = drawText("The Dark Root", "Bold 50px Arial", "#000", canvas.width/2, canvas.height/2-70);
     title.shadow = drawShadow("#666",3,3,10);
     stage.addChild(title);
 }
 function createCopyrightText(){
-    var copyRightText = drawText("\251 Copyright 2019 - NC Bots", "Bold 20px Arial", "#000", canvas.width/2-130, canvas.height/2+50);
+    var copyRightText = drawText("\251 Copyright 2019 - NC Bots", "Bold 20px Arial", "#000", canvas.width/2, canvas.height/2+50);
     stage.addChild(copyRightText);
 }
 /*FOR GAME OVER SCREEN*/
 function createGameTextScreen(textToDisplay){
-    var text = drawText(textToDisplay, "Bold 50px Arial", "#000", canvas.width/2- 170, canvas.height/2-100);
+    var text = drawText(textToDisplay, "Bold 50px Arial", "#000", canvas.width/2, canvas.height/2);
     text.shadow = drawShadow("#666",3,3,10);
     stage.addChild(text);
 }

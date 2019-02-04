@@ -82,7 +82,7 @@ class EnemySpawner{
             if (random){
                 var enemy = this.randomizeMinions(nextX, nextY);
             }else{
-                var enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, nextX, nextY), enemySpd, meleeDmg, meleeAtkInterval);
+                var enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, nextX, nextY), enemySpd, meleeDmg, meleeAtkInterval, meleeDropRate);
                 enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
                 enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
             }
@@ -96,11 +96,11 @@ class EnemySpawner{
         var n = 1+ Math.random()*10;
         var enemy;
         if (n<8){
-            enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, posX, posY), enemySpd, meleeDmg, meleeAtkInterval);
+            enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, posX, posY), enemySpd, meleeDmg, meleeAtkInterval, meleeDropRate);
             enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
             enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
         } else {
-            enemy = new RangedEnemy(drawPreloadedImage(preloader.queue.getResult("Ranged"), .3, posX, posY), enemySpd, rangedDmg, rangedAtkSpd, 0, shootAtkInterval, 0, 500);
+            enemy = new RangedEnemy(drawPreloadedImage(preloader.queue.getResult("Ranged"), .3, posX, posY), enemySpd, rangedDmg, rangedAtkSpd, 0, shootAtkInterval, 0, 500, rangedDropRate);
             enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
             enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
         }
@@ -126,7 +126,7 @@ class HealthBar extends createjs.Container{
         this.fillArea = null;
         
          //will be replaced with player avatar later 
-        this.text = drawText(text, "20px Arial Bold", "#000", - this.width/2 - 60, -this.height/2-5);
+        this.text = drawText(text, "20px Arial Bold", "#000", -this.width/2-40, 0);
         
         this.addChild(this.text, this.fillArea, this.border); //group border and fill 
         stage.addChild(this);
@@ -223,7 +223,7 @@ class Timer extends createjs.Container{
         if(min < 10){
             min = "0" + min; //Add a 0 before any 1-digit number
         }
-        this.text = drawText(min + ":" + sec, "20px Arial Bold", this.textColor, -22.5, -8); //offset pos from containerBox  
+        this.text = drawText(min + ":" + sec, "20px Arial Bold", this.textColor, 0,0); //offset pos from containerBox  
         
         this.addChild(this.text);
     }
