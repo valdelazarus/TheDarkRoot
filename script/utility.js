@@ -236,7 +236,7 @@ class DamageText{
         this.posY = posY;
         this.parent = parent; 
         
-        this.text = drawText(damage, "20px Arial Bold", this.color, this.posX,this.posY);
+        this.text = drawText(-damage, "20px Arial Bold", this.color, this.posX,this.posY);
         this.parent.addChild(this.text);
         
         createjs.Tween.get(this.text).to({scale:10, alpha:0},1000).call(this.selfDestroy);

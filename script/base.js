@@ -306,7 +306,7 @@ class Bullet extends MoveableGameObject{
                     
                     enemies[i].reduceHealth(this.source.damage);
                     
-                    new DamageText(enemies[i],this.source.damage, "#ffffcc", enemies[i].graphic.image.width/2*enemies[i].graphic.scale, enemies[i].graphic.image.height/2*enemies[i].graphic.scale);
+                    new DamageText(enemies[i],this.source.damage, "red", enemies[i].graphic.image.width/2*enemies[i].graphic.scale, enemies[i].graphic.image.height/2*enemies[i].graphic.scale);
                     
                     console.log("Hit "+ enemies[i].type + ". Target health: "+ enemies[i].health);
                     this.selfDestroy();
