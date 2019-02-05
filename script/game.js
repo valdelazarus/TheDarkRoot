@@ -26,7 +26,8 @@ var playerAtkSpd = 1; //can be changed with pickups
 var playerAimAngle = 0;  //changing depending on mouse position 
 var playerShootInterval = 1; //in seconds, changing based on weapon equipped
 var playerSpecialAtkInterval = 3; //in seconds, changing based on weapon equipped 
-var playerDmg = 2;
+var playerMinDmg = 1;
+var playerMaxDmg =3;
 
 var gameOver = false;
 var nextLevel = false;
@@ -133,7 +134,7 @@ function update(){
     
     stage.update();
     
-//    //make sure boss is always rendered on top of other objects in scene
+//    //make sure boss is always rendered on top of other enemies and player in scene
     if(boss != undefined){
         stage.setChildIndex(boss, stage.numChildren-1);
     }
@@ -297,7 +298,7 @@ function restartGame(){
 function createPlayer(){
 //    player = new Player(drawImage("images/player.png", .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval);
 //    
-    player = new Player(drawPreloadedImage(preloader.queue.getResult("Player"), .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval, PLAYER_HEALTH, playerDmg);
+    player = new Player(drawPreloadedImage(preloader.queue.getResult("Player"), .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval, PLAYER_HEALTH, playerMinDmg, playerMaxDmg);
     
     createAimIndicator();
 }

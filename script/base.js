@@ -38,7 +38,7 @@ class MoveableGameObject extends GameObject{
 }
 //Player specific class 
 class Player extends MoveableGameObject{
-    constructor(graphic, speed, atkSpd, aimAngle, shootInterval, specialAtkInterval, health, damage){
+    constructor(graphic, speed, atkSpd, aimAngle, shootInterval, specialAtkInterval, health, minDamage, maxDamage){
         super(graphic);
         
         this.speed = speed;
@@ -51,7 +51,9 @@ class Player extends MoveableGameObject{
         this.health = health;
         this.maxHealth = health;
         
-        this.damage = damage;
+        this.minDamage = minDamage;
+        this.maxDamage = maxDamage;
+        this.damage = this.minDamage;
         
         this.type = 'Player';
         
@@ -299,7 +301,13 @@ class Bullet extends MoveableGameObject{
         for(var i=0 ; i <enemies.length; ++i){
             if (checkCollisionSprSpr(this,enemies[i])){      
                 if (enemies[i].type == 'Boss 1'){
+                    
+                    this.source.damage = Math.round(this.source.minDamage + Math.random()*(this.source.maxDamage-this.source.minDamage)); //randomize player damage dealt
+                    
                     enemies[i].reduceHealth(this.source.damage);
+                    
+                    new DamageText(enemies[i],this.source.damage, "#ffffcc", enemies[i].graphic.image.width/2*enemies[i].graphic.scale, enemies[i].graphic.image.height/2*enemies[i].graphic.scale);
+                    
                     console.log("Hit "+ enemies[i].type + ". Target health: "+ enemies[i].health);
                     this.selfDestroy();
                 } else {

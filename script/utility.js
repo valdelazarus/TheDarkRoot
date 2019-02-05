@@ -228,3 +228,20 @@ class Timer extends createjs.Container{
         this.addChild(this.text);
     }
 }
+//Display damage text 
+class DamageText{
+    constructor(parent, damage, color, posX, posY){
+        this.color = color;
+        this.posX = posX;
+        this.posY = posY;
+        this.parent = parent; 
+        
+        this.text = drawText(damage, "20px Arial Bold", this.color, this.posX,this.posY);
+        this.parent.addChild(this.text);
+        
+        createjs.Tween.get(this.text).to({scale:10, alpha:0},1000).call(this.selfDestroy);
+    }
+    selfDestroy(){
+        this.parent.removeChild(this.text);
+    }
+}
