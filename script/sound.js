@@ -8,13 +8,15 @@ function registerSound(soundPath, name){
 
 //play sound and return instance of the sound playing
 function playSound(soundName, loop=false, volume = 1){ //usind name of registered sound
-    var instance;
+    var instance = createjs.Sound.createInstance(soundName);
     if (loop){
-        instance = createjs.Sound.play(soundName, {loop:-1});
+        instance.play({loop:-1});
+        //instance = createjs.Sound.play(soundName, {loop:-1});
     }else {
-        instance = createjs.Sound.play(soundName);
+        instance.play();
     }
     instance.volume = volume;
+    return instance;
 }
 
 //set sound volume

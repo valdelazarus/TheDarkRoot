@@ -2,7 +2,247 @@
 
 //manage scenes and scene transition
 class SceneManager{
+    constructor(){
+        
+    }
+    /*FOR LOADING SCREEN*/
+    createGameTitle(){
+        var title = drawText("The Dark Root", "Bold 50px Arial", "#000", canvas.width/2, canvas.height/2-70);
+        title.shadow = drawShadow("#666",3,3,10);
+        stage.addChild(title);
+    }
+    createCopyrightText(){
+        var copyRightText = drawText("\xA9 Copyright 2019 - NC Bots", "Bold 20px Arial", "#000", canvas.width/2, canvas.height/2+50);
+        stage.addChild(copyRightText);
+    }
+    gameReady(){
+        createjs.Ticker.on("tick", this.onTick, this);
+        this.changeState(GameStates.MAIN_MENU);
+        this.setUpKeyboardMouseEvent();
+    }
+    changeState(state){
+        switch (state) {
+            case GameStates.MAIN_MENU:
+                this.currentGameStateFunction = this.gameStateMainMenu;
+                break;
+            case GameStates.LEVEL_1:
+                this.currentGameStateFunction = this.gameStateLevel1;
+                break;
+            case GameStates.LEVEL_2:
+                this.currentGameStateFunction = this.gameStateLevel2;
+                break;
+            case GameStates.LEVEL_3:
+                this.currentGameStateFunction = this.gameStateLevel3;
+                break;
+            case GameStates.GAME_COMPLETE:
+                this.currentGameStateFunction = this.gameStateGameComplete;
+                break;
+            case GameStates.GAME_LOSE:
+                this.currentGameStateFunction = this.gameStateGameLose;
+                break;
+            case GameStates.RUN_SCENE:
+                this.currentGameStateFunction = this.gameStateRunScene;
+                break;
+        }
+    }
+    onStateEvent(e, obj) {
+        this.changeState(obj.state);
+    }
+    disposeCurrentScene(){
+        if (this.currentScene != null) {
+            stage.removeChild(this.currentScene);
+            if (this.currentScene.dispose) {
+                this.currentScene.dispose();
+            }
+            this.currentScene = null;
+        }
+    }
+    gameStateMainMenu() {      
+        player = undefined;
+        boss = undefined;
+        
+        this.disposeCurrentScene();
+        
+        var scene = new GameMenu();
+        
+        scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+       
+        stage.addChild(scene);
+        
+        this.currentScene = scene;
+        this.changeState(GameStates.RUN_SCENE);
+    }
     
+    gameStateLevel1() {
+        this.disposeCurrentScene();
+        
+        var scene = new GameLevel1(levelData1);
+        
+        scene.on(GameStateEvents.LEVEL_2, this.onStateEvent, this, true, {state:GameStates.LEVEL_2});
+        
+        scene.on(GameStateEvents.GAME_LOSE, this.onStateEvent, this, true, {state:GameStates.GAME_LOSE});
+        
+        stage.addChild(scene);
+        
+        this.currentScene = scene;
+        this.changeState(GameStates.RUN_SCENE);
+    }
+    gameStateLevel2() {
+        this.disposeCurrentScene();
+        
+        var scene = new GameLevel2(levelData2);
+        
+        scene.on(GameStateEvents.LEVEL_3, this.onStateEvent, this, true, {state:GameStates.LEVEL_3});
+        
+        scene.on(GameStateEvents.GAME_LOSE, this.onStateEvent, this, true, {state:GameStates.GAME_LOSE});
+        
+        stage.addChild(scene);
+        
+        this.currentScene = scene;
+        this.changeState(GameStates.RUN_SCENE);
+    }
+    gameStateLevel3() {
+        this.disposeCurrentScene();
+        
+        var scene = new GameLevel3(levelData3);
+        
+        scene.on(GameStateEvents.GAME_COMPLETE, this.onStateEvent, this, true, {state:GameStates.GAME_COMPLETE}); //to be replaced with level 2 state later
+        
+        scene.on(GameStateEvents.GAME_LOSE, this.onStateEvent, this, true, {state:GameStates.GAME_LOSE});
+        
+        stage.addChild(scene);
+        
+        this.currentScene = scene;
+        this.changeState(GameStates.RUN_SCENE);
+    }
+    
+    gameStateGameComplete() {    
+        this.disposeCurrentScene();
+        player = undefined;
+        boss = undefined;
+        
+        var scene = new GameComplete("Congrats!");
+        
+        scene.on(GameStateEvents.MAIN_MENU, this.onStateEvent, this, true, {state:GameStates.MAIN_MENU});
+        scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+        
+        stage.addChild(scene);
+
+        this.currentScene = scene;
+        this.changeState(GameStates.RUN_SCENE);
+    }
+    
+    gameStateGameLose() {   
+        this.disposeCurrentScene();
+        player = undefined;
+        boss = undefined;
+        
+        var scene = new GameComplete("Game Over!");
+        
+        scene.on(GameStateEvents.MAIN_MENU, this.onStateEvent, this, true, {state:GameStates.MAIN_MENU});
+        scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+        
+        stage.addChild(scene);
+        
+        this.currentScene = scene;
+        this.changeState(GameStates.RUN_SCENE);
+    }
+    
+    gameStateRunScene(tickerEvent) {
+        if (this.currentScene.run) {
+            this.currentScene.run(tickerEvent.time);
+        }
+    }
+    onTick(e){
+        if (this.currentGameStateFunction != null) {
+           this.currentGameStateFunction(e);
+        }
+        //stage.update();
+    }
+    setUpKeyboardMouseEvent(){
+        document.onclick = this.mouseClickHandler; //left click
+        document.oncontextmenu = this.rightMouseClickHandler; //right click
+        stage.on('stagemousemove', this.mouseMoveHandler) //mouse move
+
+        this.handleKeyBoardEvent();
+    }
+    mouseClickHandler(){
+        if (player != undefined){
+            player.shootBehavior.performAtk(player);
+        } else return;
+    }
+    rightMouseClickHandler(e){
+        if (player != undefined){
+            player.shootBehavior.performSpecialAtk(player);
+            e.preventDefault(); //hide popup menu
+        } else return;
+    }
+    mouseMoveHandler(e){
+        var mouseX = e.stageX;
+        var mouseY = e.stageY;
+        
+        if (player != undefined){
+            player.aimAngle = Math.atan2(mouseY-player.y,mouseX-player.x) / Math.PI * 180;
+
+            //rotate aimIndicator accordingly 
+            aimIndicator.setTransform(aimIndicator.x,aimIndicator.y,1,1,player.aimAngle+90);
+        }
+    }
+    handleKeyBoardEvent(){
+        //handle keyboard event
+        window.onkeyup = this.keyUpHandler;
+        window.onkeydown = this.keyDownHandler;
+    }
+    keyDownHandler(e){ //when key is pressed
+        switch(e.keyCode){
+            case KEYCODE_A:
+                keyboardMoveLeft = true;
+                break;
+            case KEYCODE_D:
+                keyboardMoveRight = true;
+                break;
+            case KEYCODE_W:
+                keyboardMoveUp = true;
+                break;
+            case KEYCODE_S:
+                keyboardMoveDown = true;
+                break;   
+            case KEYCODE_1:
+                keyboard1 = true;
+                break; 
+            case KEYCODE_2:
+                keyboard2 = true;
+                break; 
+            case KEYCODE_3:
+                keyboard3 = true;
+                break; 
+        }
+    }
+    keyUpHandler(e){ // when key is released
+        switch(e.keyCode){
+            case KEYCODE_A:
+                keyboardMoveLeft = false;
+                break;
+            case KEYCODE_D:
+                keyboardMoveRight = false;
+                break;
+            case KEYCODE_W:
+                keyboardMoveUp = false;
+                break;
+            case KEYCODE_S:
+                keyboardMoveDown = false;
+                break;
+            case KEYCODE_1:
+                keyboard1 = false;
+                break; 
+            case KEYCODE_2:
+                keyboard2 = false;
+                break; 
+            case KEYCODE_3:
+                keyboard3 = false;
+                break; 
+        }
+    }
 }
 //preload assets and render loading bar 
 class Preloader{
@@ -52,10 +292,11 @@ class Preloader{
 
 //general random enemy spawner class
 class EnemySpawner{
-    constructor(total){
+    constructor(total, levelData){
         this.total = total;
+        this.levelData = levelData;
     }
-    spawnRandom(){
+    spawnMinions(random=false,ranged=false){
         var nextX = 0, nextY = 50, maxGap = 100;
         
         for (var i=0; i< this.total; ++i){
@@ -63,16 +304,25 @@ class EnemySpawner{
 
             //var enemy = new Enemy(drawImage('images/enemy.png', .5, nextX, nextY), enemySpd);
 //            var enemy = new Enemy(drawPreloadedImage(preloader.queue.getResult("Minion"), .2, nextX, nextY), enemySpd, meleeDmg);
+            if(random){
+                var enemy = this.randomizeMinions(nextX, nextY);
+            } else if (!ranged){
+                var enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, nextX, nextY), this.levelData.enemySpd, this.levelData.meleeDmg, this.levelData.meleeAtkInterval, this.levelData.meleeHealthDropRate, this.levelData.meleeSmallAmmoDropRate, this.levelData.meleeLargeAmmoDropRate);
+                enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
+                enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
+            } else if (ranged){
+                var enemy = new RangedEnemy(drawPreloadedImage(preloader.queue.getResult("Ranged"), .3, nextX, nextY), this.levelData.enemySpd, this.levelData.rangedDmg, this.levelData.rangedAtkSpd, 0, this.levelData.shootAtkInterval, 0, 500, this.levelData.rangedHealthDropRate, this.levelData.rangedSmallAmmoDropRate, this.levelData.rangedLargeAmmoDropRate);
+                enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
+                enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
+            }
             
-            var enemy = this.randomizeMinions(nextX, nextY);
-
             enemies.push(enemy);
 
             nextX = gap + Math.random() * (stage.canvas.width - enemy.graphic.image.width * enemy.graphic.scale);
             nextY = gap + Math.random() * (stage.canvas.height - enemy.graphic.image.height * enemy.graphic.scale); 
         }
     }
-    spawnAtSpecifiedPosition(posX, posY, maxGap, random){
+    spawnAtSpecifiedPosition(posX, posY, maxGap, random=false){
         var nextX = posX, nextY=posY;
         var maxGap = maxGap;
         for (var i=0; i< this.total; ++i){
@@ -82,7 +332,7 @@ class EnemySpawner{
             if (random){
                 var enemy = this.randomizeMinions(nextX, nextY);
             }else{
-                var enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, nextX, nextY), enemySpd, meleeDmg, meleeAtkInterval, meleeDropRate);
+                var enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, nextX, nextY), this.levelData.enemySpd, this.levelData.meleeDmg, this.levelData.meleeAtkInterval, this.levelData.meleeHealthDropRate, this.levelData.meleeSmallAmmoDropRate, this.levelData.meleeLargeAmmoDropRate);
                 enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
                 enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
             }
@@ -96,11 +346,11 @@ class EnemySpawner{
         var n = 1+ Math.random()*10;
         var enemy;
         if (n<8){
-            enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, posX, posY), enemySpd, meleeDmg, meleeAtkInterval, meleeDropRate);
+            enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, posX, posY), this.levelData.enemySpd, this.levelData.meleeDmg, this.levelData.meleeAtkInterval, this.levelData.meleeHealthDropRate, this.levelData.meleeSmallAmmoDropRate, this.levelData.meleeLargeAmmoDropRate);
             enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
             enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
         } else {
-            enemy = new RangedEnemy(drawPreloadedImage(preloader.queue.getResult("Ranged"), .3, posX, posY), enemySpd, rangedDmg, rangedAtkSpd, 0, shootAtkInterval, 0, 500, rangedDropRate);
+            enemy = new RangedEnemy(drawPreloadedImage(preloader.queue.getResult("Ranged"), .3, posX, posY), this.levelData.enemySpd, this.levelData.rangedDmg, this.levelData.rangedAtkSpd, 0, this.levelData.shootAtkInterval, 0, 500, this.levelData.rangedHealthDropRate, this.levelData.rangedSmallAmmoDropRate, this.levelData.rangedLargeAmmoDropRate);
             enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
             enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
         }
@@ -129,7 +379,7 @@ class HealthBar extends createjs.Container{
         this.text = drawText(text, "20px Arial Bold", "#000", -this.width/2-40, 0);
         
         this.addChild(this.text, this.fillArea, this.border); //group border and fill 
-        stage.addChild(this);
+        //stage.addChild(this);
         
         createjs.Ticker.on('tick',this.update.bind(this));
     }
@@ -190,7 +440,7 @@ class Timer extends createjs.Container{
         this.addChild(this.containerBox);
         this.updateTime();
         
-        stage.addChild(this);
+        //stage.addChild(this);
         
         createjs.Ticker.on('tick',this.update.bind(this));
     }
@@ -204,7 +454,7 @@ class Timer extends createjs.Container{
         if (this.seconds >= 0){
             this.updateTime();
             if (this.seconds == 0){ 
-                stage.removeChild(this);
+                sceneManager.currentScene.removeChild(this);
             }
         }
     }
@@ -243,5 +493,30 @@ class DamageText{
     }
     selfDestroy(){
         this.parent.removeChild(this.text);
+    }
+}
+
+//HUD for weapon ammo display 
+class AmmoDisplay extends createjs.Container{
+    constructor(graphic, posX, posY){
+        super();
+        
+        this.graphic = graphic;
+        this.x = posX;
+        this.y = posY;
+        this.ammoText = 0;
+
+        this.ammoTxtBox = drawText("x "+ this.ammoText, "20px Arial Bold", "#000", 20, 0);
+        this.ammoTxtBox.textAlign = "left";
+        
+        this.addChild(this.graphic, this.ammoTxtBox);
+    }
+    updateAmmoText(text){
+        this.removeChild(this.ammoTxtBox);
+        
+        this.ammoText = text;
+        this.ammoTxtBox = drawText("x "+this.ammoText, "20px Arial Bold", "#000", 20, 0);
+        this.ammoTxtBox.textAlign = "left";
+        this.addChild(this.ammoTxtBox);
     }
 }
