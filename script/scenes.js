@@ -79,11 +79,11 @@ class GameLevel extends createjs.Container{
 
         this.currentMusic = playSound(this.levelData.backgroundMusic,true,.5);
         
-        this.lastSpawn = createjs.Ticker.getTime();
+        this.timer = 0;
         
         this.addChild(hudContainer);
     }
-    run(time){
+    run(){
          //handle game over
         if (gameOver){
   
@@ -103,10 +103,6 @@ class GameLevel extends createjs.Container{
 
     //    //make sure boss and hud are always rendered on top of other enemies and player in scene 
         
-        if(boss != undefined){
-            this.setChildIndex(boss, this.numChildren-1);
-            boss.update();
-        }
         if (hudContainer != undefined){
             this.setChildIndex(hudContainer, this.numChildren-2);
         }
@@ -120,13 +116,19 @@ class GameLevel extends createjs.Container{
         }
 
         if (timerObj != undefined && player != undefined && !gameOver && timerObj.seconds <= 0){
-            this.lastSpawn = time;
+           //this.lastSpawn = time;
             this.spawnBoss();
-        } else {
-            if (time > (this.lastSpawn + this.levelData.waveSpawnInterval * 1000)){
-                this.lastSpawn = time;
+        } 
+        
+        if (boss == undefined){
+            this.timer++;
+            if (this.timer > this.levelData.waveSpawnInterval * createjs.Ticker.framerate){
+                this.timer = 0;
                 this.spawnEnemies();
             }
+        } else {
+            this.setChildIndex(boss, this.numChildren-1);
+            boss.update();
         }
         
         if (smallAmmoDisplay != undefined && player != undefined && !gameOver){
@@ -168,7 +170,7 @@ class GameLevel extends createjs.Container{
         hudContainer.addChild(largeAmmoDisplay);
     }
     spawnEnemies(){
-        if (!gameOver && !nextLevel){
+        if (!gameOver && !nextLevel && timerObj.seconds > 0){
             this.levelData.enemySpawner.spawnMinions();
         }
     }
@@ -255,13 +257,12 @@ class GameLevel extends createjs.Container{
         }
     }
     reset(){
+        
         enemies = [];
         bullets = [];
         pickups = [];
         gameOver = false;
         nextLevel = false; 
-        
-        boss = null;
         
         this.currentMusic.stop();
         
@@ -274,6 +275,11 @@ class GameLevel extends createjs.Container{
     winGame(){
         this.reset();
         this.dispatchEvent(GameStateEvents.GAME_COMPLETE);
+    }
+    dispose(){
+        boss = undefined;
+        timerObj = undefined;
+        this.removeAllEventListeners();
     }
 }
 class GameLevel1 extends GameLevel{
@@ -304,7 +310,7 @@ class GameLevel2 extends GameLevel{
         this.dispatchEvent(GameStateEvents.LEVEL_3);
     }
     spawnEnemies(){
-        if (!gameOver && !nextLevel){
+        if (!gameOver && !nextLevel && timerObj.seconds > 0){
             this.levelData.enemySpawner.spawnMinions(false,true);
         }
     }
@@ -324,7 +330,7 @@ class GameLevel3 extends GameLevel{
         super(levelData);
     }
     spawnEnemies(){
-        if (!gameOver && !nextLevel){
+        if (!gameOver && !nextLevel && timerObj.seconds > 0){
             this.levelData.enemySpawner.spawnMinions(true);
         }
     }

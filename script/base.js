@@ -97,8 +97,8 @@ class LevelData{
 
                 this.bossSpd = 1;
                 this.bossDmg = 2;
-                this.bossHealth = 150;
-                this.bossMinionsNumber = 2;
+                this.bossHealth = 100;
+                this.bossMinionsNumber = 1; //calling spawn twice making them offset
                 this.bossWaveSpawnInterval = 5;
                 this.bossAtkInterval = 10;
                 this.bossAtkSpd = 2;
@@ -109,7 +109,7 @@ class LevelData{
 
                 this.rangedDmg = 2; 
                 this.rangedAtkSpd = 1; 
-                this.shootAtkInterval = 3;
+                this.shootAtkInterval = 5;
 
                 this.meleeHealthDropRate = 0.2;
                 this.meleeSmallAmmoDropRate = 0.1;
@@ -405,7 +405,7 @@ class Boss extends Enemy{
         
         this.atkInterval = atkInterval;
         
-        this.point = this.chaseBehavior.randomizeAPoint();
+        this.point = {x: player.x, y: player.y};
         
         this.healthBar = new HealthBar(this.health, this.health, 100, 10, this.graphic.image.width/2*this.graphic.scale, 0,null);
         
@@ -413,7 +413,7 @@ class Boss extends Enemy{
         
     }
     update(){
-        if (player == undefined || gameOver || nextLevel){
+        if (player == undefined || gameOver || nextLevel || timerObj.seconds > 0){
             return;
         }
         this.healthBar.currentValue= this.health;
@@ -428,14 +428,16 @@ class Boss extends Enemy{
             }
             
         }else {
-            
             this.speed = this.temp*1.5;
             this.startChasing = true;
             this.chasePlayer();
+            this.restrictToGameSpaceMinusPlayer();
         }
         
         this.x+= this.velocity.x;
         this.y += this.velocity.y;
+        
+        
     }
     moveToRandomPoint(){
         this.chaseBehavior.moveToPoint(this.point.x-this.x, this.point.y-this.y, this.speed);
@@ -445,8 +447,25 @@ class Boss extends Enemy{
     reduceHealth(points){
         this.health -= points;
         if (this.health<=0){
+            sceneManager.currentScene.removeChild(boss);
             nextLevel = true;
             //console.log("Level 1 finished!");
+        }
+    }
+    restrictToGameSpaceMinusPlayer(){
+        if (player != undefined){
+            if(this.x + this.graphic.image.width * this.graphic.scale > stage.canvas.width - player.graphic.image.width * player.graphic.scale){
+                this.x = stage.canvas.width - player.graphic.image.width * player.graphic.scale - this.graphic.image.width * this.graphic.scale;
+            }
+            if(this.x  < player.graphic.image.width * player.graphic.scale){
+                this.x = player.graphic.image.width * player.graphic.scale;
+            }
+            if(this.y + this.graphic.image.height * this.graphic.scale > stage.canvas.height - player.graphic.image.height * player.graphic.scale){
+                this.y = stage.canvas.height - player.graphic.image.height * player.graphic.scale - this.graphic.image.height * this.graphic.scale;
+            }
+            if(this.y < player.graphic.image.height * player.graphic.scale){
+                this.y = player.graphic.image.height * player.graphic.scale;
+            }
         }
     }
 }
@@ -494,13 +513,16 @@ class Boss1 extends Boss{
             this.speed = this.temp*1.5;
             this.startChasing = true;
             this.chasePlayer();
+            this.restrictToGameSpaceMinusPlayer();
         }
         
         this.x+= this.velocity.x;
         this.y += this.velocity.y;
     }
     spawnMeleeMinions(){
-        this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height/2 * this.graphic.scale, 0);
+        if (timerObj.seconds <= 0){
+            this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height/2 * this.graphic.scale, 0);
+        }
     }
     dealMeleeDamage(){
         this.meleeBehavior.dealMeleeDamage(this.damage);
@@ -540,6 +562,7 @@ class Boss2 extends Boss{
             this.speed = this.temp*1.5;
             this.startChasing = true;
             this.chasePlayer();
+            this.restrictToGameSpaceMinusPlayer();
             
             if (this.chaseBehavior.distance < this.minDistance){
                 this.speed = 0;
@@ -601,6 +624,7 @@ class Boss3 extends Boss1{
             this.speed = this.temp*1.5;
             this.startChasing = true;
             this.chasePlayer();
+            this.restrictToGameSpaceMinusPlayer();
             
             if (this.chaseBehavior.distance < this.minDistance){
                 this.speed = 0;
@@ -609,15 +633,22 @@ class Boss3 extends Boss1{
             }
         }
         
+        this.x+= this.velocity.x;
+        this.y += this.velocity.y;
+        
         //calling shoot behavior update
         this.shootBehavior.update();
         
         if (player != undefined){
             this.aimAngle = Math.atan2(player.y-this.y,player.x-this.x) / Math.PI * 180;
         }
+    }
+    spawnMeleeMinions(){
+        if (timerObj.seconds <= 0){
+            this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y, 0);
         
-        this.x+= this.velocity.x;
-        this.y += this.velocity.y;
+            this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height * this.graphic.scale, 0);
+        }    
     }
 }
 
@@ -715,7 +746,9 @@ class ShootBehavior {
                 //
                 this.generateBullet(source);
                 
-                player.currentWeapon.use();
+                if (source.type == 'Player'){
+                    player.currentWeapon.use();
+                } 
             }
         }
     }
@@ -731,7 +764,7 @@ class ShootBehavior {
     //            this.generateBullet(source,source.aimAngle - 5);
     //			this.generateBullet(source,source.aimAngle);
     //			this.generateBullet(source,source.aimAngle + 5);
-                for(var i = 0 ; i < 360; i+=60){
+                for(var i = 0 ; i < 360; i+=20){
                     this.generateBullet(source, i);
                 }
                 player.currentWeapon.use();
@@ -778,8 +811,11 @@ class ChaseBehavior{
     }
     randomizeAPoint(){
         var point = {x:0,y:0};
-        point.x = Math.random()*(canvas.width+1-200); 
-        point.y = Math.random()*(canvas.height+1-200);
+        
+        point.x = Math.random()*(stage.canvas.width+1-500); 
+        
+        point.y = Math.random()*(stage.canvas.height+1-500);
+        
         return point;
     }
 }
@@ -886,17 +922,17 @@ class DropBehavior{
         switch (itemType){
             case "Health":
                 if (this.random <= this.healthDropRate){
-                    var item = new HealthPickup(drawPreloadedImage(preloader.queue.getResult("HealthPickup"), .3, posX, posY), 3, 1);
+                    var item = new HealthPickup(drawPreloadedImage(preloader.queue.getResult("HealthPickup"), .3, posX, posY), 10, 1);
                 }
                 break;
             case "SmallAmmo":
                 if (this.random <= this.smallAmmoDropRate){
-                    var item = new SmallAmmoPickup(drawRect("#999", 20, 20, 0, 0),3,10);
+                    var item = new SmallAmmoPickup(drawRect("#999", 20, 20, 0, 0),10,10);
                 }
                 break;
             case "LargeAmmo":
                 if (this.random <= this.largeAmmoDropRate){
-                    var item = new LargeAmmoPickup(drawRect("#333", 20, 20, 0, 0),3,10);
+                    var item = new LargeAmmoPickup(drawRect("#333", 20, 20, 0, 0),10,10);
                 }
                 break;
         }

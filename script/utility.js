@@ -117,9 +117,11 @@ class SceneManager{
     }
     
     gameStateGameComplete() {    
-        this.disposeCurrentScene();
+        
         player = undefined;
         boss = undefined;
+        
+        this.disposeCurrentScene();
         
         var scene = new GameComplete("Congrats!");
         
@@ -133,9 +135,11 @@ class SceneManager{
     }
     
     gameStateGameLose() {   
-        this.disposeCurrentScene();
+        
         player = undefined;
         boss = undefined;
+        
+        this.disposeCurrentScene();
         
         var scene = new GameComplete("Game Over!");
         
@@ -148,9 +152,9 @@ class SceneManager{
         this.changeState(GameStates.RUN_SCENE);
     }
     
-    gameStateRunScene(tickerEvent) {
+    gameStateRunScene() {
         if (this.currentScene.run) {
-            this.currentScene.run(tickerEvent.time);
+            this.currentScene.run();
         }
     }
     onTick(e){
@@ -454,7 +458,7 @@ class Timer extends createjs.Container{
         if (this.seconds >= 0){
             this.updateTime();
             if (this.seconds == 0){ 
-                sceneManager.currentScene.removeChild(this);
+                hudContainer.removeChild(this);
             }
         }
     }

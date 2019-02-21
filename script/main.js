@@ -74,8 +74,8 @@ var aimIndicator;
 
 var playerAtkSpd = 1; //can be changed with pickups
 var playerAimAngle = 0;  //changing depending on mouse position 
-var playerShootInterval = 1; //in seconds, changing based on weapon equipped
-var playerSpecialAtkInterval = 3; //in seconds, changing based on weapon equipped 
+var playerShootInterval = 1; 
+var playerSpecialAtkInterval = 3;  
 var playerMinDmg = 1;
 var playerMaxDmg =3;
 
