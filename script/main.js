@@ -46,7 +46,7 @@ var GameStateEvents = {
 
 /* Settings - global variables */
 var canvas = document.getElementById('game-canvas');
-var stage;
+var stage = new createjs.Stage(canvas);
 var version = '1.0.0';
 
 var preloader = new Preloader();
@@ -104,7 +104,6 @@ var largeAmmoDisplay;
 init();
 
 function init(){
-    stage = new createjs.Stage(canvas);
     //set up auto-update on stage
     createjs.Ticker.framerate = 60;
     createjs.Ticker.on('tick',stage);
@@ -142,24 +141,24 @@ function intialLog(){
 }
 function loadGraphics(){
     var loader = new createjs.LoadQueue(false);
-    loader.addEventListener("fileload", handleFileLoad);
-    loader.addEventListener("complete", handleComplete, this);
+    loader.addEventListener("fileload", function(evt){handleFileLoad(evt)});
+    loader.addEventListener("complete", function(evt){handleComplete(evt)});
     loader.loadManifest(lib.properties.manifest);
-
-    function handleFileLoad(evt) {
+}
+function handleFileLoad(evt) {
         var images=comp.getImages();	
         if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }	
     }
-    function handleComplete(evt) {
-        //This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
-        var ss=comp.getSpriteSheet();
-        var queue = evt.target;
-        var ssMetadata = lib.ssMetadata;
-        for(i=0; i<ssMetadata.length; i++) {
-            ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
-        }
-        this.preloadAssets();
+function handleComplete(evt) {
+    //This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
+    var ss=comp.getSpriteSheet();
+    var queue = evt.target;
+    var ssMetadata = lib.ssMetadata;
+    for(i=0; i<ssMetadata.length; i++) {
+        ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
     }
+
+    preloadAssets();
 }
 function preloadAssets(){
     /*LOADING SCREEN*/
