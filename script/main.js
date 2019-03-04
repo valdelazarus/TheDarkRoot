@@ -181,8 +181,6 @@ function preloadAssets(){
         preloader.addFile("Background1","sound/EpicTheme.mp3");
     
         preloader.addFiles(lib.properties.manifest);
-        
-        preloader.loadFiles();
 
         //loadInterval = setInterval(updateLoadingBar, 50);
         preloader.queue.on("progress", function(){
@@ -198,8 +196,10 @@ function preloadAssets(){
                 location.reload();
             }
         });
+    
+        preloader.loadFiles();
 }
-function handleComplete(){
+handleComplete = function(){
     try{
         var ss=comp.getSpriteSheet();
         var ssMetadata = lib.ssMetadata;
