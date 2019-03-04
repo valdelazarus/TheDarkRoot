@@ -16,7 +16,8 @@ class SceneManager{
         stage.addChild(copyRightText);
     }
     createLoadingScene(){
-        var bg = new lib.LoadingScreen();
+        //var bg = new lib.LoadingScreen();
+        var bg = drawImage("images/loadingScreenBG.jpg", 1, 0, 0);
         stage.addChild(bg);
     }
     createFontSheet(){
@@ -409,6 +410,12 @@ class Preloader{
     //add file to array 
     addFile(id, src){
         this.fileArray.push({id: id, src: src});
+    }
+    //add file to array 
+    addFiles(array){
+        for (var i = 0; i<array.length; ++i){
+            this.fileArray.push(array[i]);
+        }
     }
     //use a file array; each item in array should have id and src property
     loadFiles(){

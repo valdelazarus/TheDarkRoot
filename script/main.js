@@ -112,8 +112,7 @@ function init(){
     
     intialLog();
     
-//    preloadAssets();
-    loadGraphics();
+    preloadAssets();
     
     window.addEventListener("click", resumeAudioContext);
 }
@@ -139,27 +138,6 @@ function retinalize(){
 function intialLog(){
     console.log(`Welcome to the game. Version ${version}`);
 }
-function loadGraphics(){
-    var loader = new createjs.LoadQueue(false);
-    loader.addEventListener("fileload", function(evt){handleFileLoad(evt)});
-    loader.addEventListener("complete", function(evt){handleComplete(evt)});
-    loader.loadManifest(lib.properties.manifest);
-}
-function handleFileLoad(evt) {
-        var images=comp.getImages();	
-        if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }	
-    }
-function handleComplete(evt) {
-    //This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
-    var ss=comp.getSpriteSheet();
-    var queue = evt.target;
-    var ssMetadata = lib.ssMetadata;
-    for(i=0; i<ssMetadata.length; i++) {
-        ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
-    }
-
-    preloadAssets();
-}
 function preloadAssets(){
     /*LOADING SCREEN*/
 //        sceneManager.createGameTitle();
@@ -184,6 +162,8 @@ function preloadAssets(){
         preloader.addFile("Normal Shoot", "sound/shoot1.wav");
         preloader.addFile("Special Shoot", "sound/shoot2.wav");
         preloader.addFile("Background1","sound/EpicTheme.mp3");
+    
+        preloader.addFiles(lib.properties.manifest);
         
         preloader.loadFiles();
 
@@ -223,6 +203,11 @@ function updateLoadingBar(){
     
     if (fakeProgress >= 1){
         clearInterval(loadInterval);
+        var ss=comp.getSpriteSheet();
+        var ssMetadata = lib.ssMetadata;
+        for(i=0; i<ssMetadata.length; i++) {
+            ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [preloader.queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+        }
         stage.removeAllChildren();
         sceneManager.gameReady();
     }
