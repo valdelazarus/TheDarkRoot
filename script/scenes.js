@@ -58,25 +58,78 @@ class GameComplete extends createjs.Container{
     constructor(displayedText){
         super();
         this.removeAllChildren();
+        this.addBG();
         this.addTitle(displayedText);
         this.addButtons();
     }
     addTitle(displayedText) {
-        var title = drawText(displayedText, "Bold 50px Arial", "#000", canvas.width/2, canvas.height/2-100);
-        title.shadow = drawShadow("#666",3,3,10);
-        this.addChild(title);
+//        var title = drawText(displayedText, "Bold 50px Arial", "#000", canvas.width/2, canvas.height/2-100);
+//        title.shadow = drawShadow("#666",3,3,10);
+        this.title = new createjs.BitmapText(displayedText, textSpriteSheet);
+        
+        this.title.x = canvas.width/4;
+        this.title.y = canvas.height/2-200;
+        this.title.scale = .7;
+        
+        this.addChild(this.title);
+    }
+    addBG(){
+        this.addChild(new lib.UIBG_1());
     }
     addButtons() {
         
-        this.menuBtn = drawRect("#000", 100, 50, canvas.width/2, canvas.height/2 + 80);
-        this.menuBtnText = drawText("Menu", "20px Arial", "#fff", canvas.width/2, canvas.height/2 + 80);
-        this.menuBtn.on('click', this.onMenuButtonClick, this);
+//        this.menuBtn = drawRect("#000", 100, 50, canvas.width/2, canvas.height/2 + 80);
+//        this.menuBtnText = drawText("Menu", "20px Arial", "#fff", canvas.width/2, canvas.height/2 + 80);
+//        this.menuBtn.on('click', this.onMenuButtonClick, this);
+//        
+//        this.replayBtn = drawRect("#000", 100, 50, canvas.width/2, canvas.height/2);
+//        this.replayBtnText = drawText("Replay", "20px Arial", "#fff", canvas.width/2, canvas.height/2);
+//        this.replayBtn.on('click', this.onReplayButtonClick, this);
         
-        this.replayBtn = drawRect("#000", 100, 50, canvas.width/2, canvas.height/2);
-        this.replayBtnText = drawText("Replay", "20px Arial", "#fff", canvas.width/2, canvas.height/2);
-        this.replayBtn.on('click', this.onReplayButtonClick, this);
+        var replayBtnContainer = new createjs.Container();
+        
+        var replayBtn = new lib.UIBtn_1();
+        replayBtn .scale = .5;
+        
+        var replayText = new createjs.BitmapText("REPLAY", textSpriteSheet);
+        replayText.scale = .3;
+        replayText.x = 20;
+        replayText.y = 40;
+        
+        var replayBtnHit = drawRect("#fff", replayBtn.nominalBounds.width * replayBtn.scale, replayBtn.nominalBounds.height * replayBtn.scale, replayBtn.nominalBounds.width/2 * replayBtn.scale, replayBtn.nominalBounds.height/2 * replayBtn.scale);
+        
+        replayBtnContainer.addChild(replayBtn, replayText);
+        
+        replayBtnContainer.x = canvas.width/2-replayBtn.nominalBounds.width/2 * replayBtn.scale;
+        replayBtnContainer.y = canvas.height/2;
+        
+        replayBtnContainer.hitArea = replayBtnHit;
+        
+        replayBtnContainer.on('click', this.onReplayButtonClick, this);
+        
+        var menuBtnContainer = new createjs.Container();
+        
+        var menuBtn = new lib.UIBtn_1();
+        menuBtn .scale = .5;
+        
+        var menuText = new createjs.BitmapText("MENU", textSpriteSheet);
+        menuText.scale = .3;
+        menuText.x = 20;
+        menuText.y = 40;
+        
+        var menuBtnHit = drawRect("#fff", menuBtn.nominalBounds.width * menuBtn.scale, menuBtn.nominalBounds.height * menuBtn.scale, menuBtn.nominalBounds.width/2 * menuBtn.scale, menuBtn.nominalBounds.height/2 * menuBtn.scale);
+        
+        menuBtnContainer.addChild(menuBtn, menuText);
+        
+        menuBtnContainer.x = canvas.width/2-menuBtn.nominalBounds.width/2 * menuBtn.scale;
+        menuBtnContainer.y = canvas.height/2 + 100;
+        
+        menuBtnContainer.hitArea = menuBtnHit;
+        
+        menuBtnContainer.on('click', this.onMenuButtonClick, this);
        
-        this.addChild(this.menuBtn, this.menuBtnText, this.replayBtn, this.replayBtnText);
+        //this.addChild(this.menuBtn, this.menuBtnText, this.replayBtn, this.replayBtnText);
+        this.addChild(replayBtnContainer, menuBtnContainer);
     }
     onMenuButtonClick(e) {
         
@@ -91,6 +144,13 @@ class GameComplete extends createjs.Container{
 class GameLevel extends createjs.Container{
     constructor(levelData){
         super();
+        
+        this.bgLayer = new createjs.Container();
+        this.ppLayer = new createjs.Container();
+        this.playerLayer = new createjs.Container();
+        this.enemyLayer = new createjs.Container();
+        this.bossLayer = new createjs.Container();
+        this.hudLayer = new createjs.Container();
         
         this.levelData = levelData;
         
@@ -108,9 +168,20 @@ class GameLevel extends createjs.Container{
         this.currentMusic = playSound(this.levelData.backgroundMusic,true,.5);
         
         this.timer = 0;
+        this.boss = null;
         
-        this.addChildAt(this.levelBG, 0);
-        this.addChild(hudContainer);   
+//        this.addChildAt(this.levelBG, 0);
+//        this.hudLayer.addChild(hudContainer);   
+        
+        this.addChildAt(this.bgLayer, 0);
+        this.addChildAt(this.ppLayer, 1);
+        this.addChildAt(this.playerLayer, 2);
+        this.addChildAt(this.enemyLayer, 3);
+        this.addChildAt(this.bossLayer, 4);
+        this.addChildAt(this.hudLayer, 5);
+        
+        this.bgLayer.addChild(this.levelBG);
+        this.hudLayer.addChild(hudContainer);
     }
     run(){
          //handle game over
@@ -132,9 +203,9 @@ class GameLevel extends createjs.Container{
 
     //    //make sure boss and hud are always rendered on top of other enemies and player in scene 
         
-        if (hudContainer != undefined){
-            this.setChildIndex(hudContainer, this.numChildren-2);
-        }
+//        if (hudContainer != undefined){
+//            this.setChildIndex(hudContainer, this.numChildren-2);
+//        }
 
         this.runEnemyBehavior();
         this.runBulletBehavior();
@@ -149,15 +220,15 @@ class GameLevel extends createjs.Container{
             this.spawnBoss();
         } 
         
-        if (boss == undefined){
+        if (this.boss == undefined){
             this.timer++;
             if (this.timer > this.levelData.waveSpawnInterval * createjs.Ticker.framerate){
                 this.timer = 0;
                 this.spawnEnemies();
             }
         } else {
-            this.setChildIndex(boss, this.numChildren-1);
-            boss.update();
+//            this.setChildIndex(this.boss, this.numChildren-1);
+            this.boss.update();
         }
         
         if (smallAmmoDisplay != undefined && player != undefined && !gameOver){
@@ -176,7 +247,7 @@ class GameLevel extends createjs.Container{
         
         this.createAimIndicator();
         
-        this.addChild(player);
+        this.playerLayer.addChild(player);
     }
     createAimIndicator(){
         aimIndicator = new GameObject(drawPreloadedImage(preloader.queue.getResult("AimIndicator"), .5, 0, 0));
@@ -197,9 +268,9 @@ class GameLevel extends createjs.Container{
         hudContainer.addChild(timerObj);
     }
     createAmmoDisplay(){
-        smallAmmoDisplay = new AmmoDisplay(drawRect("#999", 20, 20, 0, 0),110,50);
+        smallAmmoDisplay = new AmmoDisplay(new lib.SmallProj(),110,50);
         hudContainer.addChild(smallAmmoDisplay);
-        largeAmmoDisplay = new AmmoDisplay(drawRect("#333", 20, 20, 0, 0),110,80);
+        largeAmmoDisplay = new AmmoDisplay(new lib.LargeProj(),110,80);
         hudContainer.addChild(largeAmmoDisplay);
     }
     spawnEnemies(){
@@ -300,6 +371,13 @@ class GameLevel extends createjs.Container{
         
         this.currentMusic.stop();
         
+        this.bgLayer.removeAllChildren();
+        this.ppLayer.removeAllChildren();
+        this.playerLayer.removeAllChildren();
+        this.enemyLayer.removeAllChildren();
+        this.bossLayer.removeAllChildren();
+        this.hudLayer.removeAllChildren();
+        
         this.removeAllChildren();
     }
     loseGame(){
@@ -311,7 +389,6 @@ class GameLevel extends createjs.Container{
         this.dispatchEvent(GameStateEvents.GAME_COMPLETE);
     }
     dispose(){
-        boss = undefined;
         timerObj = undefined;
         this.removeAllEventListeners();
     }
@@ -326,14 +403,14 @@ class GameLevel1 extends GameLevel{
     }
     spawnBoss(){
         if (this.bossSpawned){
-            boss = new Boss1(new lib.Boss1(),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval,this.levelData.bossMinionsNumber,this.levelData.bossWaveSpawnInterval, this.levelData);
-            boss.graphic.scale = .7;
-            boss.x = 700;
-            boss.y = 300;
-            boss.healthBar.x = boss.graphic.nominalBounds.width/2 * boss.graphic.scale;
+            this.boss = new Boss1(new lib.Boss1(),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval,this.levelData.bossMinionsNumber,this.levelData.bossWaveSpawnInterval, this.levelData);
+            this.boss.graphic.scale = .7;
+            this.boss.x = 700;
+            this.boss.y = 300;
+            this.boss.healthBar.x = this.boss.graphic.nominalBounds.width/2 * this.boss.graphic.scale;
 
-            enemies.push(boss);
-            this.addChild(boss);
+            enemies.push(this.boss);
+            this.bossLayer.addChild(this.boss);
 
             this.bossSpawned = false;
         }
@@ -349,19 +426,20 @@ class GameLevel2 extends GameLevel{
     }
     spawnEnemies(){
         if (!gameOver && !nextLevel && timerObj.seconds > 0){
+            console.log("Level spawned minions");
             this.levelData.enemySpawner.spawnMinions(false,true);
         }
     }
     spawnBoss(){
         if (this.bossSpawned){
-            boss = new Boss2(new lib.Boss2(),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval,this.levelData.bossAtkSpd,this.levelData.bossMinDistance, this.levelData);
-            boss.graphic.scale = .5;
-            boss.x = 700;
-            boss.y = 300;
-            boss.healthBar.x = boss.graphic.nominalBounds.width/2 * boss.graphic.scale;
+            this.boss = new Boss2(new lib.Boss2(),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval,this.levelData.bossAtkSpd,this.levelData.bossMinDistance, this.levelData);
+            this.boss.graphic.scale = .5;
+            this.boss.x = 700;
+            this.boss.y = 300;
+            this.boss.healthBar.x = this.boss.graphic.nominalBounds.width/2 * this.boss.graphic.scale;
 
-            enemies.push(boss);
-            this.addChild(boss);
+            enemies.push(this.boss);
+            this.bossLayer.addChild(this.boss);
 
             this.bossSpawned = false;
         }
@@ -373,19 +451,20 @@ class GameLevel3 extends GameLevel{
     }
     spawnEnemies(){
         if (!gameOver && !nextLevel && timerObj.seconds > 0){
+            console.log("Level spawned minions");
             this.levelData.enemySpawner.spawnMinions(true);
         }
     }
     spawnBoss(){
         if (this.bossSpawned){
-            boss = new Boss3(new lib.Boss3(),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval, this.levelData.bossAtkSpd, this.levelData.bossMinDistance, this.levelData.bossMinionsNumber, this.levelData.bossWaveSpawnInterval, this.levelData);
-            boss.graphic.scale = .7;
-            boss.x = 700;
-            boss.y = 300;
-            boss.healthBar.x = boss.graphic.nominalBounds.width/2 * boss.graphic.scale;
+            this.boss = new Boss3(new lib.Boss3(),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval, this.levelData.bossAtkSpd, this.levelData.bossMinDistance, this.levelData.bossMinionsNumber, this.levelData.bossWaveSpawnInterval, this.levelData);
+            this.boss.graphic.scale = .5;
+            this.boss.x = 700;
+            this.boss.y = 300;
+            this.boss.healthBar.x = this.boss.graphic.nominalBounds.width/2 * this.boss.graphic.scale;
             
-            enemies.push(boss);
-            this.addChild(boss);
+            enemies.push(this.boss);
+            this.bossLayer.addChild(this.boss);
 
             this.bossSpawned = false;
         }

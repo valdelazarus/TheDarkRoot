@@ -49,7 +49,7 @@ class LevelData{
                 this.bossHealth = 50;
                 this.bossAtkInterval = 1;
                 this.bossMinionsNumber = 1;
-                this.bossWaveSpawnInterval = 5;
+                this.bossWaveSpawnInterval = 600;
 
                 this.meleeDmg = 1;
                 this.meleeAtkInterval = 1;
@@ -99,7 +99,7 @@ class LevelData{
                 this.bossDmg = 2;
                 this.bossHealth = 100;
                 this.bossMinionsNumber = 1; //calling spawn twice making them offset
-                this.bossWaveSpawnInterval = 5;
+                this.bossWaveSpawnInterval = 1200;
                 this.bossAtkInterval = 10;
                 this.bossAtkSpd = 2;
                 this.bossMinDistance = 20;
@@ -146,9 +146,9 @@ class GameObject extends createjs.Container{ //Container is a display class that
         this.addChild(this.graphic);
         
         //stage.addChild(this); -- to add child to scene container instead
-        if (sceneManager.currentScene != undefined){
-            sceneManager.currentScene.addChild(this);
-        }
+//        if (sceneManager.currentScene != undefined){
+//            sceneManager.currentScene.addChild(this);
+//        }
     }
   }
 }
@@ -203,8 +203,8 @@ class Player extends MoveableGameObject{
         
         //createjs.Ticker.on('tick', this.update.bind(this));
         this.currentWeapon = this.weaponManager.normalWeapon;
-        this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/2*.3-10;
-        this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*.3;
+        this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/4*.3;
+        this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*.3 - 50;
         this.addChild(this.currentWeapon.graphic);
     }
     update(){
@@ -253,8 +253,8 @@ class Player extends MoveableGameObject{
             this.removeChild(this.currentWeapon.graphic);
             
             this.currentWeapon = this.weaponManager.normalWeapon;
-            this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/2*this.graphic.scale;
-            this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*this.graphic.scale - 10;
+            this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/4*this.graphic.scale;
+            this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*this.graphic.scale - 50;
             this.addChild(this.currentWeapon.graphic);
             
             this.atkSpd = this.weaponManager.normalWeapon.atkSpd;
@@ -265,8 +265,8 @@ class Player extends MoveableGameObject{
                 this.removeChild(this.currentWeapon.graphic);
                 
                 this.currentWeapon = this.weaponManager.smallWeapon;
-                this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/2*this.graphic.scale;
-                this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*this.graphic.scale - 10;
+                this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/4*this.graphic.scale;
+                this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*this.graphic.scale - 50;
                 this.addChild(this.currentWeapon.graphic);
                 
                 this.atkSpd = this.weaponManager.smallWeapon.atkSpd;
@@ -278,8 +278,8 @@ class Player extends MoveableGameObject{
                 this.removeChild(this.currentWeapon.graphic);
                 
                 this.currentWeapon = this.weaponManager.largeWeapon;
-                this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/2*this.graphic.scale;
-                this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*this.graphic.scale - 10;
+                this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/4*this.graphic.scale;
+                this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*this.graphic.scale - 50;
                 this.addChild(this.currentWeapon.graphic);
                 
                 this.atkSpd = this.weaponManager.largeWeapon.atkSpd;
@@ -451,7 +451,7 @@ class Boss extends Enemy{
     reduceHealth(points){
         this.health -= points;
         if (this.health<=0){
-            sceneManager.currentScene.removeChild(boss);
+            sceneManager.currentScene.bossLayer.removeChild(sceneManager.currentScene.boss);
             nextLevel = true;
             //console.log("Level 1 finished!");
         }
@@ -506,9 +506,12 @@ class Boss1 extends Boss{
                 this.point = this.chaseBehavior.randomizeAPoint();
             }
             
-            if (this.timer > (this.waveSpawnInterval * createjs.Ticker.framerate)){
+            if (this.timer > (this.waveSpawnInterval)){
                 this.timer = 0;
-                this.spawnMeleeMinions();
+                //this.spawnMeleeMinions();
+                if (timerObj.seconds <= 0){
+                    this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.nominalBounds.width/2 * this.graphic.scale, this.y+ this.graphic.nominalBounds.height/2 * this.graphic.scale, 0);
+                }
             }
             
         }else {
@@ -582,7 +585,7 @@ class Boss2 extends Boss{
         this.shootBehavior.update();
         
         if (player != undefined){
-            this.aimAngle = Math.atan2(player.y-this.y,player.x-this.x) / Math.PI * 180;
+            this.aimAngle = Math.atan2(player.y-this.y,player.x-this.x) / Math.PI * 180 + 10;
         }
     }
 }
@@ -617,9 +620,13 @@ class Boss3 extends Boss1{
                 this.point = this.chaseBehavior.randomizeAPoint();
             }
             
-            if (this.timer > (this.waveSpawnInterval * createjs.Ticker.framerate)){
+            if (this.timer > (this.waveSpawnInterval)){
                 this.timer = 0;
-                this.spawnMeleeMinions();
+                if (timerObj.seconds <= 0){
+                    this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.nominalBounds.width/2 * this.graphic.scale, this.y, 0);
+
+                    this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.nominalBounds.width/2 * this.graphic.scale, this.y+ this.graphic.nominalBounds.height * this.graphic.scale, 0);
+                } 
             }
             
         }else {
@@ -644,7 +651,7 @@ class Boss3 extends Boss1{
         this.shootBehavior.update();
         
         if (player != undefined){
-            this.aimAngle = Math.atan2(player.y-this.y,player.x-this.x) / Math.PI * 180;
+            this.aimAngle = Math.atan2(player.y-this.y,player.x-this.x) / Math.PI * 180 + 10;
         }
     }
     spawnMeleeMinions(){
@@ -715,7 +722,7 @@ class Bullet extends MoveableGameObject{
         }
     }
     selfDestroy(){
-        sceneManager.currentScene.removeChild(this);
+        sceneManager.currentScene.ppLayer.removeChild(this);
         for (var i=0; i<bullets.length; ++i){
             if (bullets[i] === this){
                 bullets.splice(i,1);
@@ -781,8 +788,27 @@ class ShootBehavior {
 
 //        var bullet = new Bullet(drawImage('images/playerBullet.png', .2, spawnPosX, spawnPosY),
 //                               5, source.type);
-        var bullet = new Bullet(new lib.Projectile(), 1, source);
+        var bullet;
+        if (source.type == 'Player'){
+            switch(source.currentWeapon.type){
+                case "normal":
+                    bullet = new Bullet(new lib.MediumProj(), 1, source);
+                    bullet.graphic.scale = .3;
+                    break;
+                case "small":
+                    bullet = new Bullet(new lib.SmallProj(), 1, source);
+                    bullet.graphic.scale = .3;
+                    break;
+                case "large":
+                    bullet = new Bullet(new lib.LargeProj(), 1, source);
+                    break;
+            }
+        } else {
+            bullet = new Bullet(new lib.Projectile(), 1, source);
+        }
+        
         bullet.graphic.scale = .3;
+        bullet.graphic.shadow = drawShadow("#000",2,2,10);
         bullet.x = spawnPosX;
         bullet.y = spawnPosY;
 
@@ -795,6 +821,8 @@ class ShootBehavior {
         bullet.velocity.y = Math.sin(angle/180*Math.PI)*bullet.speed;
         
         bullets.push(bullet);
+        
+        sceneManager.currentScene.ppLayer.addChild(bullet);
     }
 }
 //Chasing behavior
@@ -861,7 +889,7 @@ class Pickup extends GameObject{
         } 
     }
     selfDestroy(){
-        sceneManager.currentScene.removeChild(this);
+        sceneManager.currentScene.ppLayer.removeChild(this);
         for (var i=0; i<pickups.length; ++i){
             if (pickups[i] === this){
                 pickups.splice(i,1);
@@ -925,11 +953,11 @@ class DropBehavior{
     }
     dropItem(itemType, posX, posY){
         this.random = Math.random();
-        
+        var item; 
         switch (itemType){
             case "Health":
                 if (this.random <= this.healthDropRate){
-                    var item = new HealthPickup(new lib.HealthPickup(), 10, 1);
+                    item = new HealthPickup(new lib.HealthPickup(), 10, 1);
                     item.graphic.scale = .3;
                     item.x = posX;
                     item.y = posY;
@@ -937,15 +965,16 @@ class DropBehavior{
                 break;
             case "SmallAmmo":
                 if (this.random <= this.smallAmmoDropRate){
-                    var item = new SmallAmmoPickup(drawRect("#999", 20, 20, 0, 0),10,10);
+                    item = new SmallAmmoPickup(new lib.SmallProj(),10,10);
                 }
                 break;
             case "LargeAmmo":
                 if (this.random <= this.largeAmmoDropRate){
-                    var item = new LargeAmmoPickup(drawRect("#333", 20, 20, 0, 0),10,10);
+                    item = new LargeAmmoPickup(new lib.LargeProj(),10,10);
                 }
                 break;
         }
+        sceneManager.currentScene.ppLayer.addChild(item);
 //        if (this.random <= this.dropRate){
 //            if (itemType == "Health"){
 //                var item = new HealthPickup(drawPreloadedImage(preloader.queue.getResult("HealthPickup"), .3, posX, posY), 3, 1);
@@ -954,16 +983,24 @@ class DropBehavior{
     }
     dropRandomItem(posX, posY){
         this.random = Math.random();
+        var item;
         if (this.random < this.largeAmmoDropRate){
-            var item = new LargeAmmoPickup(drawRect("#333", 20, 20, posX, posY),3,10);
+            item = new LargeAmmoPickup(new lib.LargeProj(),3,10);
+            item.graphic.scale = .5;
+            item.x = posX;
+            item.y = posY;
         } else if (this.random < this.smallAmmoDropRate){
-            var item = new SmallAmmoPickup(drawRect("#999", 20, 20, posX, posY),3,10);
+            item = new SmallAmmoPickup(new lib.SmallProj(),3,10);
+            item.graphic.scale = .5;
+            item.x = posX;
+            item.y = posY;
         } else if (this.random < this.healthDropRate){
-            var item = new HealthPickup(new lib.HealthPickup(), 3, 1);
+            item = new HealthPickup(new lib.HealthPickup(), 3, 1);
             item.graphic.scale = .3;
             item.x = posX;
             item.y = posY;
         }
+        sceneManager.currentScene.ppLayer.addChild(item);
     }
 }
 
@@ -974,23 +1011,30 @@ class DropBehavior{
 //- normal default has infinite ammo number-> no deduction
 class WeaponManager{
     constructor(){
-        this.normalWeapon = new Weapon(drawRect("#666", 20, 20, 0, 0), NORMAL_ATKSPD, NORMAL_MIN, NORMAL_MAX, 1, false); 
+//        this.normalWeapon = new Weapon(drawRect("#666", 20, 20, 0, 0), NORMAL_ATKSPD, NORMAL_MIN, NORMAL_MAX, 1, false); 
+//        
+//        this.smallWeapon = new Weapon(drawRect("#999", 20, 20, 0, 0), SMALL_ATKSPD, SMALL_MIN, SMALL_MAX, 0 , true);
+//        
+//        this.largeWeapon = new Weapon(drawRect("#333", 20, 20, 0, 0), LARGE_ATKSPD, LARGE_MIN, LARGE_MAX, 0, true); 
+        this.normalWeapon = new Weapon(new lib.MediumWP(), NORMAL_ATKSPD, NORMAL_MIN, NORMAL_MAX, 1, false, "normal"); 
         
-        this.smallWeapon = new Weapon(drawRect("#999", 20, 20, 0, 0), SMALL_ATKSPD, SMALL_MIN, SMALL_MAX, 0 , true);
+        this.smallWeapon = new Weapon(new lib.SmallWP(), SMALL_ATKSPD, SMALL_MIN, SMALL_MAX, 0 , true , "small");
         
-        this.largeWeapon = new Weapon(drawRect("#333", 20, 20, 0, 0), LARGE_ATKSPD, LARGE_MIN, LARGE_MAX, 0, true); 
+        this.largeWeapon = new Weapon(new lib.LargeWP(), LARGE_ATKSPD, LARGE_MIN, LARGE_MAX, 0, true, "large"); 
     }
 }
 
 //each weapon has graphic, atkSpd, and damage range associated 
 class Weapon{
-    constructor(graphic, atkSpd, minDamage, maxDamage, ammoNumber, ammoCheck){
+    constructor(graphic, atkSpd, minDamage, maxDamage, ammoNumber, ammoCheck, type){
         this.graphic = graphic;
         this.atkSpd = atkSpd;
         this.minDamage = minDamage;
         this.maxDamage = maxDamage;
         this.ammoNumber = ammoNumber;
         this.ammoCheck = ammoCheck;
+        this.graphic.scale = .3;
+        this.type = type;
     }
     use(){
         if (this.ammoCheck){

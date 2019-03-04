@@ -207,7 +207,6 @@ class SceneManager{
     }
     gameStateMainMenu() {      
         player = undefined;
-        boss = undefined;
         
         this.disposeCurrentScene();
         
@@ -267,11 +266,11 @@ class SceneManager{
     gameStateGameComplete() {    
         
         player = undefined;
-        boss = undefined;
         
         this.disposeCurrentScene();
         
-        var scene = new GameComplete("Congrats!");
+        var scene = new GameComplete("ESCAPED!");
+        scene.title.shadow = drawShadow("#ffffcc", 2, 2, 10);
         
         scene.on(GameStateEvents.MAIN_MENU, this.onStateEvent, this, true, {state:GameStates.MAIN_MENU});
         scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
@@ -285,11 +284,11 @@ class SceneManager{
     gameStateGameLose() {   
         
         player = undefined;
-        boss = undefined;
         
         this.disposeCurrentScene();
         
-        var scene = new GameComplete("Game Over!");
+        var scene = new GameComplete("GAME OVER!");
+        scene.title.shadow = drawShadow("red", 2, 2, 10);
         
         scene.on(GameStateEvents.MAIN_MENU, this.onStateEvent, this, true, {state:GameStates.MAIN_MENU});
         scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
@@ -482,6 +481,8 @@ class EnemySpawner{
 
             nextX = gap + Math.random() * (stage.canvas.width - enemy.graphic.nominalBounds.width * enemy.graphic.scale);
             nextY = gap + Math.random() * (stage.canvas.height - enemy.graphic.nominalBounds.height * enemy.graphic.scale); 
+            
+            sceneManager.currentScene.enemyLayer.addChild(enemy);
         }
     }
     spawnAtSpecifiedPosition(posX, posY, maxGap, random=false){
@@ -502,6 +503,8 @@ class EnemySpawner{
             }
             
             enemies.push(enemy);
+            
+            sceneManager.currentScene.enemyLayer.addChild(enemy);
 
             nextY += gap;
         }
@@ -513,7 +516,7 @@ class EnemySpawner{
             enemy = new MeleeEnemy(new lib.Melee(), this.levelData.enemySpd, this.levelData.meleeDmg, this.levelData.meleeAtkInterval, this.levelData.meleeHealthDropRate, this.levelData.meleeSmallAmmoDropRate, this.levelData.meleeLargeAmmoDropRate);
             
             enemy.graphic.scale = .3;
-            enemy.x = poxX - enemy.graphic.nominalBounds.width/2*enemy.graphic.scale;
+            enemy.x = posX - enemy.graphic.nominalBounds.width/2*enemy.graphic.scale;
             enemy.y = posY - enemy.graphic.nominalBounds.height/2*enemy.graphic.scale;
         } else {
             enemy = new RangedEnemy(new lib.Ranged(), this.levelData.enemySpd, this.levelData.rangedDmg, this.levelData.rangedAtkSpd, 0, this.levelData.shootAtkInterval, 0, 500, this.levelData.rangedHealthDropRate, this.levelData.rangedSmallAmmoDropRate, this.levelData.rangedLargeAmmoDropRate);
@@ -610,8 +613,12 @@ class Timer extends createjs.Container{
         this.boxHeight = boxHeight;
         this.boxColor = boxColor;
         
-        this.containerBox = drawRect(this.boxColor, this.boxWidth, this.boxHeight, 0, 0);
-        this.containerBox.graphics.setStrokeStyle(2).beginStroke("#000").drawRect(0,0,this.boxWidth,this.boxHeight);
+        //this.containerBox = drawRect(this.boxColor, this.boxWidth, this.boxHeight, 0, 0);
+        this.containerBox = new lib.TimerHUD();
+        //this.containerBox.scale = 1;
+        this.containerBox.x = -this.containerBox.nominalBounds.width/2 * this.containerBox.scale+20;
+        this.containerBox.y = -this.containerBox.nominalBounds.height/2 * this.containerBox.scale-10;
+//        this.containerBox.graphics.setStrokeStyle(2).beginStroke("#000").drawRect(0,0,this.boxWidth,this.boxHeight);
         
         this.addChild(this.containerBox);
         this.updateTime();
@@ -640,16 +647,25 @@ class Timer extends createjs.Container{
         if(this.text != undefined)
             this.removeChild(this.text); //reset after each update
        
-        var sec = this.seconds % 60;
-        var min = Math.floor(this.seconds/60);
-
-        if(sec < 10){
+//        var sec = this.seconds % 60;
+//        var min = Math.floor(this.seconds/60);
+//
+//        if(sec < 10){
+//            sec = "0" + sec; //Add a 0 before any 1-digit number
+//        }
+//        if(min < 10){
+//            min = "0" + min; //Add a 0 before any 1-digit number
+//        }
+        var sec = this.seconds.toString();
+         if(sec < 10){
             sec = "0" + sec; //Add a 0 before any 1-digit number
         }
-        if(min < 10){
-            min = "0" + min; //Add a 0 before any 1-digit number
-        }
-        this.text = drawText(min + ":" + sec, "20px Arial Bold", this.textColor, 0,0); //offset pos from containerBox  
+//        this.text = drawText(min + ":" + sec, "20px Arial Bold", this.textColor, 0,0); //offset pos from containerBox  
+        this.text = new createjs.BitmapText(sec, textSpriteSheet);
+        this.text.scale = .5;
+        this.text.shadow = drawShadow("#cc3333",2,2,10); 
+        this.text.textAlign = "center";
+        this.text.textBaseline = "middle";
         
         this.addChild(this.text);
     }
@@ -662,10 +678,17 @@ class DamageText{
         this.posY = posY;
         this.parent = parent; 
         
-        this.text = drawText(-damage, "20px Arial Bold", this.color, this.posX,this.posY);
+//        this.text = drawText(-damage, "20px Arial Bold", this.color, this.posX,this.posY);
+        this.text = new createjs.BitmapText(damage.toString(), textSpriteSheet);
+        this.text.shadow = drawShadow("#cc3333",2,2,10); 
+        this.text.textAlign = "center";
+        this.text.textBaseline = "middle";
+        this.text.x = this.posX;
+        this.text.y = this.posY;
+        
         this.parent.addChild(this.text);
         
-        createjs.Tween.get(this.text).to({scale:10, alpha:0},1000).call(this.selfDestroy);
+        createjs.Tween.get(this.text).to({y:100, alpha:0},500).call(this.selfDestroy);
     }
     selfDestroy(){
         this.parent.removeChild(this.text);
@@ -678,21 +701,28 @@ class AmmoDisplay extends createjs.Container{
         super();
         
         this.graphic = graphic;
-        this.x = posX;
-        this.y = posY;
-        this.ammoText = 0;
-
-        this.ammoTxtBox = drawText("x "+ this.ammoText, "20px Arial Bold", "#000", 20, 0);
-        this.ammoTxtBox.textAlign = "left";
         
+        this.ammoText = 0;
+        this.graphic.scale = .5;
+        this.x = posX- this.graphic.nominalBounds.width/2*this.graphic.scale;
+        this.y = posY- this.graphic.nominalBounds.height/2*this.graphic.scale;;
+
+        this.ammoTxtBox = new createjs.BitmapText("x "+this.ammoText, textSpriteSheet);
+        this.ammoTxtBox.textAlign = "left";
+        this.ammoTxtBox.scale = .3;
+        this.ammoTxtBox.x = this.graphic.nominalBounds.width*this.graphic.scale+10;
+        this.ammoTxtBox.shadow = drawShadow("#ffffcc",2,2,10);
         this.addChild(this.graphic, this.ammoTxtBox);
     }
     updateAmmoText(text){
         this.removeChild(this.ammoTxtBox);
         
         this.ammoText = text;
-        this.ammoTxtBox = drawText("x "+this.ammoText, "20px Arial Bold", "#000", 20, 0);
+        this.ammoTxtBox = new createjs.BitmapText("x "+this.ammoText, textSpriteSheet);
         this.ammoTxtBox.textAlign = "left";
+        this.ammoTxtBox.scale = .3;
+        this.ammoTxtBox.x = this.graphic.nominalBounds.width*this.graphic.scale+10;
+        this.ammoTxtBox.shadow = drawShadow("#ffffcc",2,2,10);
         this.addChild(this.ammoTxtBox);
     }
 }

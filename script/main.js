@@ -88,8 +88,6 @@ var playerMaxDmg =3;
 /* Common data */
 var enemies = [];
 
-var boss;
-
 var bullets = [];
 
 var pickups = [];
