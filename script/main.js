@@ -46,6 +46,7 @@ var GameStateEvents = {
 
 /* Settings - global variables */
 var canvas = document.getElementById('game-canvas');
+var context = canvas.getContext('2d');
 var stage = new createjs.Stage(canvas);
 var version = '1.0.0';
 
@@ -101,7 +102,7 @@ var smallAmmoDisplay;
 var largeAmmoDisplay;
 
 //calling init() function on page load
-//init();
+init();
 
 function init(){
     //set up auto-update on stage
@@ -112,13 +113,7 @@ function init(){
     
     intialLog();
     
-    //preloadAssets();
-    try{
-        loadGraphics();
-    }
-    catch(e){
-        location.reload();
-    }
+    loadGraphics();
     
     window.addEventListener("click", resumeAudioContext);
 }
@@ -184,8 +179,26 @@ function preloadAssets(){
         
         preloader.loadFiles();
 
-        loadInterval = setInterval(updateLoadingBar, 50);
+        //loadInterval = setInterval(updateLoadingBar, 50);
+        preloader.queue.on("progress", function(){
+            preloader.updateLoadingBar(preloader.loadingBar, "#ffffcc", "fff");
+        })
+    
+        preloader.queue.on("complete", function(){
+            preloader.queue.removeAllEventListeners("complete");
+            setTimeout(handleComplete,3000);
+        });
 }
+function handleComplete(){
+    var ss=comp.getSpriteSheet();
+    var ssMetadata = lib.ssMetadata;
+    for(var i=0; i<ssMetadata.length; i++) {
+        ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [preloader.queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+    }
+    stage.removeAllChildren();
+    sceneManager.gameReady();
+}
+
 /* HANDLE AUDIO CONTEXT FOR AUTOPLAY POLICY ON CHROME AND SAFARI*/
 function resumeAudioContext(){
     // handler for fixing suspended audio context in Chrome
@@ -203,37 +216,37 @@ function resumeAudioContext(){
     }
 }
 /*LOADING BAR*/
-function updateLoadingBar(){
-    fakeProgress += .005;
-    
-    preloader.loadingBar.graphics.beginFill("#ffffcc");
-        
-    preloader.loadingBar.graphics.drawRect(0, 0, preloader.loadingBar.getBounds().width *               fakeProgress, preloader.loadingBar.getBounds().height);
-
-    preloader.loadingBar.graphics.endFill();
-
-    preloader.loadingBar.graphics.setStrokeStyle(2);
-    preloader.loadingBar.graphics.beginStroke("#fff");
-
-    preloader.loadingBar.graphics.drawRect(0, 0, preloader.loadingBar.getBounds().width,                   preloader.loadingBar.getBounds().height);
-
-    preloader.loadingBar.graphics.endStroke();
-    
-    if (fakeProgress >= 1){
-        try{
-            var ss=comp.getSpriteSheet();
-            var ssMetadata = lib.ssMetadata;
-            for(var i=0; i<ssMetadata.length; i++) {
-                ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [preloader.queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
-            }    
-        }
-        catch(e){
-            location.reload();
-        }
-        finally{
-            clearInterval(loadInterval);
-            stage.removeAllChildren();
-            sceneManager.gameReady();
-        }
-    }
-}
+//function updateLoadingBar(){
+//    fakeProgress += .005;
+//    
+//    preloader.loadingBar.graphics.beginFill("#ffffcc");
+//        
+//    preloader.loadingBar.graphics.drawRect(0, 0, preloader.loadingBar.getBounds().width *               fakeProgress, preloader.loadingBar.getBounds().height);
+//
+//    preloader.loadingBar.graphics.endFill();
+//
+//    preloader.loadingBar.graphics.setStrokeStyle(2);
+//    preloader.loadingBar.graphics.beginStroke("#fff");
+//
+//    preloader.loadingBar.graphics.drawRect(0, 0, preloader.loadingBar.getBounds().width,                   preloader.loadingBar.getBounds().height);
+//
+//    preloader.loadingBar.graphics.endStroke();
+//    
+//    if (fakeProgress >= 1){
+//        try{
+//            var ss=comp.getSpriteSheet();
+//            var ssMetadata = lib.ssMetadata;
+//            for(var i=0; i<ssMetadata.length; i++) {
+//                ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [preloader.queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+//            }    
+//        }
+//        catch(e){
+//            location.reload();
+//        }
+//        finally{
+//            clearInterval(loadInterval);
+//            stage.removeAllChildren();
+//            sceneManager.gameReady();
+//        }
+//    }
+//}
