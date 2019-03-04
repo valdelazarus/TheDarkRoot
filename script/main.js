@@ -142,8 +142,8 @@ function intialLog(){
 }
 function loadGraphics(){
     var loader = new createjs.LoadQueue(false);
-    loader.addEventListener("fileload", function(evt){handleFileLoad(evt)});
-    loader.addEventListener("complete", function(evt){handleComplete(evt)}, this);
+    loader.addEventListener("fileload", handleFileLoad);
+    loader.addEventListener("complete", handleComplete, this);
     loader.loadManifest(lib.properties.manifest);
 
     function handleFileLoad(evt) {
