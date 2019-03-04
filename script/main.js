@@ -55,8 +55,6 @@ var loadInterval;
 
 var comp=AdobeAn.getComposition("1977E17A7A7E4A0591398ED1B9A11F5A");
 var lib=comp.getLibrary();
-var ss=comp.getSpriteSheet();
-var ssMetadata = lib.ssMetadata;
 
 var textSpriteSheet;
 
@@ -115,7 +113,12 @@ function init(){
     intialLog();
     
     //preloadAssets();
-    loadGraphics();
+    try{
+        loadGraphics();
+    }
+    catch(e){
+        location.reload();
+    }
     
     window.addEventListener("click", resumeAudioContext);
 }
@@ -142,9 +145,12 @@ function intialLog(){
     console.log(`Welcome to the game. Version ${version}`);
 }
 function loadGraphics(){
+    var comp=AdobeAn.getComposition("1977E17A7A7E4A0591398ED1B9A11F5A");
+    var lib=comp.getLibrary();
     var loader = new createjs.LoadQueue(false);
     loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
     loader.addEventListener("complete", function(evt){handleComplete(evt,comp)}, this);
+    var lib=comp.getLibrary();
     loader.loadManifest(lib.properties.manifest);
 
     function handleFileLoad(evt, comp) {
@@ -153,16 +159,14 @@ function loadGraphics(){
     }
     function handleComplete(evt,comp) {
         //This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
+        var lib=comp.getLibrary();
+        var ss=comp.getSpriteSheet();
         var queue = evt.target;
-        try{
-            for(i=0; i<ssMetadata.length; i++) {
-                ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
-            }
+        var ssMetadata = lib.ssMetadata;
+        for(i=0; i<ssMetadata.length; i++) {
+            ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
         }
-        catch(err){
-            location.reload();
-        }
-        
+
         this.preloadAssets();
     }
 }
@@ -206,7 +210,8 @@ function resumeAudioContext(){
             // Should only need to fire once
             window.removeEventListener("click", resumeAudioContext);
         }
-    } catch (e) {
+    } 
+    catch (e) {
         // SoundJS context or web audio plugin may not exist
         console.error("There was an error while trying to resume the SoundJS Web Audio context...");
         console.error(e);
