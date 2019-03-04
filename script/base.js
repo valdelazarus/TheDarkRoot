@@ -451,7 +451,10 @@ class Boss extends Enemy{
     reduceHealth(points){
         this.health -= points;
         if (this.health<=0){
-            sceneManager.currentScene.bossLayer.removeChild(sceneManager.currentScene.boss);
+            if (sceneManager.currentScene.bossLayer != undefined){
+                sceneManager.currentScene.bossLayer.removeChild(sceneManager.currentScene.boss);
+            }
+            
             nextLevel = true;
             //console.log("Level 1 finished!");
         }
@@ -722,7 +725,10 @@ class Bullet extends MoveableGameObject{
         }
     }
     selfDestroy(){
-        sceneManager.currentScene.ppLayer.removeChild(this);
+        if (sceneManager.currentScene.ppLayer != undefined){
+            sceneManager.currentScene.ppLayer.removeChild(this);
+        }
+        
         for (var i=0; i<bullets.length; ++i){
             if (bullets[i] === this){
                 bullets.splice(i,1);
@@ -822,7 +828,9 @@ class ShootBehavior {
         
         bullets.push(bullet);
         
-        sceneManager.currentScene.ppLayer.addChild(bullet);
+        if (sceneManager.currentScene.ppLayer != undefined){
+            sceneManager.currentScene.ppLayer.addChild(bullet);
+        }
     }
 }
 //Chasing behavior
@@ -889,7 +897,10 @@ class Pickup extends GameObject{
         } 
     }
     selfDestroy(){
-        sceneManager.currentScene.ppLayer.removeChild(this);
+        if (sceneManager.currentScene.ppLayer != undefined){
+            sceneManager.currentScene.ppLayer.removeChild(this);
+        }
+        
         for (var i=0; i<pickups.length; ++i){
             if (pickups[i] === this){
                 pickups.splice(i,1);
@@ -974,7 +985,10 @@ class DropBehavior{
                 }
                 break;
         }
-        sceneManager.currentScene.ppLayer.addChild(item);
+        if (sceneManager.currentScene.ppLayer != undefined){
+            sceneManager.currentScene.ppLayer.addChild(item);
+        }
+        
 //        if (this.random <= this.dropRate){
 //            if (itemType == "Health"){
 //                var item = new HealthPickup(drawPreloadedImage(preloader.queue.getResult("HealthPickup"), .3, posX, posY), 3, 1);
@@ -1000,7 +1014,9 @@ class DropBehavior{
             item.x = posX;
             item.y = posY;
         }
-        sceneManager.currentScene.ppLayer.addChild(item);
+        if (sceneManager.currentScene.ppLayer != undefined){
+            sceneManager.currentScene.ppLayer.addChild(item);
+        }
     }
 }
 

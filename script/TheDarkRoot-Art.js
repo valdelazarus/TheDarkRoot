@@ -3,7 +3,7 @@
 var p; // shortcut to reference prototypes
 var lib={};var ss={};var img={};
 lib.ssMetadata = [
-		{name:"TheDarkRoot_Art_atlas_", frames: [[1026,0,464,531],[0,3080,825,517],[827,3080,671,541],[0,0,1024,768],[297,3868,92,159],[892,3849,37,41],[846,3623,211,224],[0,770,1024,768],[1059,3829,44,51],[1270,3759,170,182],[426,3599,207,320],[0,1540,1024,768],[1026,533,256,572],[635,3623,209,292],[846,3849,44,46],[0,3599,424,267],[1059,3780,51,47],[1059,3623,209,155],[1270,3623,234,134],[0,2310,1024,768],[0,3868,295,202]]}
+		{name:"TheDarkRoot_Art_atlas_", frames: [[1026,0,464,531],[0,3080,825,517],[827,3080,671,541],[0,2310,1024,768],[297,3868,92,159],[892,3849,37,41],[846,3623,211,224],[0,0,1024,768],[1059,3829,44,51],[1270,3759,170,182],[426,3599,207,320],[0,770,1024,768],[1026,533,256,572],[635,3623,209,292],[846,3849,44,46],[0,3599,424,267],[1059,3780,51,47],[1059,3623,209,155],[1270,3623,234,134],[0,1540,1024,768],[0,3868,295,202]]}
 ];
 
 
@@ -13,189 +13,147 @@ lib.ssMetadata = [
 
 (lib.boss1 = function() {
 	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(0);
-//    this.spriteSheet = spritesheet;
-//	this.gotoAndStop(1);
+	this.gotoAndStop(0);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.boss2 = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(1);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(20);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(1);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.boss3 = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(2);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(19);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(2);
 }).prototype = p = new cjs.Sprite();
 
 
 
-(lib.gameBG = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(3);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(3);
+(lib.gameBG2 = function() {
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(3);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.healthPickup = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(4);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(9);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(4);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.largeProj = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(5);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(6);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(5);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.largeWP = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(6);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(13);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(6);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.loadingScreenBG = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(7);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(12);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(7);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.mediumProj = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(8);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(4);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(8);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.mediumWP = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(9);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(8);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(9);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.melee = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(10);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(17);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(10);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.menuBG = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(11);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(18);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(11);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.player = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(12);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(11);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(12);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.playerAva = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(13);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(14);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(13);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.projectile = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(14);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(5);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(14);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.ranged = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(15);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(2);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(15);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.smallProj = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(16);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(10);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(16);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.smallWP = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(17);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(16);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(17);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.timerHUD = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(18);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(15);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(18);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.UIBG = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(19);
-//	this.spriteSheet = spritesheet;
-//	this.gotoAndStop(0);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(19);
 }).prototype = p = new cjs.Sprite();
 
 
 
 (lib.UIBtn = function() {
-    this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
-    this.gotoAndStop(20);
-	//this.spriteSheet = spritesheet;
-//	this.gotoAndStop(7);
+	this.spriteSheet = ss["TheDarkRoot_Art_atlas_"];
+	this.gotoAndStop(20);
 }).prototype = p = new cjs.Sprite();
 
 
@@ -426,7 +384,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,92,159);
 	this.initialize(mode,startPosition,loop,{});
 
 	// Layer_1
-	this.instance = new lib.gameBG();
+	this.instance = new lib.gameBG2();
 	this.instance.parent = this;
 
 	this.timeline.addTween(cjs.Tween.get(this.instance).wait(1));

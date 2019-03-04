@@ -220,7 +220,7 @@ class GameLevel extends createjs.Container{
             this.spawnBoss();
         } 
         
-        if (this.boss == undefined){
+        if (this.boss == undefined || this.boss == null){
             this.timer++;
             if (this.timer > this.levelData.waveSpawnInterval * createjs.Ticker.framerate){
                 this.timer = 0;
