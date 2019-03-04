@@ -145,12 +145,9 @@ function intialLog(){
     console.log(`Welcome to the game. Version ${version}`);
 }
 function loadGraphics(){
-    var comp=AdobeAn.getComposition("1977E17A7A7E4A0591398ED1B9A11F5A");
-    var lib=comp.getLibrary();
     var loader = new createjs.LoadQueue(false);
     loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
     loader.addEventListener("complete", function(evt){handleComplete(evt,comp)}, this);
-    var lib=comp.getLibrary();
     loader.loadManifest(lib.properties.manifest);
 
     function handleFileLoad(evt, comp) {
@@ -159,15 +156,20 @@ function loadGraphics(){
     }
     function handleComplete(evt,comp) {
         //This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
-        var lib=comp.getLibrary();
-        var ss=comp.getSpriteSheet();
-        var queue = evt.target;
-        var ssMetadata = lib.ssMetadata;
-        for(i=0; i<ssMetadata.length; i++) {
-            ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+        try{
+            var ss=comp.getSpriteSheet();
+            var queue = evt.target;
+            var ssMetadata = lib.ssMetadata;
+            for(var i=0; i<ssMetadata.length; i++) {
+                ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+            }    
         }
-
-        this.preloadAssets();
+        catch(e){
+            location.reload();
+        }
+        finally{
+            this.preloadAssets();
+        }
     }
 }
 function preloadAssets(){
