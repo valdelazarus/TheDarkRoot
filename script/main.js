@@ -191,7 +191,12 @@ function preloadAssets(){
     
         preloader.queue.on("complete", function(){
             preloader.queue.removeAllEventListeners("complete");
-            setTimeout(handleComplete,3000);
+            try{
+                setTimeout(handleComplete,3000);
+            }
+            catch(e){
+                location.reload();
+            }
         });
 }
 function handleComplete(){
