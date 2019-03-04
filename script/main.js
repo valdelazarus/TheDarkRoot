@@ -113,7 +113,12 @@ function init(){
     
     intialLog();
     
-    loadGraphics();
+    try{
+        loadGraphics();
+    }
+    catch(e){
+        location.reload();
+    }
     
     window.addEventListener("click", resumeAudioContext);
 }
@@ -190,13 +195,20 @@ function preloadAssets(){
         });
 }
 function handleComplete(){
-    var ss=comp.getSpriteSheet();
-    var ssMetadata = lib.ssMetadata;
-    for(var i=0; i<ssMetadata.length; i++) {
-        ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [preloader.queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+    try{
+        var ss=comp.getSpriteSheet();
+        var ssMetadata = lib.ssMetadata;
+        for(var i=0; i<ssMetadata.length; i++) {
+            ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [preloader.queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+        }    
     }
-    stage.removeAllChildren();
-    sceneManager.gameReady();
+    catch(e){
+        location.reload();
+    }
+    finally{
+        stage.removeAllChildren();
+        sceneManager.gameReady();
+    }
 }
 
 /* HANDLE AUDIO CONTEXT FOR AUTOPLAY POLICY ON CHROME AND SAFARI*/
