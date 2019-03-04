@@ -141,9 +141,12 @@ function intialLog(){
     console.log(`Welcome to the game. Version ${version}`);
 }
 function loadGraphics(){
+    var comp=AdobeAn.getComposition("1977E17A7A7E4A0591398ED1B9A11F5A");
+    var lib=comp.getLibrary();
     var loader = new createjs.LoadQueue(false);
     loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
     loader.addEventListener("complete", function(evt){handleComplete(evt,comp)}, this);
+    var lib=comp.getLibrary();
     loader.loadManifest(lib.properties.manifest);
 
     function handleFileLoad(evt, comp) {
@@ -159,6 +162,7 @@ function loadGraphics(){
         for(i=0; i<ssMetadata.length; i++) {
             ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
         }
+
         this.preloadAssets();
     }
 }
