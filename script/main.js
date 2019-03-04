@@ -55,6 +55,8 @@ var loadInterval;
 
 var comp=AdobeAn.getComposition("1977E17A7A7E4A0591398ED1B9A11F5A");
 var lib=comp.getLibrary();
+var ss=comp.getSpriteSheet();
+var ssMetadata = lib.ssMetadata;
 
 var textSpriteSheet;
 
@@ -101,7 +103,7 @@ var smallAmmoDisplay;
 var largeAmmoDisplay;
 
 //calling init() function on page load
-init();
+//init();
 
 function init(){
     //set up auto-update on stage
@@ -112,7 +114,8 @@ function init(){
     
     intialLog();
     
-    preloadAssets();
+    //preloadAssets();
+    loadGraphics();
     
     window.addEventListener("click", resumeAudioContext);
 }
@@ -137,6 +140,31 @@ function retinalize(){
 }
 function intialLog(){
     console.log(`Welcome to the game. Version ${version}`);
+}
+function loadGraphics(){
+    var loader = new createjs.LoadQueue(false);
+    loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
+    loader.addEventListener("complete", function(evt){handleComplete(evt,comp)}, this);
+    loader.loadManifest(lib.properties.manifest);
+
+    function handleFileLoad(evt, comp) {
+        var images=comp.getImages();	
+        if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }	
+    }
+    function handleComplete(evt,comp) {
+        //This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
+        var queue = evt.target;
+        try{
+            for(i=0; i<ssMetadata.length; i++) {
+                ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+            }
+        }
+        catch(err){
+            location.reload();
+        }
+        
+        this.preloadAssets();
+    }
 }
 function preloadAssets(){
     /*LOADING SCREEN*/
@@ -163,7 +191,7 @@ function preloadAssets(){
         preloader.addFile("Special Shoot", "sound/shoot2.wav");
         preloader.addFile("Background1","sound/EpicTheme.mp3");
     
-        preloader.addFiles(lib.properties.manifest);
+        //preloader.addFiles(lib.properties.manifest);
         
         preloader.loadFiles();
 
@@ -203,11 +231,6 @@ function updateLoadingBar(){
     
     if (fakeProgress >= 1){
         clearInterval(loadInterval);
-        var ss=comp.getSpriteSheet();
-        var ssMetadata = lib.ssMetadata;
-        for(i=0; i<ssMetadata.length; i++) {
-            ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [preloader.queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
-        }
         stage.removeAllChildren();
         sceneManager.gameReady();
     }
