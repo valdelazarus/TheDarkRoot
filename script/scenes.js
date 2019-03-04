@@ -204,6 +204,7 @@ class GameLevel extends createjs.Container{
     }
     spawnEnemies(){
         if (!gameOver && !nextLevel && timerObj.seconds > 0){
+            console.log("Level spawned minions");
             this.levelData.enemySpawner.spawnMinions();
         }
     }

@@ -16,8 +16,9 @@ class SceneManager{
         stage.addChild(copyRightText);
     }
     createLoadingScene(){
-        var bg = new lib.LoadingScreen();
+        //var bg = new lib.LoadingScreen();
         //var bg = drawImage("images/loadingScreenBG.jpg", 1, 0, 0);
+        var bg = drawPreloadedImage(preloader.queue.getResult("loadingScreen"),1,0,0);
         stage.addChild(bg);
     }
     createFontSheet(){
