@@ -291,11 +291,10 @@ class GameLevel extends createjs.Container{
     }
     runEnemyBehavior(){
         for (var i =0; i<enemies.length; ++i){      
-           
-            
+ 
             if ((enemies[i].type == "Melee")||(enemies[i].type == "Boss") ){
                 if (checkCollisionSprSpr(player, enemies[i])){
-                    enemies[i].speed = 0;              
+                    enemies[i].speed = 0;      
                     if (enemies[i].dealMeleeDamage){
                         enemies[i].meleeBehavior.atkCounter++;
                         enemies[i].dealMeleeDamage();
@@ -330,6 +329,7 @@ class GameLevel extends createjs.Container{
         for (var i=0; i<bullets.length; ++i){     
             if ((bullets[i].source.type === 'Ranged') ||(bullets[i].source.type == "Boss")){
                 if (checkCollisionSprSpr(bullets[i],player)){
+                    playSound("Hurt");
                     bullets[i].hitPlayer();
                     this.removeChild(bullets[i]);
                     bullets.splice(i,1);
@@ -348,10 +348,12 @@ class GameLevel extends createjs.Container{
             
             if (pickups[i].graphic.nominalBounds != undefined){
                 if (checkCollisionSprSpr(pickups[i],player)){
+                    playSound("Pickup");
                     pickups[i].onPickup();
                 }
             } else {
                 if (checkCollisionSpriteRect(player, pickups[i])){
+                    playSound("Pickup");
                     pickups[i].onPickup();
                 }
             }
@@ -410,6 +412,7 @@ class GameLevel1 extends GameLevel{
             this.boss.healthBar.x = this.boss.graphic.nominalBounds.width/2 * this.boss.graphic.scale;
 
             enemies.push(this.boss);
+            playSound("Boss Appear");
             this.bossLayer.addChild(this.boss);
 
             this.bossSpawned = false;
@@ -439,6 +442,7 @@ class GameLevel2 extends GameLevel{
             this.boss.healthBar.x = this.boss.graphic.nominalBounds.width/2 * this.boss.graphic.scale;
 
             enemies.push(this.boss);
+            playSound("Boss Appear");
             this.bossLayer.addChild(this.boss);
 
             this.bossSpawned = false;
@@ -464,6 +468,7 @@ class GameLevel3 extends GameLevel{
             this.boss.healthBar.x = this.boss.graphic.nominalBounds.width/2 * this.boss.graphic.scale;
             
             enemies.push(this.boss);
+            playSound("Boss Appear");
             this.bossLayer.addChild(this.boss);
 
             this.bossSpawned = false;

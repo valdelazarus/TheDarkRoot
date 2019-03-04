@@ -177,6 +177,14 @@ function preloadAssets(){
         preloader.addFile("Normal Shoot", "sound/shoot1.wav");
         preloader.addFile("Special Shoot", "sound/shoot2.wav");
         preloader.addFile("Background1","sound/EpicTheme.mp3");
+        
+        preloader.addFile("Pickup", "sound/pickup.wav");
+        preloader.addFile("Hurt", "sound/hit.wav");
+    
+        preloader.addFile("Minion Die", "sound/minionDie.wav");
+        preloader.addFile("Boss Die", "sound/bossDie.wav");
+        preloader.addFile("Boss Hurt", "sound/bossHurt.wav");
+        preloader.addFile("Boss Appear", "sound/bossAppear.wav");   
     
         preloader.addFiles(lib.properties.manifest);
 

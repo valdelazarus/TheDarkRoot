@@ -452,6 +452,7 @@ class Boss extends Enemy{
         this.health -= points;
         if (this.health<=0){
             if (sceneManager.currentScene.bossLayer != undefined){
+                playSound("Boss Die");
                 sceneManager.currentScene.bossLayer.removeChild(sceneManager.currentScene.boss);
             }
             
@@ -698,6 +699,7 @@ class Bullet extends MoveableGameObject{
         for(var i=0 ; i <enemies.length; ++i){
             if (checkCollisionSprSpr(this,enemies[i])){      
                 if (enemies[i].type == 'Boss'){
+                    playSound("Boss Hurt");
                     
                     this.source.damage = Math.round(this.source.minDamage + Math.random()*(this.source.maxDamage-this.source.minDamage)); //randomize player damage dealt
                     
@@ -709,6 +711,7 @@ class Bullet extends MoveableGameObject{
                     this.selfDestroy();
                 } else {
                     this.selfDestroy();
+                    playSound("Minion Die");
                     enemies[i].parent.removeChild(enemies[i]);
                     enemies[i].dropItem();
                     enemies.splice(i, 1);
