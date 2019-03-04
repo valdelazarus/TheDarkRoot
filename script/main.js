@@ -142,17 +142,16 @@ function intialLog(){
 }
 function loadGraphics(){
     var loader = new createjs.LoadQueue(false);
-    loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
-    loader.addEventListener("complete", function(evt){handleComplete(evt,comp)}, this);
+    loader.addEventListener("fileload", function(evt){handleFileLoad(evt)});
+    loader.addEventListener("complete", function(evt){handleComplete(evt)}, this);
     loader.loadManifest(lib.properties.manifest);
 
-    function handleFileLoad(evt, comp) {
+    function handleFileLoad(evt) {
         var images=comp.getImages();	
         if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }	
     }
-    function handleComplete(evt,comp) {
+    function handleComplete(evt) {
         //This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
-        var lib=comp.getLibrary();
         var ss=comp.getSpriteSheet();
         var queue = evt.target;
         var ssMetadata = lib.ssMetadata;
