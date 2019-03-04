@@ -6,14 +6,16 @@
     <title>The Dark Root</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+<!--
     <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Cabin" rel="stylesheet">
+-->
 </head>
 <body>
     <!-- header/title -->
     <header>
-        <img src="images/TeamLogo.png" id="header-img">
-        <span id="title">The Dark Root</span>
+<!--        <span id="title">The Dark Root</span>-->
+        <center><img src="images/gameTitleTrans.png" id="gameTitle"></center>
     </header>
     <main>
         <canvas id="game-canvas" width="1024" height="768" style="border: 1px dashed #000">
@@ -47,12 +49,16 @@
     
     <!-- footer -->
     <footer>
+       
+        <center>
+            <img src="images/TeamLogo.png" id="header-img"></center>
         <center>&copy; Copyright NC Bots - Centennial College Winter 2019 - COMP 397</center>
     </footer>
     
     
     <!-- import library -->
     <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+    <script src="script/TheDarkRoot-Art.js"></script>  
    
      <!-- import game scripts -->
     <script src="script/graphics.js"></script>

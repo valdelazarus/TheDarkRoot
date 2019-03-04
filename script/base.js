@@ -174,6 +174,8 @@ class Player extends MoveableGameObject{
     constructor(graphic, speed, atkSpd, aimAngle, shootInterval, specialAtkInterval, health, minDamage, maxDamage){
         super(graphic);
         
+        this.graphic.shadow = drawShadow("#ffffcc",2,2,10);
+        
         this.weaponManager = new WeaponManager();
         
         this.speed = speed;
@@ -201,8 +203,8 @@ class Player extends MoveableGameObject{
         
         //createjs.Ticker.on('tick', this.update.bind(this));
         this.currentWeapon = this.weaponManager.normalWeapon;
-        this.currentWeapon.graphic.x = this.graphic.image.width/2*this.graphic.scale;
-        this.currentWeapon.graphic.y = this.graphic.image.height*this.graphic.scale - 10;
+        this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/2*.3-10;
+        this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*.3;
         this.addChild(this.currentWeapon.graphic);
     }
     update(){
@@ -251,8 +253,8 @@ class Player extends MoveableGameObject{
             this.removeChild(this.currentWeapon.graphic);
             
             this.currentWeapon = this.weaponManager.normalWeapon;
-            this.currentWeapon.graphic.x = this.graphic.image.width/2*this.graphic.scale;
-            this.currentWeapon.graphic.y = this.graphic.image.height*this.graphic.scale - 10;
+            this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/2*this.graphic.scale;
+            this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*this.graphic.scale - 10;
             this.addChild(this.currentWeapon.graphic);
             
             this.atkSpd = this.weaponManager.normalWeapon.atkSpd;
@@ -263,8 +265,8 @@ class Player extends MoveableGameObject{
                 this.removeChild(this.currentWeapon.graphic);
                 
                 this.currentWeapon = this.weaponManager.smallWeapon;
-                this.currentWeapon.graphic.x = this.graphic.image.width/2*this.graphic.scale;
-                this.currentWeapon.graphic.y = this.graphic.image.height*this.graphic.scale - 10;
+                this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/2*this.graphic.scale;
+                this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*this.graphic.scale - 10;
                 this.addChild(this.currentWeapon.graphic);
                 
                 this.atkSpd = this.weaponManager.smallWeapon.atkSpd;
@@ -276,8 +278,8 @@ class Player extends MoveableGameObject{
                 this.removeChild(this.currentWeapon.graphic);
                 
                 this.currentWeapon = this.weaponManager.largeWeapon;
-                this.currentWeapon.graphic.x = this.graphic.image.width/2*this.graphic.scale;
-                this.currentWeapon.graphic.y = this.graphic.image.height*this.graphic.scale - 10;
+                this.currentWeapon.graphic.x = this.graphic.nominalBounds.width/2*this.graphic.scale;
+                this.currentWeapon.graphic.y = this.graphic.nominalBounds.height*this.graphic.scale - 10;
                 this.addChild(this.currentWeapon.graphic);
                 
                 this.atkSpd = this.weaponManager.largeWeapon.atkSpd;
@@ -291,6 +293,8 @@ class Player extends MoveableGameObject{
 class Enemy extends MoveableGameObject{
     constructor(graphic, speed, damage){
         super(graphic);
+        
+        this.graphic.shadow = drawShadow("#ccc",2,2,10);
         
         this.speed = speed; 
         
@@ -407,7 +411,7 @@ class Boss extends Enemy{
         
         this.point = {x: player.x, y: player.y};
         
-        this.healthBar = new HealthBar(this.health, this.health, 100, 10, this.graphic.image.width/2*this.graphic.scale, 0,null);
+        this.healthBar = new HealthBar(this.health, this.health, 200, 10, 0, 0,null);
         
         this.addChild(this.healthBar);
         
@@ -454,17 +458,17 @@ class Boss extends Enemy{
     }
     restrictToGameSpaceMinusPlayer(){
         if (player != undefined){
-            if(this.x + this.graphic.image.width * this.graphic.scale > stage.canvas.width - player.graphic.image.width * player.graphic.scale){
-                this.x = stage.canvas.width - player.graphic.image.width * player.graphic.scale - this.graphic.image.width * this.graphic.scale;
+            if(this.x + this.graphic.nominalBounds.width * this.graphic.scale > stage.canvas.width - player.graphic.nominalBounds.width * player.graphic.scale){
+                this.x = stage.canvas.width - player.graphic.nominalBounds.width * player.graphic.scale - this.graphic.nominalBounds.width * this.graphic.scale;
             }
-            if(this.x  < player.graphic.image.width * player.graphic.scale){
-                this.x = player.graphic.image.width * player.graphic.scale;
+            if(this.x  < player.graphic.nominalBounds.width * player.graphic.scale){
+                this.x = player.graphic.nominalBounds.width * player.graphic.scale;
             }
-            if(this.y + this.graphic.image.height * this.graphic.scale > stage.canvas.height - player.graphic.image.height * player.graphic.scale){
-                this.y = stage.canvas.height - player.graphic.image.height * player.graphic.scale - this.graphic.image.height * this.graphic.scale;
+            if(this.y + this.graphic.nominalBounds.height * this.graphic.scale > stage.canvas.height - player.graphic.nominalBounds.height * player.graphic.scale){
+                this.y = stage.canvas.height - player.graphic.nominalBounds.height * player.graphic.scale - this.graphic.nominalBounds.height * this.graphic.scale;
             }
-            if(this.y < player.graphic.image.height * player.graphic.scale){
-                this.y = player.graphic.image.height * player.graphic.scale;
+            if(this.y < player.graphic.nominalBounds.height * player.graphic.scale){
+                this.y = player.graphic.nominalBounds.height * player.graphic.scale;
             }
         }
     }
@@ -521,7 +525,7 @@ class Boss1 extends Boss{
     }
     spawnMeleeMinions(){
         if (timerObj.seconds <= 0){
-            this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height/2 * this.graphic.scale, 0);
+            this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.nominalBounds.width/2 * this.graphic.scale, this.y+ this.graphic.nominalBounds.height/2 * this.graphic.scale, 0);
         }
     }
     dealMeleeDamage(){
@@ -645,9 +649,9 @@ class Boss3 extends Boss1{
     }
     spawnMeleeMinions(){
         if (timerObj.seconds <= 0){
-            this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y, 0);
+            this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.nominalBounds.width/2 * this.graphic.scale, this.y, 0);
         
-            this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.image.width/2 * this.graphic.scale, this.y+ this.graphic.image.height * this.graphic.scale, 0);
+            this.spawner.spawnAtSpecifiedPosition(this.x + this.graphic.nominalBounds.width/2 * this.graphic.scale, this.y+ this.graphic.nominalBounds.height * this.graphic.scale, 0);
         }    
     }
 }
@@ -689,7 +693,7 @@ class Bullet extends MoveableGameObject{
                     
                     enemies[i].reduceHealth(this.source.damage);
                     
-                    new DamageText(enemies[i],this.source.damage, "red", enemies[i].graphic.image.width/2*enemies[i].graphic.scale, enemies[i].graphic.image.height/2*enemies[i].graphic.scale);
+                    new DamageText(enemies[i],this.source.damage, "red", enemies[i].graphic.nominalBounds.width/2*enemies[i].graphic.scale, enemies[i].graphic.nominalBounds.height/2*enemies[i].graphic.scale);
                     
                     console.log("Hit "+ enemies[i].type + ". Target health: "+ enemies[i].health);
                     this.selfDestroy();
@@ -772,12 +776,15 @@ class ShootBehavior {
         }
     }
     generateBullet(source, aimOverwrite){
-        var spawnPosX = source.x + source.graphic.image.width * source.graphic.scale/2;
-        var spawnPosY = source.y + source.graphic.image.height * source.graphic.scale/2;
+        var spawnPosX = source.x + source.graphic.nominalBounds.width * source.graphic.scale/2;
+        var spawnPosY = source.y + source.graphic.nominalBounds.height * source.graphic.scale/2;
 
 //        var bullet = new Bullet(drawImage('images/playerBullet.png', .2, spawnPosX, spawnPosY),
 //                               5, source.type);
-        var bullet = new Bullet(drawPreloadedImage(preloader.queue.getResult("Projectile"), .2, spawnPosX, spawnPosY), 1, source);
+        var bullet = new Bullet(new lib.Projectile(), 1, source);
+        bullet.graphic.scale = .3;
+        bullet.x = spawnPosX;
+        bullet.y = spawnPosY;
 
         var angle;
         if(aimOverwrite !== undefined)
@@ -922,7 +929,10 @@ class DropBehavior{
         switch (itemType){
             case "Health":
                 if (this.random <= this.healthDropRate){
-                    var item = new HealthPickup(drawPreloadedImage(preloader.queue.getResult("HealthPickup"), .3, posX, posY), 10, 1);
+                    var item = new HealthPickup(new lib.HealthPickup(), 10, 1);
+                    item.graphic.scale = .3;
+                    item.x = posX;
+                    item.y = posY;
                 }
                 break;
             case "SmallAmmo":
@@ -949,7 +959,10 @@ class DropBehavior{
         } else if (this.random < this.smallAmmoDropRate){
             var item = new SmallAmmoPickup(drawRect("#999", 20, 20, posX, posY),3,10);
         } else if (this.random < this.healthDropRate){
-            var item = new HealthPickup(drawPreloadedImage(preloader.queue.getResult("HealthPickup"), .3, posX, posY), 3, 1);
+            var item = new HealthPickup(new lib.HealthPickup(), 3, 1);
+            item.graphic.scale = .3;
+            item.x = posX;
+            item.y = posY;
         }
     }
 }

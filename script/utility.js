@@ -15,7 +15,153 @@ class SceneManager{
         var copyRightText = drawText("\xA9 Copyright 2019 - NC Bots", "Bold 20px Arial", "#000", canvas.width/2, canvas.height/2+50);
         stage.addChild(copyRightText);
     }
+    createLoadingScene(){
+        var bg = new lib.LoadingScreen();
+        stage.addChild(bg);
+    }
+    createFontSheet(){
+        var textData = {
+            "images": [preloader.queue.getResult("font")],
+            
+            "frames": [
+                [4, 38, 16, 62], 
+                [50, 35, 46, 66],
+                [98, 37, 38, 66],
+                [138, 35, 41, 69],
+                [181,36,50,67],
+                [233,38,44, 64],
+                [279,38,47,68],
+                [328,38,53,67],
+                [383,33,52,69],
+                [437,35,45,67],
+                [484,35,44,67],
+                [540,37,32,64],
+                [574,49,64,57],
+                [640,38,100,91],
+                [742,38,92,115],
+                [836,37,106,83],
+                [944,38,69,94],
+                [1015,37,123,90],
+                [1140,38,73,90],
+                [1215,39,121,129],
+                [1338,39,58,107],
+                [1398,32,122,83],
+                [1522,37,102,140],
+                [1626,36,110,86],
+                [1738,25,105,98],
+                [1845,22,89,132],
+                [1936,26,66,84],
+                [2004,25,67,78],
+                [2073,32,72,109],
+                [2147,33,78,95],
+                [2227,35,135,82],
+                [2364,31,89,78],
+                [2455,22,171,82],
+                [2628,27,63,76],
+                [2693,8,81,98],
+                [2776,2,97,101],
+                [2875,37,126,100],
+                [3003,32,65,104],
+                [3070,31,114,87],
+                [3198,66,36,37],
+                [3236,43,36,60],
+                [3274,66,30,36],
+                [3306,43,35,60],
+                [3343,67,37,35],
+                [3382,43,74,79],
+                [3458,66,32,36],
+                [3492,42,35,61],
+                [3529,53,19,49],
+                [3550,53,39,67],
+                [3591,43,35,59],
+                [3628,42,19,61],
+                [3649,66,37,36],
+                [3688,67,35,36],
+                [3725,64,37,37],
+                [3764,64,34,60],
+                [3800,63,34,64],
+                [3836,66,38,38],
+                [3876,66,30,37],
+                [3908,54,57,48],
+                [3967,65,32,38],
+                [4001,63,37,38],
+                [4040,64,44,38],
+                [2,245,33,41],
+                [37,246,44,64],
+                [83,246,39,35]
+            ],
+            "animations": {
+                "!":[0], 
+                "0":[1], 
+                "1":[2], 
+                "2":[3], 
+                "3":[4], 
+                "4":[5], 
+                "5":[6], 
+                "6":[7], 
+                "7":[8], 
+                "8":[9],
+                "9":[10],
+                "?":[11],
+                "@":[12],
+                "A":[13],
+                "B":[14],
+                "C":[15],
+                "D":[16],
+                "E":[17],
+                "F":[18],
+                "G":[19],
+                "H":[20],
+                "I":[21],
+                "J":[22],
+                "K":[23],
+                "L":[24],
+                "M":[25],
+                "N":[26],
+                "O":[27],
+                "P":[28],
+                "Q":[29],
+                "R":[30],
+                "S":[31],
+                "T":[32],
+                "U":[33],
+                "V":[34],
+                "W":[35],
+                "X":[36],
+                "Y":[37],
+                "Z":[38],
+                "a":[39],
+                "b":[40],
+                "c":[41],
+                "d":[42],
+                "e":[43],
+                "f":[44],
+                "g":[45],
+                "h":[46],
+                "i":[47],
+                "j":[48],
+                "k":[49],
+                "l":[50],
+                "m":[51],
+                "n":[52],
+                "o":[53],
+                "p":[54],
+                "q":[55],
+                "r":[56],
+                "s":[57],
+                "t":[58],
+                "u":[59],
+                "v":[60],
+                "w":[61],
+                "x":[62],
+                "y":[63],
+                "z":[64]    
+            }
+        };
+        textSpriteSheet = new createjs.SpriteSheet(textData);
+    }
     gameReady(){
+        this.createFontSheet();
         createjs.Ticker.on("tick", this.onTick, this);
         this.changeState(GameStates.MAIN_MENU);
         this.setUpKeyboardMouseEvent();
@@ -189,7 +335,7 @@ class SceneManager{
             player.aimAngle = Math.atan2(mouseY-player.y,mouseX-player.x) / Math.PI * 180;
 
             //rotate aimIndicator accordingly 
-            aimIndicator.setTransform(aimIndicator.x,aimIndicator.y,1,1,player.aimAngle+90);
+            aimIndicator.setTransform(aimIndicator.x,aimIndicator.y,1,1,player.aimAngle-270);
         }
     }
     handleKeyBoardEvent(){
@@ -273,12 +419,12 @@ class Preloader{
         return this.queue.progress;
     }
     //create loading bar at pos x and y and return the instance
-    createLoadingBar(width, height, posX, posY, color= "#000"){
+    createLoadingBar(width, height, posX, posY, color= "#fff"){
         this.loadingBar = drawBorderedRect(color, width, height, posX, posY);
         stage.addChild(this.loadingBar);
     }
     //update loading bar with real loading progress - pass in bar instance
-    updateLoadingBar(loadingBar, fillColor="#666", strokeColor="#000"){
+    updateLoadingBar(loadingBar, fillColor="#ccc", strokeColor="#fff"){
         loadingBar.graphics.beginFill(fillColor);
         
         loadingBar.graphics.drawRect(0, 0, loadingBar.getBounds().width *                     this.getLoadingProgress(), loadingBar.getBounds().height);
@@ -311,19 +457,23 @@ class EnemySpawner{
             if(random){
                 var enemy = this.randomizeMinions(nextX, nextY);
             } else if (!ranged){
-                var enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, nextX, nextY), this.levelData.enemySpd, this.levelData.meleeDmg, this.levelData.meleeAtkInterval, this.levelData.meleeHealthDropRate, this.levelData.meleeSmallAmmoDropRate, this.levelData.meleeLargeAmmoDropRate);
-                enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
-                enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
+                var enemy = new MeleeEnemy(new lib.Melee(), this.levelData.enemySpd, this.levelData.meleeDmg, this.levelData.meleeAtkInterval, this.levelData.meleeHealthDropRate, this.levelData.meleeSmallAmmoDropRate, this.levelData.meleeLargeAmmoDropRate);
+                enemy.graphic.scale = .3;
+                
+                enemy.x = nextX - enemy.graphic.nominalBounds.width/2*enemy.graphic.scale;
+                enemy.y = nextY - enemy.graphic.nominalBounds.height/2*enemy.graphic.scale;
             } else if (ranged){
-                var enemy = new RangedEnemy(drawPreloadedImage(preloader.queue.getResult("Ranged"), .3, nextX, nextY), this.levelData.enemySpd, this.levelData.rangedDmg, this.levelData.rangedAtkSpd, 0, this.levelData.shootAtkInterval, 0, 500, this.levelData.rangedHealthDropRate, this.levelData.rangedSmallAmmoDropRate, this.levelData.rangedLargeAmmoDropRate);
-                enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
-                enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
+                var enemy = new RangedEnemy(new lib.Ranged(), this.levelData.enemySpd, this.levelData.rangedDmg, this.levelData.rangedAtkSpd, 0, this.levelData.shootAtkInterval, 0, 500, this.levelData.rangedHealthDropRate, this.levelData.rangedSmallAmmoDropRate, this.levelData.rangedLargeAmmoDropRate);
+                enemy.graphic.scale = .3;
+                
+                enemy.x = nextX - enemy.graphic.nominalBounds.width/2*enemy.graphic.scale;
+                enemy.y = nextY - enemy.graphic.nominalBounds.height/2*enemy.graphic.scale;
             }
             
             enemies.push(enemy);
 
-            nextX = gap + Math.random() * (stage.canvas.width - enemy.graphic.image.width * enemy.graphic.scale);
-            nextY = gap + Math.random() * (stage.canvas.height - enemy.graphic.image.height * enemy.graphic.scale); 
+            nextX = gap + Math.random() * (stage.canvas.width - enemy.graphic.nominalBounds.width * enemy.graphic.scale);
+            nextY = gap + Math.random() * (stage.canvas.height - enemy.graphic.nominalBounds.height * enemy.graphic.scale); 
         }
     }
     spawnAtSpecifiedPosition(posX, posY, maxGap, random=false){
@@ -336,9 +486,11 @@ class EnemySpawner{
             if (random){
                 var enemy = this.randomizeMinions(nextX, nextY);
             }else{
-                var enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, nextX, nextY), this.levelData.enemySpd, this.levelData.meleeDmg, this.levelData.meleeAtkInterval, this.levelData.meleeHealthDropRate, this.levelData.meleeSmallAmmoDropRate, this.levelData.meleeLargeAmmoDropRate);
-                enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
-                enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
+                var enemy = new MeleeEnemy(new lib.Melee(), this.levelData.enemySpd, this.levelData.meleeDmg, this.levelData.meleeAtkInterval, this.levelData.meleeHealthDropRate, this.levelData.meleeSmallAmmoDropRate, this.levelData.meleeLargeAmmoDropRate);
+                enemy.graphic.scale = .3;
+                
+                enemy.x = nextX - enemy.graphic.nominalBounds.width/2*enemy.graphic.scale;
+                enemy.y = nextY - enemy.graphic.nominalBounds.height/2*enemy.graphic.scale;
             }
             
             enemies.push(enemy);
@@ -350,13 +502,16 @@ class EnemySpawner{
         var n = 1+ Math.random()*10;
         var enemy;
         if (n<8){
-            enemy = new MeleeEnemy(drawPreloadedImage(preloader.queue.getResult("Melee"), .5, posX, posY), this.levelData.enemySpd, this.levelData.meleeDmg, this.levelData.meleeAtkInterval, this.levelData.meleeHealthDropRate, this.levelData.meleeSmallAmmoDropRate, this.levelData.meleeLargeAmmoDropRate);
-            enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
-            enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
+            enemy = new MeleeEnemy(new lib.Melee(), this.levelData.enemySpd, this.levelData.meleeDmg, this.levelData.meleeAtkInterval, this.levelData.meleeHealthDropRate, this.levelData.meleeSmallAmmoDropRate, this.levelData.meleeLargeAmmoDropRate);
+            
+            enemy.graphic.scale = .3;
+            enemy.x = poxX - enemy.graphic.nominalBounds.width/2*enemy.graphic.scale;
+            enemy.y = posY - enemy.graphic.nominalBounds.height/2*enemy.graphic.scale;
         } else {
-            enemy = new RangedEnemy(drawPreloadedImage(preloader.queue.getResult("Ranged"), .3, posX, posY), this.levelData.enemySpd, this.levelData.rangedDmg, this.levelData.rangedAtkSpd, 0, this.levelData.shootAtkInterval, 0, 500, this.levelData.rangedHealthDropRate, this.levelData.rangedSmallAmmoDropRate, this.levelData.rangedLargeAmmoDropRate);
-            enemy.x -= enemy.graphic.image.width/2*enemy.graphic.scale;
-            enemy.y -= enemy.graphic.image.height/2*enemy.graphic.scale;
+            enemy = new RangedEnemy(new lib.Ranged(), this.levelData.enemySpd, this.levelData.rangedDmg, this.levelData.rangedAtkSpd, 0, this.levelData.shootAtkInterval, 0, 500, this.levelData.rangedHealthDropRate, this.levelData.rangedSmallAmmoDropRate, this.levelData.rangedLargeAmmoDropRate);
+            enemy.graphic.scale = .3;
+            enemy.x = posX - enemy.graphic.nominalBounds.width/2*enemy.graphic.scale;
+            enemy.y = posY - enemy.graphic.nominalBounds.height/2*enemy.graphic.scale;
         }
         return enemy;
     }
@@ -380,9 +535,18 @@ class HealthBar extends createjs.Container{
         this.fillArea = null;
         
          //will be replaced with player avatar later 
-        this.text = drawText(text, "20px Arial Bold", "#000", -this.width/2-40, 0);
+        //this.text = drawText(text, "20px Arial Bold", "#000", -this.width/2-40, 0);
+        if (text != null){
+            this.ava = new lib.PlayerAva();
+            this.ava.scale = .3;
+            this.ava.x = -this.width/2-70;
+            this.ava.y = -10;
+             this.addChild(this.ava, this.fillArea, this.border);
+        }
+        else {
+            this.addChild(this.fillArea, this.border); //group border and fill 
+        }
         
-        this.addChild(this.text, this.fillArea, this.border); //group border and fill 
         //stage.addChild(this);
         
         createjs.Ticker.on('tick',this.update.bind(this));

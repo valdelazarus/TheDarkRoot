@@ -53,6 +53,11 @@ var preloader = new Preloader();
 var fakeProgress = 0;
 var loadInterval; 
 
+var comp=AdobeAn.getComposition("1977E17A7A7E4A0591398ED1B9A11F5A");
+var lib=comp.getLibrary();
+
+var textSpriteSheet;
+
 var sceneManager = new SceneManager();
 
 var nextLevel = false;
@@ -108,7 +113,8 @@ function init(){
     
     intialLog();
     
-    preloadAssets();
+//    preloadAssets();
+    loadGraphics();
     
     window.addEventListener("click", resumeAudioContext);
 }
@@ -134,26 +140,53 @@ function retinalize(){
 function intialLog(){
     console.log(`Welcome to the game. Version ${version}`);
 }
+function loadGraphics(){
+    var loader = new createjs.LoadQueue(false);
+    loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
+    loader.addEventListener("complete", function(evt){handleComplete(evt,comp)}, this);
+    loader.loadManifest(lib.properties.manifest);
+
+    function handleFileLoad(evt, comp) {
+        var images=comp.getImages();	
+        if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }	
+    }
+    function handleComplete(evt,comp) {
+        //This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
+        var lib=comp.getLibrary();
+        var ss=comp.getSpriteSheet();
+        var queue = evt.target;
+        var ssMetadata = lib.ssMetadata;
+        for(i=0; i<ssMetadata.length; i++) {
+            ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+        }
+        this.preloadAssets();
+    }
+}
 function preloadAssets(){
     /*LOADING SCREEN*/
-        sceneManager.createGameTitle();
-        sceneManager.createCopyrightText();
+//        sceneManager.createGameTitle();
+//        sceneManager.createCopyrightText();
+        sceneManager.createLoadingScene();
+    
         //preloader jobs
-        preloader.createLoadingBar(canvas.width/4,20,canvas.width/2,canvas.height/2);
+        preloader.createLoadingBar(canvas.width,20,canvas.width/2,canvas.height-10);
         preloader.installSoundPlugin();
         createjs.Sound.alternateExtensions = ["ogg", "aiff"];
     
-        preloader.addFile("Player", "images/player.png");
-        preloader.addFile("Boss", "images/enemy.png");
-        preloader.addFile("Melee", "images/melee.png");
-        preloader.addFile("Ranged", "images/ranged.png");
-        preloader.addFile("Projectile", "images/playerBullet.png");
+//        preloader.addFile("Player", "images/player.png");
+//        preloader.addFile("Boss", "images/enemy.png");
+//        preloader.addFile("Melee", "images/melee.png");
+//        preloader.addFile("Ranged", "images/ranged.png");
+//        preloader.addFile("Projectile", "images/playerBullet.png");
         preloader.addFile("AimIndicator", "images/aimIndicator.png");
-        preloader.addFile("HealthPickup", "images/upgrade2.png");
+//        preloader.addFile("HealthPickup", "images/upgrade2.png");
+    
+        preloader.addFile("font", "font/TheDarkRootFont.png");
     
         preloader.addFile("Normal Shoot", "sound/shoot1.wav");
         preloader.addFile("Special Shoot", "sound/shoot2.wav");
         preloader.addFile("Background1","sound/EpicTheme.mp3");
+        
         preloader.loadFiles();
 
         loadInterval = setInterval(updateLoadingBar, 50);
@@ -177,14 +210,14 @@ function resumeAudioContext(){
 function updateLoadingBar(){
     fakeProgress += .005;
     
-    preloader.loadingBar.graphics.beginFill("#666");
+    preloader.loadingBar.graphics.beginFill("#ffffcc");
         
     preloader.loadingBar.graphics.drawRect(0, 0, preloader.loadingBar.getBounds().width *               fakeProgress, preloader.loadingBar.getBounds().height);
 
     preloader.loadingBar.graphics.endFill();
 
     preloader.loadingBar.graphics.setStrokeStyle(2);
-    preloader.loadingBar.graphics.beginStroke("#000");
+    preloader.loadingBar.graphics.beginStroke("#fff");
 
     preloader.loadingBar.graphics.drawRect(0, 0, preloader.loadingBar.getBounds().width,                   preloader.loadingBar.getBounds().height);
 

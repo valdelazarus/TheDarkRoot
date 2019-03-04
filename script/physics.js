@@ -1,14 +1,26 @@
 /*GAME SPACE RESTRICTION*/
 //restrict to game space for sprite object
 function restrictToGameSpace(spriteObj){
-    if(spriteObj.x + spriteObj.graphic.image.width * spriteObj.graphic.scale > stage.canvas.width){
-        spriteObj.x = stage.canvas.width - spriteObj.graphic.image.width * spriteObj.graphic.scale;
+//    if(spriteObj.x + spriteObj.graphic.image.width * spriteObj.graphic.scale > stage.canvas.width){
+//        spriteObj.x = stage.canvas.width - spriteObj.graphic.image.width * spriteObj.graphic.scale;
+//    }
+//    if(spriteObj.x  < 0){
+//        spriteObj.x = 0;
+//    }
+//    if(spriteObj.y + spriteObj.graphic.image.height * spriteObj.graphic.scale > stage.canvas.height){
+//        spriteObj.y = stage.canvas.height - spriteObj.graphic.image.height * spriteObj.graphic.scale;
+//    }
+//    if(spriteObj.y < 0){
+//        spriteObj.y = 0;
+//    }
+    if(spriteObj.x + spriteObj.graphic.nominalBounds.width * spriteObj.graphic.scale > stage.canvas.width){
+        spriteObj.x = stage.canvas.width - spriteObj.graphic.nominalBounds.width * spriteObj.graphic.scale;
     }
     if(spriteObj.x  < 0){
         spriteObj.x = 0;
     }
-    if(spriteObj.y + spriteObj.graphic.image.height * spriteObj.graphic.scale > stage.canvas.height){
-        spriteObj.y = stage.canvas.height - spriteObj.graphic.image.height * spriteObj.graphic.scale;
+    if(spriteObj.y + spriteObj.graphic.nominalBounds.height * spriteObj.graphic.scale > stage.canvas.height){
+        spriteObj.y = stage.canvas.height - spriteObj.graphic.nominalBounds.height * spriteObj.graphic.scale;
     }
     if(spriteObj.y < 0){
         spriteObj.y = 0;
@@ -49,9 +61,9 @@ function restrictToGameSpaceForCircle(circleObj){
 //check for collision between sprite and rect
 function checkCollisionSpriteRect(sprite, rect){
     
-    if((sprite.x + sprite.graphic.image.width * sprite.graphic.scale >= rect.x - rect.graphic.getBounds().width/2)
+    if((sprite.x + sprite.graphic.nominalBounds.width * sprite.graphic.scale >= rect.x - rect.graphic.getBounds().width/2)
       && (sprite.x  <= rect.x + rect.graphic.getBounds().width/2) 
-      && (sprite.y + sprite.graphic.image.height * sprite.graphic.scale >= rect.y - rect.graphic.getBounds().height/2)
+      && (sprite.y + sprite.graphic.nominalBounds.height * sprite.graphic.scale >= rect.y - rect.graphic.getBounds().height/2)
       && (sprite.y <= rect.y + rect.graphic.getBounds().height/2)){
         return true;
     }
@@ -60,15 +72,33 @@ function checkCollisionSpriteRect(sprite, rect){
 }
 //check for collision between 2 sprites 
 function checkCollisionSprSpr(spr1, spr2){
+//    var leftBorder1 = spr1.x;
+//    var rightBorder1 = spr1.x + spr1.graphic.image.width * spr1.graphic.scale;
+//    var topBorder1 = spr1.y;
+//    var botBorder1 = spr1.y + spr1.graphic.image.height * spr1.graphic.scale;
+//    
+//    var leftBorder2 = spr2.x;
+//    var rightBorder2 = spr2.x + spr2.graphic.image.width * spr2.graphic.scale;
+//    var topBorder2 = spr2.y;
+//    var botBorder2 = spr2.y + spr2.graphic.image.height * spr2.graphic.scale;
+//    
+//    if((rightBorder1 >= leftBorder2)
+//      && (leftBorder1  <= rightBorder2) 
+//      && (botBorder1 >= topBorder2)
+//      && (topBorder1 <= botBorder2)){
+//        return true;
+//    }
+//    
+//    return false;
     var leftBorder1 = spr1.x;
-    var rightBorder1 = spr1.x + spr1.graphic.image.width * spr1.graphic.scale;
+    var rightBorder1 = spr1.x + spr1.graphic.nominalBounds.width * spr1.graphic.scale;
     var topBorder1 = spr1.y;
-    var botBorder1 = spr1.y + spr1.graphic.image.height * spr1.graphic.scale;
+    var botBorder1 = spr1.y + spr1.graphic.nominalBounds.height * spr1.graphic.scale;
     
     var leftBorder2 = spr2.x;
-    var rightBorder2 = spr2.x + spr2.graphic.image.width * spr2.graphic.scale;
+    var rightBorder2 = spr2.x + spr2.graphic.nominalBounds.width * spr2.graphic.scale;
     var topBorder2 = spr2.y;
-    var botBorder2 = spr2.y + spr2.graphic.image.height * spr2.graphic.scale;
+    var botBorder2 = spr2.y + spr2.graphic.nominalBounds.height * spr2.graphic.scale;
     
     if((rightBorder1 >= leftBorder2)
       && (leftBorder1  <= rightBorder2) 
@@ -83,9 +113,9 @@ function checkCollisionSprSpr(spr1, spr2){
 //handle collision between sprite and rect
 function handleCollisionSpriteRect(sprite, rect){
     var leftBorder = sprite.x;
-    var rightBorder = sprite.x + sprite.graphic.image.width * sprite.graphic.scale;
+    var rightBorder = sprite.x + sprite.graphic.nominalBounds.width * sprite.graphic.scale;
     var topBorder = sprite.y;
-    var botBorder = sprite.y + sprite.graphic.image.height * sprite.graphic.scale;
+    var botBorder = sprite.y + sprite.graphic.nominalBounds.height * sprite.graphic.scale;
     
     var rectLeft = rect.x - rect.graphic.getBounds().width/2;
     var rectRight = rect.x + rect.graphic.getBounds().width/2;
@@ -99,7 +129,7 @@ function handleCollisionSpriteRect(sprite, rect){
             sprite.x = rect.x + rect.graphic.getBounds().width/2;
         } 
         if ((rightBorder >= rectLeft) && (rightBorder <= rectRight)){
-            sprite.x = rect.x - rect.graphic.getBounds().width/2 - sprite.graphic.image.width * sprite.graphic.scale;
+            sprite.x = rect.x - rect.graphic.getBounds().width/2 - sprite.graphic.nominalBounds.width * sprite.graphic.scale;
         }
     }
     //vertical collision
@@ -108,7 +138,7 @@ function handleCollisionSpriteRect(sprite, rect){
             sprite.y = rect.y + rect.graphic.getBounds().height/2;
         } 
         if ((botBorder >= rectTop) && (botBorder <= rectBot)){
-            sprite.y = rect.y - rect.graphic.getBounds().height/2 - sprite.graphic.image.height * sprite.graphic.scale;
+            sprite.y = rect.y - rect.graphic.getBounds().height/2 - sprite.graphic.nominalBounds.height * sprite.graphic.scale;
         }
     }
 }
@@ -119,13 +149,17 @@ function handleCollisionSprSpr(spr1, spr2){
     }
     var x1= spr1.x;
     var y1= spr1.y;
-    var w1=spr1.graphic.image.width * spr1.graphic.scale;
-    var h1= spr1.graphic.image.height * spr1.graphic.scale;
+//    var w1=spr1.graphic.image.width * spr1.graphic.scale;
+//    var h1= spr1.graphic.image.height * spr1.graphic.scale;
+    var w1=spr1.graphic.nominalBounds.width * spr1.graphic.scale;
+    var h1= spr1.graphic.nominalBounds.height * spr1.graphic.scale;
     
     var x2= spr2.x;
     var y2= spr2.y;
-    var w2=spr2.graphic.image.width * spr2.graphic.scale;
-    var h2= spr2.graphic.image.height * spr2.graphic.scale;
+//    var w2=spr2.graphic.image.width * spr2.graphic.scale;
+//    var h2= spr2.graphic.image.height * spr2.graphic.scale;
+    var w2=spr2.graphic.nominalBounds.width * spr2.graphic.scale;
+    var h2= spr2.graphic.nominalBounds.height * spr2.graphic.scale;
     
     //horizontal collision
     if ((y1 < y2+h2)&&(y2 < y1+h1)){

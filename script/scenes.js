@@ -2,7 +2,8 @@ class GameMenu extends createjs.Container{
     constructor(){
         super();
         this.removeAllChildren();
-        this.addTitle();
+        //this.addTitle();
+        this.addBG();
         this.addButtons();
     }
     addTitle() {
@@ -12,11 +13,36 @@ class GameMenu extends createjs.Container{
     }
     addButtons() {
         
-        this.gameBtn = drawRect("#000", 100, 50, canvas.width/2, canvas.height/2);
-        this.btnText = drawText("Play", "20px Arial", "#fff", canvas.width/2, canvas.height/2);
-        this.gameBtn.on('click', this.onButtonClick, this);
+//        this.gameBtn = drawRect("#000", 100, 50, canvas.width/2, canvas.height/2);
+//        this.btnText = drawText("Play", "20px Arial", "#fff", canvas.width/2, canvas.height/2);
+//        this.gameBtn.on('click', this.onButtonClick, this);
        
-        this.addChild(this.gameBtn, this.btnText);
+//        this.addChild(this.gameBtn, this.btnText);
+        var btnContainer = new createjs.Container();
+        
+        var playBtn = new lib.UIBtn_1();
+        playBtn.scale = .5;
+        
+        var playText = new createjs.BitmapText("PLAY", textSpriteSheet);
+        playText.scale = .3;
+        playText.x = 20;
+        playText.y = 40;
+        
+        var btnHit = drawRect("#fff", playBtn.nominalBounds.width * playBtn.scale, playBtn.nominalBounds.height * playBtn.scale, playBtn.nominalBounds.width/2 * playBtn.scale, playBtn.nominalBounds.height/2 * playBtn.scale);
+        
+        btnContainer.addChild(playBtn, playText);
+        
+        btnContainer.x = canvas.width - 200;
+        btnContainer.y = canvas.height/2 - 100;
+        
+        btnContainer.hitArea = btnHit;
+        
+        btnContainer.on('click', this.onButtonClick, this);
+        
+        this.addChild(btnContainer);
+    }
+    addBG(){
+        this.addChild(new lib.MenuBG());
     }
     onButtonClick(e) {
         //var newGame;
@@ -68,8 +94,10 @@ class GameLevel extends createjs.Container{
         
         this.levelData = levelData;
         
+        this.levelBG = new lib.GameBG();
+        
         this.bossSpawned = true;
-    
+        
         this.createPlayer();
 
         hudContainer = new createjs.Container();
@@ -81,7 +109,8 @@ class GameLevel extends createjs.Container{
         
         this.timer = 0;
         
-        this.addChild(hudContainer);
+        this.addChildAt(this.levelBG, 0);
+        this.addChild(hudContainer);   
     }
     run(){
          //handle game over
@@ -139,8 +168,12 @@ class GameLevel extends createjs.Container{
         }
     }
     createPlayer(){
-        player = new Player(drawPreloadedImage(preloader.queue.getResult("Player"), .5, 500, 300), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval, PLAYER_HEALTH, playerMinDmg, playerMaxDmg);
+        player = new Player(new lib.Player(), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval, PLAYER_HEALTH, playerMinDmg, playerMaxDmg);
     
+        player.graphic.scale = .3;
+        player.x = 500;
+        player.y = 300;
+        
         this.createAimIndicator();
         
         this.addChild(player);
@@ -149,10 +182,10 @@ class GameLevel extends createjs.Container{
         aimIndicator = new GameObject(drawPreloadedImage(preloader.queue.getResult("AimIndicator"), .5, 0, 0));
         player.addChild(aimIndicator);
         //setting local positions for rotating point (parent object)
-        aimIndicator.x = 33;
-        aimIndicator.y = 30;
+        aimIndicator.x = player.graphic.nominalBounds.width/2*player.graphic.scale;
+        aimIndicator.y = 50;
         //setting child local position offset
-        aimIndicator.graphic.x = -13;
+        aimIndicator.graphic.x = -20;
         aimIndicator.graphic.y = -60;
     }
     createHealthBar(){
@@ -241,7 +274,7 @@ class GameLevel extends createjs.Container{
     runPickupBehavior(){
         for (var i=0; i<pickups.length; ++i){
             
-            if (pickups[i].graphic.image != undefined){
+            if (pickups[i].graphic.nominalBounds != undefined){
                 if (checkCollisionSprSpr(pickups[i],player)){
                     pickups[i].onPickup();
                 }
@@ -292,7 +325,11 @@ class GameLevel1 extends GameLevel{
     }
     spawnBoss(){
         if (this.bossSpawned){
-            boss = new Boss1(drawPreloadedImage(preloader.queue.getResult("Boss"), .7, 700, 300),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval,this.levelData.bossMinionsNumber,this.levelData.bossWaveSpawnInterval, this.levelData);
+            boss = new Boss1(new lib.Boss1(),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval,this.levelData.bossMinionsNumber,this.levelData.bossWaveSpawnInterval, this.levelData);
+            boss.graphic.scale = .7;
+            boss.x = 700;
+            boss.y = 300;
+            boss.healthBar.x = boss.graphic.nominalBounds.width/2 * boss.graphic.scale;
 
             enemies.push(boss);
             this.addChild(boss);
@@ -316,7 +353,11 @@ class GameLevel2 extends GameLevel{
     }
     spawnBoss(){
         if (this.bossSpawned){
-            boss = new Boss2(drawPreloadedImage(preloader.queue.getResult("Boss"), .7, 700, 300),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval,this.levelData.bossAtkSpd,this.levelData.bossMinDistance, this.levelData);
+            boss = new Boss2(new lib.Boss2(),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval,this.levelData.bossAtkSpd,this.levelData.bossMinDistance, this.levelData);
+            boss.graphic.scale = .5;
+            boss.x = 700;
+            boss.y = 300;
+            boss.healthBar.x = boss.graphic.nominalBounds.width/2 * boss.graphic.scale;
 
             enemies.push(boss);
             this.addChild(boss);
@@ -336,8 +377,12 @@ class GameLevel3 extends GameLevel{
     }
     spawnBoss(){
         if (this.bossSpawned){
-            boss = new Boss3(drawPreloadedImage(preloader.queue.getResult("Boss"), .7, 700, 300),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval, this.levelData.bossAtkSpd, this.levelData.bossMinDistance, this.levelData.bossMinionsNumber, this.levelData.bossWaveSpawnInterval, this.levelData);
-
+            boss = new Boss3(new lib.Boss3(),this.levelData.bossSpd,this.levelData.bossDmg,this.levelData.bossHealth,this.levelData.bossAtkInterval, this.levelData.bossAtkSpd, this.levelData.bossMinDistance, this.levelData.bossMinionsNumber, this.levelData.bossWaveSpawnInterval, this.levelData);
+            boss.graphic.scale = .7;
+            boss.x = 700;
+            boss.y = 300;
+            boss.healthBar.x = boss.graphic.nominalBounds.width/2 * boss.graphic.scale;
+            
             enemies.push(boss);
             this.addChild(boss);
 

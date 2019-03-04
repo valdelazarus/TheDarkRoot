@@ -29,9 +29,12 @@ header{
         3px 3px 0 #000;
 }
 #header-img{
-    height: 100px; 
+    height: 70px; 
     width: auto; 
-    float: left;
+}
+#gameTitle{
+    height: 150px;
+    margin: auto;
 }
 canvas{
     background: #ccc;
@@ -41,7 +44,6 @@ h3{
     text-shadow: 3px 2px lightgray;
 }
 footer {
-    height: 20px;
     color: white;
     background: #404040;
     padding: 10px;
