@@ -87,7 +87,7 @@ class LevelData{
                 //HUD
                 this.timerMaxTimer = 20; 
                 
-                this.backgroundMusic = "Background1";
+                this.backgroundMusic = "Background2";
                 break;
             case 3:
                 this.enemySpd = 2; //changing depending on the level - will be used with chasing behavior codes
@@ -122,7 +122,7 @@ class LevelData{
                 //HUD
                 this.timerMaxTimer = 30; 
                 
-                this.backgroundMusic = "Background1";
+                this.backgroundMusic = "Background3";
                 break;
         }
     }

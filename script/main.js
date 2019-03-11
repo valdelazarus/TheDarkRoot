@@ -118,7 +118,7 @@ function init(){
         location.reload();
     }
     
-    window.addEventListener("click", resumeAudioContext);
+    
 }
 //for retina display 
 function retinalize(){
@@ -176,7 +176,6 @@ function preloadAssets(){
     
         preloader.addFile("Normal Shoot", "sound/shoot1.wav");
         preloader.addFile("Special Shoot", "sound/shoot2.wav");
-        preloader.addFile("Background1","sound/EpicTheme.mp3");
         
         preloader.addFile("Pickup", "sound/pickup.wav");
         preloader.addFile("Hurt", "sound/hit.wav");
@@ -185,6 +184,13 @@ function preloadAssets(){
         preloader.addFile("Boss Die", "sound/bossDie.wav");
         preloader.addFile("Boss Hurt", "sound/bossHurt.wav");
         preloader.addFile("Boss Appear", "sound/bossAppear.wav");   
+    
+        preloader.addFile("Background1","sound/[Slow]TemptingFate.mp3");
+        preloader.addFile("Background2","sound/[Fast]EpicSeries.mp3");
+        preloader.addFile("Background3","sound/[Fast]Pentagram.mp3");
+        preloader.addFile("MenuMusic", "sound/[Med]Marauder.mp3");
+        preloader.addFile("GameOverMusic", "sound/[Slow]TheMaster.mp3");
+        preloader.addFile("GameWinMusic", "sound/[Med]Triangle.mp3");
     
         preloader.addFiles(lib.properties.manifest);
 
@@ -195,12 +201,8 @@ function preloadAssets(){
     
         preloader.queue.on("complete", function(){
             preloader.queue.removeAllEventListeners("complete");
-            try{
-                setTimeout(handleComplete,3000);
-            }
-            catch(e){
-                location.reload();
-            }
+            setTimeout(handleComplete,10000);
+            
         });
     
         preloader.loadFiles();
@@ -218,6 +220,7 @@ handleComplete = function(){
     }
     finally{
         stage.removeAllChildren();
+        window.addEventListener("click", resumeAudioContext);
         sceneManager.gameReady();
     }
 }

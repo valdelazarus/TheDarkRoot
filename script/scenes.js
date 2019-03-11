@@ -5,6 +5,7 @@ class GameMenu extends createjs.Container{
         //this.addTitle();
         this.addBG();
         this.addButtons();
+        this.music = playSound("MenuMusic",true,.5);
     }
     addTitle() {
         var title = drawText("The Dark Root", "Bold 50px Arial", "#000", canvas.width/2, canvas.height/2-70);
@@ -53,14 +54,18 @@ class GameMenu extends createjs.Container{
 //        }
         this.dispatchEvent(GameStateEvents.LEVEL_1);
     }
+    dispose(){
+        this.music.stop();
+    }
 }
 class GameComplete extends createjs.Container{
-    constructor(displayedText){
+    constructor(displayedText, music){
         super();
         this.removeAllChildren();
         this.addBG();
         this.addTitle(displayedText);
         this.addButtons();
+        this.music = playSound(music,true,.5);
     }
     addTitle(displayedText) {
 //        var title = drawText(displayedText, "Bold 50px Arial", "#000", canvas.width/2, canvas.height/2-100);
@@ -138,6 +143,9 @@ class GameComplete extends createjs.Container{
     onReplayButtonClick(e) {
         
         this.dispatchEvent(GameStateEvents.LEVEL_1);
+    }
+    dispose(){
+        this.music.stop();
     }
 }
 

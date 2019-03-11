@@ -253,7 +253,7 @@ class SceneManager{
         
         var scene = new GameLevel3(levelData3);
         
-        scene.on(GameStateEvents.GAME_COMPLETE, this.onStateEvent, this, true, {state:GameStates.GAME_COMPLETE}); //to be replaced with level 2 state later
+        scene.on(GameStateEvents.GAME_COMPLETE, this.onStateEvent, this, true, {state:GameStates.GAME_COMPLETE}); 
         
         scene.on(GameStateEvents.GAME_LOSE, this.onStateEvent, this, true, {state:GameStates.GAME_LOSE});
         
@@ -269,7 +269,7 @@ class SceneManager{
         
         this.disposeCurrentScene();
         
-        var scene = new GameComplete("ESCAPED!");
+        var scene = new GameComplete("ESCAPED!", "GameWinMusic");
         scene.title.shadow = drawShadow("#ffffcc", 2, 2, 10);
         
         scene.on(GameStateEvents.MAIN_MENU, this.onStateEvent, this, true, {state:GameStates.MAIN_MENU});
@@ -287,7 +287,7 @@ class SceneManager{
         
         this.disposeCurrentScene();
         
-        var scene = new GameComplete("GAME OVER!");
+        var scene = new GameComplete("GAME OVER!", "GameOverMusic");
         scene.title.shadow = drawShadow("red", 2, 2, 10);
         
         scene.on(GameStateEvents.MAIN_MENU, this.onStateEvent, this, true, {state:GameStates.MAIN_MENU});
