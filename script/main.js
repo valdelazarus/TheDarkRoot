@@ -32,7 +32,10 @@ var GameStates = {
     LEVEL_2:30,
     LEVEL_3:40,
     GAME_COMPLETE:50,
-    GAME_LOSE:60
+    GAME_LOSE:60,
+    LEVEL_1_TRANSITION: 15,
+    LEVEL_2_TRANSITION: 25,
+    LEVEL_3_TRANSITION: 35,
 };
 var GameStateEvents = { 
     MAIN_MENU:'main menu event',
@@ -41,7 +44,10 @@ var GameStateEvents = {
     MAIN_MENU_SELECT:'game menu select event',
     LEVEL_1:'game level 1 event',
     LEVEL_2:'game level 2 event',
-    LEVEL_3:'game level 3 event'
+    LEVEL_3:'game level 3 event',
+    LEVEL_1_TRANSITION: 'level 1 transition event',
+    LEVEL_2_TRANSITION: 'level 2 transition event',
+    LEVEL_3_TRANSITION: 'level 3 transition event'
 };
 
 /* Settings - global variables */
@@ -70,6 +76,8 @@ var levelData2 = new LevelData();
     levelData2.setData(2);
 var levelData3 = new LevelData();
     levelData3.setData(3);
+
+var levelLoad = 1;
 
 /* Player specific */
 var keyboardMoveLeft = false, keyboardMoveRight = false, keyboardMoveUp = false, keyboardMoveDown = false;

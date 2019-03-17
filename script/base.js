@@ -415,8 +415,13 @@ class Boss extends Enemy{
         
         this.addChild(this.healthBar);
         
+        this.active = true;
+        
     }
     update(){
+        if (this.active == false){
+            return;
+        }
         if (player == undefined || gameOver || nextLevel || timerObj.seconds > 0){
             return;
         }
@@ -453,6 +458,7 @@ class Boss extends Enemy{
         if (this.health<=0){
             if (sceneManager.currentScene.bossLayer != undefined){
                 playSound("Boss Die");
+                this.active = false;
                 sceneManager.currentScene.bossLayer.removeChild(sceneManager.currentScene.boss);
             }
             
@@ -494,6 +500,9 @@ class Boss1 extends Boss{
         this.spawnMeleeMinions();
     }
     update(){
+        if (this.active == false){
+            return;
+        }
         if (player == undefined || gameOver || nextLevel){
             return;
         }
@@ -554,6 +563,9 @@ class Boss2 extends Boss{
 
     }
     update(){
+        if (this.active == false){
+            return;
+        }
         if (player == undefined || gameOver || nextLevel){
             return;
         }
@@ -608,6 +620,9 @@ class Boss3 extends Boss1{
 
     }
     update(){
+        if (this.active == false){
+            return;
+        }
         if (player == undefined || gameOver || nextLevel){
             return;
         }
@@ -712,10 +727,11 @@ class Bullet extends MoveableGameObject{
                 } else {
                     this.selfDestroy();
                     playSound("Minion Die");
+                    console.log('Hit enemy' + i);
+
                     enemies[i].parent.removeChild(enemies[i]);
                     enemies[i].dropItem();
                     enemies.splice(i, 1);
-                    console.log('Hit enemy' + i);
                 }
             }
         }

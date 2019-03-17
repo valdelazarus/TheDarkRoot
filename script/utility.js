@@ -191,6 +191,15 @@ class SceneManager{
             case GameStates.RUN_SCENE:
                 this.currentGameStateFunction = this.gameStateRunScene;
                 break;
+            case GameStates.LEVEL_1_TRANSITION:
+                this.currentGameStateFunction = this.gameStateLevel1Transition;
+                break;
+            case GameStates.LEVEL_2_TRANSITION:
+                this.currentGameStateFunction = this.gameStateLevel2Transition;
+                break;
+            case GameStates.LEVEL_3_TRANSITION:
+                this.currentGameStateFunction = this.gameStateLevel3Transition;
+                break;
         }
     }
     onStateEvent(e, obj) {
@@ -212,7 +221,10 @@ class SceneManager{
         
         var scene = new GameMenu();
         
-        scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+        //scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+        scene.on(GameStateEvents.LEVEL_1_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_1_TRANSITION});
+        scene.on(GameStateEvents.LEVEL_2_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_2_TRANSITION});
+        scene.on(GameStateEvents.LEVEL_3_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_3_TRANSITION});
        
         stage.addChild(scene);
         
@@ -225,7 +237,8 @@ class SceneManager{
         
         var scene = new GameLevel1(levelData1);
         
-        scene.on(GameStateEvents.LEVEL_2, this.onStateEvent, this, true, {state:GameStates.LEVEL_2});
+        //scene.on(GameStateEvents.LEVEL_2, this.onStateEvent, this, true, {state:GameStates.LEVEL_2});
+        scene.on(GameStateEvents.LEVEL_2_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_2_TRANSITION});
         
         scene.on(GameStateEvents.GAME_LOSE, this.onStateEvent, this, true, {state:GameStates.GAME_LOSE});
         
@@ -239,7 +252,8 @@ class SceneManager{
         
         var scene = new GameLevel2(levelData2);
         
-        scene.on(GameStateEvents.LEVEL_3, this.onStateEvent, this, true, {state:GameStates.LEVEL_3});
+        //scene.on(GameStateEvents.LEVEL_3, this.onStateEvent, this, true, {state:GameStates.LEVEL_3});
+        scene.on(GameStateEvents.LEVEL_3_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_3_TRANSITION});
         
         scene.on(GameStateEvents.GAME_LOSE, this.onStateEvent, this, true, {state:GameStates.GAME_LOSE});
         
@@ -269,11 +283,14 @@ class SceneManager{
         
         this.disposeCurrentScene();
         
-        var scene = new GameComplete("ESCAPED!", "GameWinMusic");
+        //var scene = new GameComplete("FINALLY...", "GameWinMusic");
+        var scene = new GameComplete2("FINALLY...", "GameWinMusic","I come closer to the tree. Its beauty shines despite the dark root. And after a moment, it disappeared...");
+        
         scene.title.shadow = drawShadow("#ffffcc", 2, 2, 10);
         
         scene.on(GameStateEvents.MAIN_MENU, this.onStateEvent, this, true, {state:GameStates.MAIN_MENU});
-        scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+        //scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+        scene.on(GameStateEvents.LEVEL_1_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_1_TRANSITION});
         
         stage.addChild(scene);
 
@@ -291,7 +308,8 @@ class SceneManager{
         scene.title.shadow = drawShadow("red", 2, 2, 10);
         
         scene.on(GameStateEvents.MAIN_MENU, this.onStateEvent, this, true, {state:GameStates.MAIN_MENU});
-        scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+        //scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+        scene.on(GameStateEvents.LEVEL_1_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_1_TRANSITION});
         
         stage.addChild(scene);
         
@@ -303,6 +321,49 @@ class SceneManager{
         if (this.currentScene.run) {
             this.currentScene.run();
         }
+    }
+    
+    gameStateLevel1Transition(){
+        player = undefined;
+        
+        this.disposeCurrentScene();
+        
+         var scene = new Level1Transition();
+        
+        scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+       
+        stage.addChild(scene);
+        
+        this.currentScene = scene;
+        this.changeState(GameStates.RUN_SCENE);
+    }
+     gameStateLevel2Transition(){
+        player = undefined;
+        
+        this.disposeCurrentScene();
+        
+         var scene = new Level2Transition();
+        
+        scene.on(GameStateEvents.LEVEL_2, this.onStateEvent, this, true, {state:GameStates.LEVEL_2});
+       
+        stage.addChild(scene);
+        
+        this.currentScene = scene;
+        this.changeState(GameStates.RUN_SCENE);
+    }
+     gameStateLevel3Transition(){
+        player = undefined;
+        
+        this.disposeCurrentScene();
+        
+         var scene = new Level3Transition();
+        
+        scene.on(GameStateEvents.LEVEL_3, this.onStateEvent, this, true, {state:GameStates.LEVEL_3});
+       
+        stage.addChild(scene);
+        
+        this.currentScene = scene;
+        this.changeState(GameStates.RUN_SCENE);
     }
     onTick(e){
         if (this.currentGameStateFunction != null) {
