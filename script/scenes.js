@@ -704,7 +704,7 @@ class LevelTransition extends createjs.Container{
 }
 class Level1Transition extends LevelTransition{
     constructor(){
-        super("LEVEL 1", "I, Bobbie, was out looking for my inspiration. I saw a beautiful tree, but I fell into a hole. Where is this place?...");
+        super("ROOT I", "I, Bobbie, was out looking for my inspiration. I saw a beautiful tree, but I fell into a hole. Where is this place?...");
     }
     onNextButtonClick(e) {
         playSound("Pickup");
@@ -713,7 +713,7 @@ class Level1Transition extends LevelTransition{
 }
 class Level2Transition extends LevelTransition{
     constructor(){
-        super("LEVEL 2", "I proceeded through a dark cave. I saw some red eyes from the corners. Are they bats?...");
+        super("ROOT II", "I proceeded through a dark cave. I saw some red eyes from the corners. Are they bats?...");
     }
     onNextButtonClick(e) {
         playSound("Pickup");
@@ -722,7 +722,7 @@ class Level2Transition extends LevelTransition{
 }
 class Level3Transition extends LevelTransition{
     constructor(){
-        super("LEVEL 3", "It seems like I have reached the end of these roots. There is light going through from above...");
+        super("ROOT III", "It seems like I have reached the end of these roots. There is light going through from above...");
     }
     onNextButtonClick(e) {
         playSound("Pickup");
