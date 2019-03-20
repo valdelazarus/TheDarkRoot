@@ -534,7 +534,10 @@ class GameLevel extends createjs.Container{
         }
     }
     reset(){
-        this.boss.active = false;
+        if (this.boss){
+            this.boss.active = false;
+        }
+        
         enemies = [];
         bullets = [];
         pickups = [];
