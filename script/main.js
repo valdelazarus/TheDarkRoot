@@ -3,7 +3,7 @@ const KEYCODE_W = 87;
 const KEYCODE_A = 65;
 const KEYCODE_S = 83;
 const KEYCODE_D = 68;
-const PLAYER_SPEED = 3;
+const PLAYER_MAXSPEED = 7;
 const BULLET_SPEED = 10;
 const PLAYER_HEALTH = 10;
 
@@ -92,6 +92,10 @@ var playerShootInterval = 1;
 var playerSpecialAtkInterval = 3;  
 var playerMinDmg = 1;
 var playerMaxDmg =3;
+
+var playerSpd = 3;
+
+var score = 0;
 
 /* Common data */
 var enemies = [];

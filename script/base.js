@@ -35,6 +35,9 @@ class LevelData{
         
         //bg music
         this.backgroundMusic = null;
+        
+        //bonus point upon killing minions
+        this.bonus = 0;
     }
     setData(level){
         switch(level){
@@ -62,6 +65,8 @@ class LevelData{
                 
                 this.backgroundMusic = "Background1";
                 
+                this.bonus = 10;
+                
                 break;
             case 2:
                 this.enemySpd = 2; //changing depending on the level - will be used with chasing behavior codes
@@ -88,6 +93,9 @@ class LevelData{
                 this.timerMaxTimer = 20; 
                 
                 this.backgroundMusic = "Background2";
+                
+                this.bonus = 15;
+                
                 break;
             case 3:
                 this.enemySpd = 2; //changing depending on the level - will be used with chasing behavior codes
@@ -123,6 +131,9 @@ class LevelData{
                 this.timerMaxTimer = 30; 
                 
                 this.backgroundMusic = "Background3";
+                
+                this.bonus = 20;
+                
                 break;
         }
     }
@@ -728,7 +739,16 @@ class Bullet extends MoveableGameObject{
                     this.selfDestroy();
                     playSound("Minion Die");
                     console.log('Hit enemy' + i);
-
+                    
+                    score+=sceneManager.currentScene.levelData.bonus;
+                    if (score % 100 == 0){
+                        player.speed++;
+                        if (player.speed > PLAYER_MAXSPEED){
+                            player.speed = PLAYER_MAXSPEED;
+                        }
+                        playerSpd = player.speed;
+                    }
+                    
                     enemies[i].parent.removeChild(enemies[i]);
                     enemies[i].dropItem();
                     enemies.splice(i, 1);

@@ -321,6 +321,7 @@ class GameLevel extends createjs.Container{
         this.createHealthBar();
         this.createTimer();
         this.createAmmoDisplay();
+        this.createScoreBoard();
 
         this.currentMusic = playSound(this.levelData.backgroundMusic,true,.5);
         
@@ -344,13 +345,13 @@ class GameLevel extends createjs.Container{
          //handle game over
         if (gameOver){
   
-            createjs.Tween.get(this).wait(1000).call(this.loseGame,null,this);
+            this.loseGame();
             return;
         }
 
         if (nextLevel){
 
-            createjs.Tween.get(this).wait(1000).call(this.winGame,null, this);
+            this.winGame();
             return;
         }
         
@@ -396,7 +397,7 @@ class GameLevel extends createjs.Container{
         }
     }
     createPlayer(){
-        player = new Player(new lib.Player(), PLAYER_SPEED, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval, PLAYER_HEALTH, playerMinDmg, playerMaxDmg);
+        player = new Player(new lib.Player(), playerSpd, playerAtkSpd, playerAimAngle, playerShootInterval, playerSpecialAtkInterval, PLAYER_HEALTH, playerMinDmg, playerMaxDmg);
     
         player.graphic.scale = .3;
         player.x = 500;
@@ -429,6 +430,17 @@ class GameLevel extends createjs.Container{
         hudContainer.addChild(smallAmmoDisplay);
         largeAmmoDisplay = new AmmoDisplay(new lib.LargeProj(),110,80);
         hudContainer.addChild(largeAmmoDisplay);
+    }
+    createScoreBoard(){
+        if (this.scoreTxt != undefined){
+            hudContainer.removeChild(this.scoreTxt);
+        }
+        this.scoreTxt = new createjs.BitmapText(score.toString(), textSpriteSheet);
+        this.scoreTxt.y = timerObj.y;
+        this.scoreTxt.x = stage.canvas.width -100;
+        this.scoreTxt.shadow = drawShadow("#ffffcc",0,0,10);
+        this.scoreTxt.scale = .5;
+        hudContainer.addChild(this.scoreTxt);
     }
     spawnEnemies(){
         if (!gameOver && !nextLevel && timerObj.seconds > 0){
@@ -494,6 +506,7 @@ class GameLevel extends createjs.Container{
             } else if (bullets[i].source.type === 'Player'){
                 
                 bullets[i].hitEnemy();
+                this.createScoreBoard();
             }
             if (bullets[i] != undefined){
                 bullets[i].update(); 
@@ -541,6 +554,8 @@ class GameLevel extends createjs.Container{
     }
     loseGame(){
         this.reset();
+        score = 0;
+        playerSpd = 3;
         this.dispatchEvent(GameStateEvents.GAME_LOSE);
     }
     winGame(){
