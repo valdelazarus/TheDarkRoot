@@ -577,11 +577,14 @@ class GameLevel1 extends GameLevel{
     }
      winGame(){
         this.reset();
-         if (localStorage.level != undefined){
+         if (localStorage.level == undefined){
+             localStorage.level = 2;
+         } else {
              if (localStorage.level < 2){
                  localStorage.level = 2;
              }
          }
+         
         this.dispatchEvent(GameStateEvents.LEVEL_2_TRANSITION);
     }
     spawnBoss(){
