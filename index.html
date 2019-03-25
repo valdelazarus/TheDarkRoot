@@ -7,6 +7,10 @@
     <title>The Dark Root</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <!--
     <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Cabin" rel="stylesheet">
@@ -22,30 +26,46 @@
         <canvas id="game-canvas" width="1024" height="768" style="border: 1px dashed #000">
         </canvas>
 
+        <div class = controls>
+        
         <!-- Game desciption -->
-        <h3>Game Description</h3>
-        <p>You play the role of Bobbie, a laid-back adventurer. He was looking for inspiration, but a sudden event happened...</p>
-        <q><i>Hang in there, adventurer!</i></q>
 
+            <h3 id="aboutTitle">About The Dark Root</h3>
+            <p id ="aboutText">You play the role of Bobbie, a laid-back adventurer. He was looking for inspiration, but a sudden event happened...</p>
+            <div id="quoteContainer">
+                
+                <div class="jumbotron quote">
+                    <q id= "quoteText"><i>Hang in there, adventurer!</i></q>
+                </div>
+            </div>
 
-        <!-- How to play -->
-        <h3>How To Play</h3>
-        <div>
-            <h4>Movement: </h4>
-            <p><b>W</b> -> Move Up</p>
-            <p><b>A</b> -> Move Left</p>
-            <p><b>S</b> -> Move Down</p>
-            <p><b>D</b> -> Move Right</p>
-            
-            <h4>General Attack: </h4>
-            <p><b>Left Click</b> -> Normal Shoot</p>
-            <p><b>Right Click</b> -> Special Shoot</p>
-            
-            <h4>Switch Weapon: </h4>
-            <p><b>1</b> -> Normal default weapon</p>
-            <p><b>2</b> -> Small weapon (Ammo Required)</p>
-            <p><b>3</b> -> Large weapon (Ammo Required)</p>
+        <div class = tutorial>
+            <!-- How to play -->
+            <h3 id= "tutorialTitle">How To Play</h3>
+            <div class = "row" id = "tutorialContent">
+                <div class = "col-md-4">
+                        <h4 id ="controlTitle">Movement</h4>
+                        <p id ="controlText"><b>W</b>: Move Up</p>
+                        <p id ="controlText"><b>A</b>: Move Left</p>
+                        <p id ="controlText"><b>S</b>: Move Down</p>
+                        <p id ="controlText"><b>D</b>: Move Right</p>
+                </div>
+                <div class = "col-md-4">
+                    <h4 id ="controlTitle">General Attack</h4>
+                </br>
+                    <p id ="controlText"><b>Left Click</b>: Normal Shoot</p>
+                    <p id ="controlText"><b>Right Click</b>: Special Shoot</p>
+                </div>
+
+                <div class = "col-md-4">
+                    <h4 id ="controlTitle">Switch Weapons</h4>
+                    <p id ="controlText"><b>1</b>: Normal default weapon</p>
+                    <p id ="controlText"><b>2</b>: Small weapon (Ammo Required)</p>
+                    <p id ="controlText"><b>3</b>: Large weapon (Ammo Required)</p>
+                </div>
+            </div>
         </div>
+    </div>
     </main>
     
     <!-- footer -->

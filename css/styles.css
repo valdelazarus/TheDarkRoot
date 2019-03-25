@@ -1,23 +1,27 @@
-body{
+body
+{
     margin: 0;
     text-align: center;
     font-family: Helvetica, Arial, sans-serif;
-    color: #404040;
-    background: #eee;
+    color: #ffffff;
+    background: rgb(65, 65, 65) !important;
 }
-main{
+main
+{
     width: 75%;
     margin-left: auto;
     margin-right: auto;
 }
-header{
+header
+{
     background: #404040;
     margin-bottom: 10px;
     text-align: left;
     height: auto;
     padding: 20px;
 }
-#title{
+#title
+{
     font-family: 'Lobster', Georgia, Times, serif;
     font-size: 70px;
     color: white;
@@ -36,15 +40,79 @@ header{
     height: 150px;
     margin: auto;
 }
-canvas{
+canvas
+{
     background: #ccc;
 }
-h3{
-    color: black;
-    text-shadow: 3px 2px lightgray;
+#aboutTitle
+{
+    color: rgb(255, 255, 255);
+    text-shadow: 3px 2px rgb(138, 84, 40);
+    font-size: 24pt;
 }
-footer {
+#aboutText
+{
+    padding-top: 20pt;
+    color:  rgb(167, 167, 167);
+    text-shadow: 1px 1px rgb(0, 0, 0);
+    font-size: 13pt;
+    font-weight: 500;
+}
+#quoteText
+{
+    color:  rgb(255, 224, 183);
+    text-shadow: 1px 1px rgb(53, 34, 13);
+    padding-top: 50px;
+    font-size: 17pt;
+    font-weight: 500; 
+}
+#quoteContainer
+{
+    padding-left: 25%;
+    padding-top: 30px;
+}
+
+.jumbotron
+{
+    background-color: rgb(177, 115, 64) !important;
+    width: 70%;
+}
+
+.controls
+{
+    padding-top: 50px;
+}
+.tutorial
+{
+    padding-top: 40px;
+}
+#tutorialTitle
+{
+    color: rgb(255, 255, 255);
+    text-shadow: 3px 2px rgb(138, 84, 40);
+    font-size: 28pt;
+}
+#tutorialContent
+{
+    padding-top: 30px;
+}
+#controlTitle
+{
+    color: rgb(255, 194, 124);
+    font-size: 24pt;
+}
+#controlText
+{
+    color: rgb(167, 167, 167);
+    font-size: 11pt;
+}
+.controls h4
+{
+    color: rgb(156, 156, 156);
+}
+footer 
+{
     color: white;
     background: #404040;
-    padding: 10px;
+    padding: 60px;
 }
