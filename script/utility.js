@@ -787,3 +787,59 @@ class AmmoDisplay extends createjs.Container{
         this.addChild(this.ammoTxtBox);
     }
 }
+
+//skill display class -create, display and update bar according to current skill cooldown value 
+class SkillDisplay extends createjs.Container{
+    constructor(maxValue, currentValue, width, height, posX, posY, borderColor= "#000", fillColor = "gray"){  
+        super();
+        
+        this.maxValue = maxValue; 
+        this.currentValue = currentValue;
+        
+        this.width = width;
+        this.height = height; 
+        this.x = posX; 
+        this.y = posY; 
+        this.strokeColor = borderColor;
+        this.fillColor = fillColor;
+        
+        this.border = null;
+        this.fillArea = null;
+         
+        this.addChild(this.fillArea, this.border); //group border and fill 
+        
+        stage.addChild(this);
+        
+        createjs.Ticker.on('tick',this.update.bind(this));
+    }
+    update(){
+        this.updateBar();
+    }
+    updateBar(){
+        //create the fill representing current value 
+        if (this.fillArea != undefined){
+            this.removeChild(this.fillArea); //reset after each update
+        }
+        if (this.border != undefined){
+            this.removeChild(this.border); //reset after each update
+        }
+        
+        //draw the fill
+            this.fillArea=drawBorderedRect(null, this.width, this.height, 0, 0); //rect with no border
+
+            this.fillArea.graphics.beginFill(this.fillColor);
+
+            // width <-> maxValue ; fillWidth <-> currentValue --> fillWidth = width*currentValue/maxValue
+            this.fillArea.graphics.drawRect(0, 0, this.width, this.currentValue * this.height / this.maxValue); 
+        
+            this.fillArea.alpha = 0.3;
+
+            this.fillArea.graphics.endFill();
+        
+        
+        //draw the border - make healthbar border drawn on top
+            this.border = drawBorderedRect(this.strokeColor, this.width, this.height, 0, 0);
+        
+        this.addChild(this.fillArea, this.border); //group border and fill 
+    }
+}
