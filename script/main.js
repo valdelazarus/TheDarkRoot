@@ -110,6 +110,8 @@ var healthBarObj;
 var timerObj;
 var smallAmmoDisplay;
 var largeAmmoDisplay;
+var skillDisplayLeft;
+var skillDisplayRight;
 
 //calling init() function on page load
 init();

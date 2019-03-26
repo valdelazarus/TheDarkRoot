@@ -793,8 +793,9 @@ class ShootBehavior {
     }
     performAtk(source){
         if (player!= undefined && player.currentWeapon.ammoNumber > 0){
-            if (this.atkCounter > (this.shootInterval * createjs.Ticker.framerate)){
+            if (this.atkCounter >= (this.shootInterval * createjs.Ticker.framerate)){
                 this.atkCounter = 0;
+                
                 //generate bullet 
                 console.log(source.type + source.id + " Normal shoot");
                 //play SFX
@@ -805,12 +806,12 @@ class ShootBehavior {
                 if (source.type == 'Player'){
                     player.currentWeapon.use();
                 } 
-            }
+            } 
         }
     }
     performSpecialAtk(source){
         if (player!= undefined && player.currentWeapon.ammoNumber > 0){
-            if (this.atkCounter > (this.specialAtkInterval * createjs.Ticker.framerate)){
+            if (this.atkCounter >= (this.specialAtkInterval * createjs.Ticker.framerate)){
                 this.atkCounter = 0;
                 //generate 3 bullets 
                 console.log(source.type + source.id + " Special shoot");
@@ -824,7 +825,7 @@ class ShootBehavior {
                     this.generateBullet(source, i);
                 }
                 player.currentWeapon.use();
-            }
+            } 
         }
     }
     generateBullet(source, aimOverwrite){

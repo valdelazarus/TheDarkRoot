@@ -4,7 +4,7 @@ body
     text-align: center;
     font-family: Helvetica, Arial, sans-serif;
     color: #ffffff;
-    background: rgb(65, 65, 65) !important;
+    background: #404040 !important;
 }
 main
 {
@@ -53,18 +53,17 @@ canvas
 #aboutText
 {
     padding-top: 20pt;
-    color:  rgb(167, 167, 167);
+    color:  #fff;
     text-shadow: 1px 1px rgb(0, 0, 0);
-    font-size: 13pt;
-    font-weight: 500;
+    font-size: 12pt;
 }
 #quoteText
 {
-    color:  rgb(255, 224, 183);
+    color:  #ffffcc;
     text-shadow: 1px 1px rgb(53, 34, 13);
     padding-top: 50px;
-    font-size: 17pt;
-    font-weight: 500; 
+    font-size: 16pt;
+    font-weight: bold; 
 }
 #quoteContainer
 {
@@ -76,6 +75,7 @@ canvas
 {
     background-color: rgb(177, 115, 64) !important;
     width: 70%;
+    border-radius: 10px;
 }
 
 .controls
@@ -99,12 +99,12 @@ canvas
 #controlTitle
 {
     color: rgb(255, 194, 124);
-    font-size: 24pt;
+    font-size: 20pt;
 }
 #controlText
 {
-    color: rgb(167, 167, 167);
-    font-size: 11pt;
+    color: #fff;
+    font-size: 12pt;
 }
 .controls h4
 {

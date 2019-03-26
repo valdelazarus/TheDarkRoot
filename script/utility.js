@@ -790,7 +790,7 @@ class AmmoDisplay extends createjs.Container{
 
 //skill display class -create, display and update bar according to current skill cooldown value 
 class SkillDisplay extends createjs.Container{
-    constructor(maxValue, currentValue, width, height, posX, posY, borderColor= "#000", fillColor = "gray"){  
+    constructor(image, maxValue, currentValue, width, height, posX, posY, fillColor = "#fff", borderColor= "#fff"){  
         super();
         
         this.maxValue = maxValue; 
@@ -800,13 +800,16 @@ class SkillDisplay extends createjs.Container{
         this.height = height; 
         this.x = posX; 
         this.y = posY; 
-        this.strokeColor = borderColor;
+        
         this.fillColor = fillColor;
+        this.strokeColor = borderColor;
         
         this.border = null;
         this.fillArea = null;
-         
-        this.addChild(this.fillArea, this.border); //group border and fill 
+        
+//        image.x = -image.nominalBounds.width/2 * image.scale;
+//        image.y = -image.nominalBounds.height/2 * image.scale;
+        this.addChild(image, this.fillArea, this.border); //group border and fill 
         
         stage.addChild(this);
         
@@ -836,9 +839,7 @@ class SkillDisplay extends createjs.Container{
 
             this.fillArea.graphics.endFill();
         
-        
-        //draw the border - make healthbar border drawn on top
-            this.border = drawBorderedRect(this.strokeColor, this.width, this.height, 0, 0);
+         this.border = drawBorderedRect(this.strokeColor, this.width, this.height, 0, 0);
         
         this.addChild(this.fillArea, this.border); //group border and fill 
     }

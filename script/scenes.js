@@ -321,6 +321,7 @@ class GameLevel extends createjs.Container{
         this.createHealthBar();
         this.createTimer();
         this.createAmmoDisplay();
+        this.createSkillDisplay();
         this.createScoreBoard();
 
         this.currentMusic = playSound(this.levelData.backgroundMusic,true,.5);
@@ -371,6 +372,20 @@ class GameLevel extends createjs.Container{
 
         if (healthBarObj != undefined && player != undefined && !gameOver){
             healthBarObj.currentValue = player.health;
+        }
+        if (skillDisplayLeft != undefined && player != undefined && !gameOver){
+            if (player.shootBehavior.atkCounter >= player.shootBehavior.shootInterval * createjs.Ticker.framerate){
+                skillDisplayLeft.currentValue = 0;
+            } else {
+                skillDisplayLeft.currentValue = 1;
+            }
+        }
+        if (skillDisplayRight != undefined && player != undefined && !gameOver){
+            if (player.shootBehavior.atkCounter >= player.shootBehavior.specialAtkInterval * createjs.Ticker.framerate){
+                skillDisplayRight.currentValue = 0;
+            } else {
+                skillDisplayRight.currentValue = 1;
+            }
         }
 
         if (timerObj != undefined && player != undefined && !gameOver && timerObj.seconds <= 0){
@@ -430,6 +445,23 @@ class GameLevel extends createjs.Container{
         hudContainer.addChild(smallAmmoDisplay);
         largeAmmoDisplay = new AmmoDisplay(new lib.LargeProj(),110,80);
         hudContainer.addChild(largeAmmoDisplay);
+    }
+    createSkillDisplay(){
+        var left = new createjs.BitmapText("L", textSpriteSheet);
+        left.scale = .3;
+        left.shadow = drawShadow("#ccff33",0,0,10);
+        left.x -= 10;
+        left.y -= 10;
+        
+        var right = new createjs.BitmapText("R", textSpriteSheet);
+        right.scale = .3;
+        right.shadow = drawShadow("#ccff33",0,0,10);
+        right.x -= 10;
+        right.y -= 10;
+        
+        skillDisplayLeft = new SkillDisplay(left, 1, 0, 40, 40, 120, 120);
+        skillDisplayRight = new SkillDisplay(right, 1, 0, 40, 40, 170, 120);
+        hudContainer.addChild(skillDisplayLeft, skillDisplayRight);
     }
     createScoreBoard(){
         if (this.scoreTxt != undefined){
