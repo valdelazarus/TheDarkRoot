@@ -740,6 +740,7 @@ class Bullet extends MoveableGameObject{
                     playSound("Minion Die");
                     console.log('Hit enemy' + i);
                     
+                    //update score
                     score+=sceneManager.currentScene.levelData.bonus;
                     if (score % 100 == 0){
                         player.speed++;
@@ -748,6 +749,19 @@ class Bullet extends MoveableGameObject{
                         }
                         playerSpd = player.speed;
                     }
+                    
+                    //generate explosion animation
+                    var expl = new createjs.Sprite(subSpriteSheet, "explosion");
+                    expl.x = enemies[i].x;
+                    expl.y = enemies[i].y;
+                    expl.paused = true;
+                    enemies[i].parent.addChild(expl);
+                    expl.gotoAndPlay("explosion");
+                    
+                    expl.on('animationend', function(e){
+                        if (!gameOver && !nextLevel)
+                            sceneManager.currentScene.enemyLayer.removeChild(e.target);
+                    }); 
                     
                     enemies[i].parent.removeChild(enemies[i]);
                     enemies[i].dropItem();

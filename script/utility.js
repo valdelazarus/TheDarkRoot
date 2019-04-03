@@ -200,6 +200,9 @@ class SceneManager{
             case GameStates.LEVEL_3_TRANSITION:
                 this.currentGameStateFunction = this.gameStateLevel3Transition;
                 break;
+            case GameStates.GUIDE:
+                this.currentGameStateFunction = this.gameStateGuide;
+                break;
         }
     }
     onStateEvent(e, obj) {
@@ -221,23 +224,36 @@ class SceneManager{
         
         var scene = new GameMenu();
         
-        //scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
         scene.on(GameStateEvents.LEVEL_1_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_1_TRANSITION});
         scene.on(GameStateEvents.LEVEL_2_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_2_TRANSITION});
         scene.on(GameStateEvents.LEVEL_3_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_3_TRANSITION});
        
+        scene.on(GameStateEvents.GUIDE, this.onStateEvent, this, true, {state:GameStates.GUIDE});
+        
         stage.addChild(scene);
         
         this.currentScene = scene;
         this.changeState(GameStates.RUN_SCENE);
     }
-    
+    gameStateGuide(){
+        player = undefined;
+        
+        this.disposeCurrentScene();
+        
+        var scene = new GuideScene("GameWinMusic");
+        
+        scene.on(GameStateEvents.MAIN_MENU, this.onStateEvent, this, true, {state:GameStates.MAIN_MENU});
+        
+        stage.addChild(scene);
+
+        this.currentScene = scene;
+        this.changeState(GameStates.RUN_SCENE);
+    }
     gameStateLevel1() {
         this.disposeCurrentScene();
         
         var scene = new GameLevel1(levelData1);
         
-        //scene.on(GameStateEvents.LEVEL_2, this.onStateEvent, this, true, {state:GameStates.LEVEL_2});
         scene.on(GameStateEvents.LEVEL_2_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_2_TRANSITION});
         
         scene.on(GameStateEvents.GAME_LOSE, this.onStateEvent, this, true, {state:GameStates.GAME_LOSE});
@@ -252,7 +268,6 @@ class SceneManager{
         
         var scene = new GameLevel2(levelData2);
         
-        //scene.on(GameStateEvents.LEVEL_3, this.onStateEvent, this, true, {state:GameStates.LEVEL_3});
         scene.on(GameStateEvents.LEVEL_3_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_3_TRANSITION});
         
         scene.on(GameStateEvents.GAME_LOSE, this.onStateEvent, this, true, {state:GameStates.GAME_LOSE});
@@ -289,7 +304,7 @@ class SceneManager{
         scene.title.shadow = drawShadow("#ffffcc", 2, 2, 10);
         
         scene.on(GameStateEvents.MAIN_MENU, this.onStateEvent, this, true, {state:GameStates.MAIN_MENU});
-        //scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+    
         scene.on(GameStateEvents.LEVEL_1_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_1_TRANSITION});
         
         stage.addChild(scene);
@@ -308,7 +323,7 @@ class SceneManager{
         scene.title.shadow = drawShadow("red", 2, 2, 10);
         
         scene.on(GameStateEvents.MAIN_MENU, this.onStateEvent, this, true, {state:GameStates.MAIN_MENU});
-        //scene.on(GameStateEvents.LEVEL_1, this.onStateEvent, this, true, {state:GameStates.LEVEL_1});
+        
         scene.on(GameStateEvents.LEVEL_1_TRANSITION, this.onStateEvent, this, true, {state:GameStates.LEVEL_1_TRANSITION});
         
         stage.addChild(scene);
@@ -368,12 +383,12 @@ class SceneManager{
     onTick(e){
         if (this.currentGameStateFunction != null) {
            this.currentGameStateFunction(e);
-        }
-        //stage.update();
+        } 
     }
     setUpKeyboardMouseEvent(){
         document.onclick = this.mouseClickHandler; //left click
         document.oncontextmenu = this.rightMouseClickHandler; //right click
+        
         stage.on('stagemousemove', this.mouseMoveHandler) //mouse move
 
         this.handleKeyBoardEvent();
@@ -394,10 +409,11 @@ class SceneManager{
         var mouseY = e.stageY;
         
         if (player != undefined){
-            player.aimAngle = Math.atan2(mouseY-player.y,mouseX-player.x) / Math.PI * 180;
+            player.aimAngle = 
+                Math.atan2(mouseY-player.y - player.graphic.nominalBounds.height * player.graphic.scale/2, mouseX-player.x- player.graphic.nominalBounds.width * player.graphic.scale/2) / Math.PI * 180;
 
             //rotate aimIndicator accordingly 
-            aimIndicator.setTransform(aimIndicator.x,aimIndicator.y,1,1,player.aimAngle-270);
+            aimIndicator.setTransform(aimIndicator.x,aimIndicator.y,1,1,player.aimAngle);
         }
     }
     handleKeyBoardEvent(){
@@ -428,6 +444,9 @@ class SceneManager{
             case KEYCODE_3:
                 keyboard3 = true;
                 break; 
+            case KEYCODE_H:
+                keyboardH = true;
+                break; 
         }
     }
     keyUpHandler(e){ // when key is released
@@ -452,6 +471,9 @@ class SceneManager{
                 break; 
             case KEYCODE_3:
                 keyboard3 = false;
+                break; 
+            case KEYCODE_H:
+                keyboardH = false;
                 break; 
         }
     }
@@ -842,5 +864,29 @@ class SkillDisplay extends createjs.Container{
          this.border = drawBorderedRect(this.strokeColor, this.width, this.height, 0, 0);
         
         this.addChild(this.fillArea, this.border); //group border and fill 
+    }
+}
+
+class UIButton extends createjs.Container{
+    constructor(text, posX, posY){
+        super();
+               
+        this.graphic = new lib.UIBtn_1();
+        this.graphic.scale = .5;
+        
+        this.text = new createjs.BitmapText(text, textSpriteSheet);
+        this.text.scale = .3;
+        this.text.x = 20;
+        this.text.y = 40;
+        this.text.shadow = drawShadow("#ffffcc", 0, 0, 10);
+        
+        this.hit = drawRect("#fff", this.graphic.nominalBounds.width * this.graphic.scale, this.graphic.nominalBounds.height * this.graphic.scale, this.graphic.nominalBounds.width/2 * this.graphic.scale, this.graphic.nominalBounds.height/2 * this.graphic.scale);
+        
+        this.addChild(this.graphic, this.text);
+        
+        this.x = posX;
+        this.y = posY;
+        
+        this.hitArea = this.hit;
     }
 }

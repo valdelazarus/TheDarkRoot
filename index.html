@@ -11,18 +11,17 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-<!--
-    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Cabin" rel="stylesheet">
--->
+  
 </head>
 <body>
     <!-- header/title -->
     <header>
-<!--        <span id="title">The Dark Root</span>-->
         <center><img src="images/gameTitleTrans.png" id="gameTitle"></center>
     </header>
     <main>
+        <div id="game">
+            <a class="linking" href="#tutorialContent" id="helpTxt">Help ?</a>
+        </div>
         <canvas id="game-canvas" width="1024" height="768" style="border: 1px dashed #000">
         </canvas>
 
@@ -38,30 +37,38 @@
                     <q id= "quoteText"><i>Hang in there, adventurer!</i></q>
                 </div>
             </div>
-
+            <div>
+                <a class="linking" href="#game">To Game >></a>
+            </div>
             <div class = tutorial>
                 <!-- How to play -->
                 <h3 id= "tutorialTitle">How To Play</h3>
                 <div class = "row" id = "tutorialContent">
-                    <div class = "col-md-4">
+                    <div class = "col-md-3">
                             <h4 id ="controlTitle">Movement</h4>
                             <p id ="controlText"><b>W</b>: Move Up</p>
                             <p id ="controlText"><b>A</b>: Move Left</p>
                             <p id ="controlText"><b>S</b>: Move Down</p>
                             <p id ="controlText"><b>D</b>: Move Right</p>
                     </div>
-                    <div class = "col-md-4">
+                    <div class = "col-md-3">
                         <h4 id ="controlTitle">General Attack</h4>
                         <br>
                         <p id ="controlText"><b>Left Click</b>: Normal Shoot</p>
                         <p id ="controlText"><b>Right Click</b>: Special Shoot</p>
                     </div>
 
-                    <div class = "col-md-4">
+                    <div class = "col-md-3">
                         <h4 id ="controlTitle">Switch Weapons</h4>
                         <p id ="controlText"><b>1</b>: Normal default weapon</p>
                         <p id ="controlText"><b>2</b>: Small weapon (Ammo Required)</p>
                         <p id ="controlText"><b>3</b>: Large weapon (Ammo Required)</p>
+                    </div>
+                    
+                    <div class = "col-md-3">
+                        <h4 id ="controlTitle">In-game Instruction</h4>
+                        <br>
+                        <p id ="controlText"><b>Press and hold H</b>: Toggle in-game instruction</p>
                     </div>
                 </div>
             </div>
@@ -76,19 +83,17 @@
         <center>&copy; Copyright NC Bots - Centennial College Winter 2019 - COMP 397</center>
     </footer>
     
-    
     <!-- import library -->
-<!--    <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>-->
-    <script src="script/createjs.js"></script>  
-    <script src="script/TheDarkRoot-Art.js"></script>  
-   
+    <!--    <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>-->
+    <script src="script/createjs.js"></script> 
+    <script src="script/TheDarkRoot-Art.js"></script> 
+    
      <!-- import game scripts -->
     <script src="script/graphics.js"></script>
     <script src="script/sound.js"></script>
     <script src="script/physics.js"></script>
     <script src="script/utility.js"></script>
     <script src="script/base.js"></script>
-<!--    <script src="script/game.js"></script>-->
     <script src="script/scenes.js"></script>
     <script src="script/main.js"></script>
 </body>

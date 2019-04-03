@@ -116,3 +116,16 @@ footer
     background: #404040;
     padding: 60px;
 }
+.linking{
+    text-decoration: none;
+    color: #ffffcc;
+    font-size: 16pt;
+    font-weight: bold;
+}
+.linking:hover{
+    color: indianred;
+    text-decoration: none;
+}
+#helpTxt{
+    font-size: 12pt;
+}
